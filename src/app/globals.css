@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+:root { color-scheme: dark; font-family: Arial, Helvetica, sans-serif; background: #080c12; color: #ecf0f2; }
+* { box-sizing: border-box; }
+html, body { margin: 0; width: 100%; min-height: 100%; overflow: hidden; }
+body { min-height: 100vh; }
+button { font: inherit; }
+.game-shell { position: relative; width: 100vw; height: 100vh; min-height: 620px; overflow: hidden; background: #080d15; }
+.city-stage, .city-stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.vignette { position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg,rgba(4,8,13,.72),transparent 24%,transparent 53%,rgba(4,8,13,.16) 72%,rgba(4,8,13,.72)); }
+.hud-shell { position: absolute; inset: 0; pointer-events: none; }
+.hud-shell button, .topbar, .mission-card, .control-panel, .scene-hint { pointer-events: auto; }
+.topbar { position: absolute; top: 0; left: 0; right: 0; height: 82px; padding: 0 42px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(191,211,230,.09); background: linear-gradient(180deg,rgba(7,12,19,.74),rgba(7,12,19,.15)); }
+.brand { display: flex; align-items: center; gap: 12px; min-width: 235px; }
+.brand-mark { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid #d2a75d; color: #e5bc77; font: 700 18px Georgia,serif; }
+.brand strong, .brand small { display: block; letter-spacing: .14em; }
+.brand strong { font-size: 11px; color: #f0eee6; }
+.brand small { margin-top: 5px; font-size: 8px; color: #74818b; }
+.top-status { display: flex; align-items: center; gap: 9px; font-size: 9px; letter-spacing: .17em; color: #9ba8ae; }
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: #76818a; }
+.status-dot.live { background: #9cc990; box-shadow: 0 0 10px #9cc990; }
+.shift-clock { min-width: 145px; text-align: right; }
+.shift-clock span, .shift-clock strong { display: block; }
+.shift-clock span { color: #75818d; font-size: 8px; letter-spacing: .2em; }
+.shift-clock strong { margin-top: 4px; color: #e1c386; font: 500 21px Georgia,serif; letter-spacing: .07em; }
+.glass-panel { background: linear-gradient(135deg,rgba(15,22,30,.9),rgba(10,16,23,.83)); border: 1px solid rgba(177,196,208,.14); box-shadow: 0 16px 48px rgba(0,0,0,.24); backdrop-filter: blur(16px); }
+.mission-card { position: absolute; top: 112px; left: 42px; width: 340px; padding: 23px 24px 22px; }
+.eyebrow { color: #bd9d65; font-size: 8px; letter-spacing: .22em; font-weight: 700; }
+.eyebrow span { color: #5e6970; padding: 0 5px; }
+.mission-card h1 { margin: 12px 0 7px; color: #f0eee8; font: 500 27px/1.12 Georgia,serif; letter-spacing: -.025em; }
+.mission-card p { margin: 0; color: #9ca8ae; font-size: 11px; line-height: 1.65; }
+.meters { display: grid; gap: 15px; margin-top: 22px; }
+.meter-label { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 7px; color: #8d9aa2; font-size: 8px; letter-spacing: .15em; }
+.meter-label b { color: #e9e7df; font: 500 13px Georgia,serif; letter-spacing: .02em; }
+.meter-label small { color: #909ca3; margin-left: 4px; font: 9px Arial,sans-serif; }
+.meter-track { height: 3px; width: 100%; background: rgba(187,205,217,.12); }
+.meter-track i { display: block; height: 100%; transition: width .35s ease; }
+.energy-fill { background: #d1a75c; box-shadow: 0 0 9px rgba(209,167,92,.35); }
+.comfort-fill { background: #8fb49b; box-shadow: 0 0 9px rgba(143,180,155,.3); }
+.control-panel { position: absolute; bottom: 35px; left: 50%; width: min(740px, calc(100% - 48px)); transform: translateX(-50%); padding: 18px 21px 16px; }
+.panel-heading, .panel-footer { display: flex; align-items: center; justify-content: space-between; }
+.panel-heading h2 { margin: 7px 0 0; color: #e9e8e1; font: 500 17px Georgia,serif; }
+.panel-heading h2 span { margin-left: 8px; color: #87949b; font: 9px Arial,sans-serif; letter-spacing: .05em; }
+.tap-hint { color: #68757e; font-size: 7px; letter-spacing: .15em; }
+.lamp-list { display: flex; gap: 8px; margin: 15px 0 13px; }
+.lamp-switch { width: 62px; height: 53px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: #74818b; background: rgba(255,255,255,.025); border: 1px solid rgba(177,196,208,.1); cursor: pointer; transition: .2s ease; }
+.lamp-switch:hover:not(:disabled) { border-color: rgba(209,167,92,.65); transform: translateY(-2px); }
+.lamp-switch.is-on { color: #e5bd79; background: rgba(204,160,84,.09); border-color: rgba(204,160,84,.35); }
+.lamp-switch:disabled { cursor: default; }
+.lamp-switch .lamp-glyph { font-size: 16px; line-height: 17px; }
+.lamp-switch span:nth-child(2) { font-size: 7px; letter-spacing: .12em; }
+.lamp-switch i { position: absolute; right: 5px; top: 5px; width: 4px; height: 4px; border-radius: 50%; background: #4e5962; }
+.lamp-switch.is-on i { background: #f0c876; box-shadow: 0 0 6px #e2b35d; }
+.panel-footer { padding-top: 12px; border-top: 1px solid rgba(177,196,208,.1); }
+.footnote { color: #75818a; font-size: 8px; letter-spacing: .12em; }
+.footnote b { margin-left: 6px; color: #c9b78e; font-weight: 500; }
+.primary-button { min-width: 190px; padding: 11px 13px; color: #12161b; background: #d6b16e; border: 0; font-size: 8px; font-weight: 700; letter-spacing: .16em; cursor: pointer; transition: background .2s ease; }
+.primary-button:hover { background: #eccb8e; }
+.primary-button span { margin-left: 14px; font-size: 14px; }
+.running-note { display: flex; align-items: center; gap: 8px; color: #9fb7a2; font-size: 8px; letter-spacing: .16em; }
+.scene-hint { position: absolute; right: 42px; bottom: 50%; color: #73808a; font-size: 8px; letter-spacing: .1em; }
+.scene-hint span { color: #d0b47c; font-size: 7px; letter-spacing: .15em; }
+.scene-hint i { display: inline-block; width: 15px; margin: 0 8px 2px; border-top: 1px solid rgba(187,205,217,.35); }
+.scene-loading { position: absolute; inset: 0; display: grid; place-items: center; color: #b9a16f; font-size: 10px; letter-spacing: .2em; }
+.record-chip { position: absolute; top: 98px; right: 42px; padding: 10px 13px; border: 1px solid rgba(143,180,155,.25); color: #a6c4ac; background: rgba(11,20,20,.65); font-size: 8px; letter-spacing: .15em; }
+.load-state { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; text-align: center; background: radial-gradient(ellipse at 50% 44%,#15202a,#080c12 62%); }
+.load-state h1 { margin: 14px 0 8px; font: 500 31px Georgia,serif; color: #eee9df; }
+.load-state p { color: #8b989f; font-size: 12px; }
+.load-state button { margin-top: 17px; padding: 12px 18px; border: 0; background: #d6b16e; color: #12161b; font-size: 9px; letter-spacing: .15em; cursor: pointer; }
+.loader-orbit { width: 32px; height: 32px; margin-bottom: 25px; border: 1px solid rgba(214,177,110,.25); border-radius: 50%; display: grid; place-items: center; animation: spin 2.5s linear infinite; }
+.loader-orbit i { width: 5px; height: 5px; border-radius: 50%; background: #e3bd77; box-shadow: 0 0 9px #e3bd77; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (max-width: 760px) {
+  .game-shell { min-height: 700px; } .topbar { height: 66px; padding: 0 18px; } .brand { min-width: 0; } .brand-mark { width: 29px; height: 29px; } .brand strong { font-size: 9px; } .brand small { font-size: 7px; } .top-status { display: none; } .shift-clock { min-width: 110px; } .shift-clock strong { font-size: 17px; }
+  .mission-card { top: 82px; left: 16px; width: min(300px, calc(100% - 32px)); padding: 17px; } .mission-card h1 { font-size: 22px; } .meters { gap: 10px; margin-top: 14px; }
+  .control-panel { bottom: 15px; width: calc(100% - 24px); padding: 14px 12px 12px; } .tap-hint { display: none; } .lamp-list { gap: 5px; overflow-x: auto; } .lamp-switch { min-width: 43px; width: 43px; height: 48px; } .panel-footer { gap: 8px; } .footnote { max-width: 130px; line-height: 1.6; } .primary-button { min-width: 155px; padding: 11px 8px; font-size: 7px; } .scene-hint { right: 18px; bottom: 34%; } .record-chip { top: 77px; right: 16px; font-size: 6px; padding: 8px; }
+}

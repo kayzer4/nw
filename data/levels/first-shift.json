@@ -1,0 +1,484 @@
+{
+  "id": "first-shift",
+  "title": "First Shift",
+  "subtitle": "Keep the crossroad lit until sunrise.",
+  "grid": {
+    "width": 7,
+    "depth": 7,
+    "cellSize": 2
+  },
+  "roads": [
+    {
+      "id": "horizontal-0",
+      "asset": "/models/roads/road-straight.glb",
+      "position": [
+        -6,
+        0,
+        0
+      ],
+      "rotationY": 0,
+      "scale": 2
+    },
+    {
+      "id": "vertical-0",
+      "asset": "/models/roads/road-straight.glb",
+      "position": [
+        0,
+        0,
+        -6
+      ],
+      "rotationY": 1.5707963267948966,
+      "scale": 2
+    },
+    {
+      "id": "horizontal-1",
+      "asset": "/models/roads/road-straight.glb",
+      "position": [
+        -4,
+        0,
+        0
+      ],
+      "rotationY": 0,
+      "scale": 2
+    },
+    {
+      "id": "vertical-1",
+      "asset": "/models/roads/road-straight.glb",
+      "position": [
+        0,
+        0,
+        -4
+      ],
+      "rotationY": 1.5707963267948966,
+      "scale": 2
+    },
+    {
+      "id": "horizontal-2",
+      "asset": "/models/roads/road-straight.glb",
+      "position": [
+        -2,
+        0,
+        0
+      ],
+      "rotationY": 0,
+      "scale": 2
+    },
+    {
+      "id": "vertical-2",
+      "asset": "/models/roads/road-straight.glb",
+      "position": [
+        0,
+        0,
+        -2
+      ],
+      "rotationY": 1.5707963267948966,
+      "scale": 2
+    },
+    {
+      "id": "horizontal-3",
+      "asset": "/models/roads/road-crossroad.glb",
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "rotationY": 0,
+      "scale": 2
+    },
+    {
+      "id": "horizontal-4",
+      "asset": "/models/roads/road-straight.glb",
+      "position": [
+        2,
+        0,
+        0
+      ],
+      "rotationY": 0,
+      "scale": 2
+    },
+    {
+      "id": "vertical-4",
+      "asset": "/models/roads/road-straight.glb",
+      "position": [
+        0,
+        0,
+        2
+      ],
+      "rotationY": 1.5707963267948966,
+      "scale": 2
+    },
+    {
+      "id": "horizontal-5",
+      "asset": "/models/roads/road-straight.glb",
+      "position": [
+        4,
+        0,
+        0
+      ],
+      "rotationY": 0,
+      "scale": 2
+    },
+    {
+      "id": "vertical-5",
+      "asset": "/models/roads/road-straight.glb",
+      "position": [
+        0,
+        0,
+        4
+      ],
+      "rotationY": 1.5707963267948966,
+      "scale": 2
+    },
+    {
+      "id": "horizontal-6",
+      "asset": "/models/roads/road-straight.glb",
+      "position": [
+        6,
+        0,
+        0
+      ],
+      "rotationY": 0,
+      "scale": 2
+    },
+    {
+      "id": "vertical-6",
+      "asset": "/models/roads/road-straight.glb",
+      "position": [
+        0,
+        0,
+        6
+      ],
+      "rotationY": 1.5707963267948966,
+      "scale": 2
+    }
+  ],
+  "buildings": [
+    {
+      "id": "residence-west-north",
+      "asset": "/models/Models/building-a.glb",
+      "position": [
+        -4,
+        0,
+        -4
+      ],
+      "rotationY": 0,
+      "scale": 1.5
+    },
+    {
+      "id": "shop-east-north",
+      "asset": "/models/Models/building-e.glb",
+      "position": [
+        4,
+        0,
+        -4
+      ],
+      "rotationY": 0,
+      "scale": 1.5
+    },
+    {
+      "id": "residence-west-south",
+      "asset": "/models/Models/building-b.glb",
+      "position": [
+        -4,
+        0,
+        4
+      ],
+      "rotationY": 0,
+      "scale": 1.5
+    },
+    {
+      "id": "residence-east-south",
+      "asset": "/models/Models/building-c.glb",
+      "position": [
+        4,
+        0,
+        4
+      ],
+      "rotationY": 0,
+      "scale": 1.5
+    }
+  ],
+  "lamps": [
+    {
+      "id": "lamp-1",
+      "asset": "/models/lamps/light-curved.glb",
+      "position": [
+        -4,
+        0,
+        -1.25
+      ],
+      "rotationY": 0,
+      "scale": 1,
+      "radius": 6,
+      "initiallyOn": true
+    },
+    {
+      "id": "lamp-2",
+      "asset": "/models/lamps/light-curved.glb",
+      "position": [
+        0,
+        0,
+        -1.25
+      ],
+      "rotationY": 0,
+      "scale": 1,
+      "radius": 6,
+      "initiallyOn": true
+    },
+    {
+      "id": "lamp-3",
+      "asset": "/models/lamps/light-curved.glb",
+      "position": [
+        4,
+        0,
+        -1.25
+      ],
+      "rotationY": 0,
+      "scale": 1,
+      "radius": 6,
+      "initiallyOn": true
+    },
+    {
+      "id": "lamp-4",
+      "asset": "/models/lamps/light-curved.glb",
+      "position": [
+        -4,
+        0,
+        1.25
+      ],
+      "rotationY": 0,
+      "scale": 1,
+      "radius": 6,
+      "initiallyOn": true
+    },
+    {
+      "id": "lamp-5",
+      "asset": "/models/lamps/light-curved.glb",
+      "position": [
+        0,
+        0,
+        1.25
+      ],
+      "rotationY": 0,
+      "scale": 1,
+      "radius": 6,
+      "initiallyOn": true
+    },
+    {
+      "id": "lamp-6",
+      "asset": "/models/lamps/light-curved.glb",
+      "position": [
+        4,
+        0,
+        1.25
+      ],
+      "rotationY": 0,
+      "scale": 1,
+      "radius": 6,
+      "initiallyOn": false
+    },
+    {
+      "id": "lamp-7",
+      "asset": "/models/lamps/light-curved.glb",
+      "position": [
+        -1.25,
+        0,
+        -4
+      ],
+      "rotationY": 0,
+      "scale": 1,
+      "radius": 6,
+      "initiallyOn": false
+    },
+    {
+      "id": "lamp-8",
+      "asset": "/models/lamps/light-curved.glb",
+      "position": [
+        1.25,
+        0,
+        4
+      ],
+      "rotationY": 0,
+      "scale": 1,
+      "radius": 6,
+      "initiallyOn": false
+    }
+  ],
+  "citizens": [
+    {
+      "id": "walker-01",
+      "asset": "/models/characters/cube_guy.glb",
+      "scale": 0.2,
+      "route": [
+        [
+          -5.2,
+          0
+        ],
+        [
+          -2.6,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          2.6,
+          0
+        ],
+        [
+          5.2,
+          0
+        ]
+      ],
+      "secondsPerPoint": 4
+    },
+    {
+      "id": "walker-02",
+      "asset": "/models/characters/cube_woman.glb",
+      "scale": 0.2,
+      "route": [
+        [
+          5.2,
+          0
+        ],
+        [
+          2.6,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          -2.6,
+          0
+        ],
+        [
+          -5.2,
+          0
+        ]
+      ],
+      "secondsPerPoint": 5
+    },
+    {
+      "id": "walker-03",
+      "asset": "/models/characters/cube_guy.glb",
+      "scale": 0.2,
+      "route": [
+        [
+          0,
+          -5.2
+        ],
+        [
+          0,
+          -2.6
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          2.6
+        ],
+        [
+          0,
+          5.2
+        ]
+      ],
+      "secondsPerPoint": 4
+    },
+    {
+      "id": "walker-04",
+      "asset": "/models/characters/cube_woman.glb",
+      "scale": 0.2,
+      "route": [
+        [
+          0,
+          5.2
+        ],
+        [
+          0,
+          2.6
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          -2.6
+        ],
+        [
+          0,
+          -5.2
+        ]
+      ],
+      "secondsPerPoint": 5
+    },
+    {
+      "id": "walker-05",
+      "asset": "/models/characters/cube_guy.glb",
+      "scale": 0.2,
+      "route": [
+        [
+          -5.2,
+          0
+        ],
+        [
+          -2.6,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          2.6,
+          0
+        ],
+        [
+          5.2,
+          0
+        ]
+      ],
+      "secondsPerPoint": 6
+    },
+    {
+      "id": "walker-06",
+      "asset": "/models/characters/cube_woman.glb",
+      "scale": 0.2,
+      "route": [
+        [
+          0,
+          -5.2
+        ],
+        [
+          0,
+          -2.6
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          2.6
+        ],
+        [
+          0,
+          5.2
+        ]
+      ],
+      "secondsPerPoint": 6
+    }
+  ],
+  "rules": {
+    "shiftSeconds": 100,
+    "startingEnergy": 190,
+    "energyPerLampSecond": 0.32,
+    "startingSatisfaction": 68,
+    "minimumSatisfaction": 35
+  }
+}

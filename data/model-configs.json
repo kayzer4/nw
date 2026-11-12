@@ -1,0 +1,1524 @@
+{
+  "gridSizeX": 8,
+  "gridSizeZ": 8,
+  "configs": {
+    "roads/road-straight": {
+      "name": "road-straight",
+      "pack": "roads",
+      "modelType": "road",
+      "rotation": 0,
+      "frontDir": "none",
+      "height": "low",
+      "actualHeight": 0.1,
+      "actualWidth": 1,
+      "actualDepth": 1,
+      "foundation": "none",
+      "foundationScale": 1,
+      "foundationOffsetY": 0,
+      "gridW": 1,
+      "gridD": 1,
+      "neighborModelsLeft": [],
+      "neighborModelsRight": [],
+      "neighborModelsFront": [],
+      "neighborModelsBack": [],
+      "roadConnectLeft": true,
+      "roadConnectRight": true,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "straight",
+      "isTerminal": false,
+      "lightRadius": 0,
+      "lightColor": "#fffbe6",
+      "lightOnByDefault": true,
+      "scale": 2,
+      "offsetY": 0,
+      "tags": [
+        "road"
+      ],
+      "notes": "",
+      "attractors": [
+        {
+          "id": "a1",
+          "type": "walk",
+          "position": {
+            "x": 0,
+            "y": 0.065,
+            "z": 0.45
+          },
+          "nextAttractors": [],
+          "directions": [
+            0
+          ]
+        },
+        {
+          "id": "a2",
+          "type": "walk",
+          "position": {
+            "x": 0,
+            "y": 0.065,
+            "z": -0.45
+          },
+          "nextAttractors": [],
+          "directions": [
+            180
+          ]
+        }
+      ],
+      "lights": [
+        {
+          "id": "8e6686ca",
+          "lampModel": "light-curved",
+          "position": [
+            0,
+            0,
+            0.45
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#fffbe6",
+          "intensity": 2,
+          "distance": 6,
+          "showSphere": true,
+          "scale": 1
+        },
+        {
+          "id": "cfae0ac6",
+          "lampModel": "light-curved",
+          "position": [
+            0,
+            0,
+            -0.45
+          ],
+          "rotation": [
+            0,
+            180,
+            0
+          ],
+          "color": "#fffbe6",
+          "intensity": 2,
+          "distance": 6,
+          "showSphere": true
+        }
+      ]
+    },
+    "roads/road-bend": {
+      "name": "road-bend",
+      "pack": "roads",
+      "modelType": "road",
+      "rotation": 0,
+      "frontDir": "none",
+      "height": "low",
+      "actualHeight": 0.1,
+      "actualWidth": 1,
+      "actualDepth": 1,
+      "foundation": "none",
+      "foundationScale": 1,
+      "foundationOffsetY": 0,
+      "gridW": 1,
+      "gridD": 1,
+      "neighborModelsLeft": [],
+      "neighborModelsRight": [],
+      "neighborModelsFront": [],
+      "neighborModelsBack": [],
+      "roadConnectLeft": false,
+      "roadConnectRight": false,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "none",
+      "isTerminal": false,
+      "lightRadius": 0,
+      "lightColor": "#fffbe6",
+      "lightOnByDefault": true,
+      "scale": 1,
+      "offsetY": 0,
+      "tags": [
+        "road"
+      ],
+      "notes": ""
+    },
+    "roads/road-crossroad": {
+      "name": "road-crossroad",
+      "pack": "roads",
+      "modelType": "road",
+      "rotation": 0,
+      "frontDir": "none",
+      "height": "low",
+      "actualHeight": 0.1,
+      "actualWidth": 1,
+      "actualDepth": 1,
+      "foundation": "none",
+      "foundationScale": 1,
+      "foundationOffsetY": 0,
+      "gridW": 1,
+      "gridD": 1,
+      "neighborModelsLeft": [],
+      "neighborModelsRight": [],
+      "neighborModelsFront": [],
+      "neighborModelsBack": [],
+      "roadConnectLeft": true,
+      "roadConnectRight": true,
+      "roadConnectFront": true,
+      "roadConnectBack": true,
+      "roadType": "crossroad",
+      "isTerminal": false,
+      "lightRadius": 0,
+      "lightColor": "#fffbe6",
+      "lightOnByDefault": true,
+      "scale": 2,
+      "offsetY": 0,
+      "tags": [
+        "road"
+      ],
+      "notes": "",
+      "attractors": [
+        {
+          "id": "a1",
+          "type": "walk",
+          "position": {
+            "x": -0.45,
+            "y": 0.065,
+            "z": 0.45
+          },
+          "nextAttractors": [],
+          "directions": [
+            0,
+            90
+          ]
+        },
+        {
+          "id": "a2",
+          "type": "walk",
+          "position": {
+            "x": 0.45,
+            "y": 0.065,
+            "z": 0.45
+          },
+          "nextAttractors": [],
+          "directions": [
+            0,
+            270
+          ]
+        },
+        {
+          "id": "a3",
+          "type": "walk",
+          "position": {
+            "x": 0.45,
+            "y": 0.065,
+            "z": -0.45
+          },
+          "nextAttractors": [],
+          "directions": [
+            180,
+            270
+          ]
+        },
+        {
+          "id": "a4",
+          "type": "walk",
+          "position": {
+            "x": -0.45,
+            "y": 0.065,
+            "z": -0.45
+          },
+          "nextAttractors": [],
+          "directions": [
+            90,
+            180
+          ]
+        }
+      ]
+    },
+    "roads/road-intersection": {
+      "name": "road-intersection",
+      "pack": "roads",
+      "modelType": "road",
+      "rotation": 0,
+      "frontDir": "none",
+      "height": "low",
+      "actualHeight": 0.1,
+      "actualWidth": 1,
+      "actualDepth": 1,
+      "foundation": "none",
+      "foundationScale": 1,
+      "foundationOffsetY": 0,
+      "gridW": 1,
+      "gridD": 1,
+      "neighborModelsLeft": [],
+      "neighborModelsRight": [],
+      "neighborModelsFront": [],
+      "neighborModelsBack": [],
+      "roadConnectLeft": true,
+      "roadConnectRight": true,
+      "roadConnectFront": false,
+      "roadConnectBack": true,
+      "roadType": "intersection",
+      "isTerminal": false,
+      "lightRadius": 0,
+      "lightColor": "#fffbe6",
+      "lightOnByDefault": true,
+      "scale": 2,
+      "offsetY": 0,
+      "tags": [
+        "road"
+      ],
+      "notes": "",
+      "attractors": [
+        {
+          "id": "a1",
+          "type": "walk",
+          "position": {
+            "x": 0,
+            "y": 0.065,
+            "z": -0.45
+          },
+          "nextAttractors": [],
+          "directions": [
+            180
+          ]
+        },
+        {
+          "id": "a2",
+          "type": "walk",
+          "position": {
+            "x": -0.45,
+            "y": 0.065,
+            "z": 0.45
+          },
+          "nextAttractors": [],
+          "directions": [
+            90,
+            180
+          ]
+        },
+        {
+          "id": "a3",
+          "type": "walk",
+          "position": {
+            "x": 0.45,
+            "y": 0.065,
+            "z": 0.45
+          },
+          "nextAttractors": [],
+          "directions": [
+            0,
+            90
+          ]
+        }
+      ],
+      "lights": [
+        {
+          "id": "c17557f4",
+          "lampModel": "light-curved",
+          "position": [
+            0,
+            0,
+            -0.45
+          ],
+          "rotation": [
+            0,
+            180,
+            0
+          ],
+          "color": "#fffbe6",
+          "intensity": 2,
+          "distance": 6,
+          "showSphere": true
+        }
+      ]
+    },
+    "roads/road-end": {
+      "name": "road-end",
+      "pack": "roads",
+      "modelType": "road",
+      "rotation": 0,
+      "frontDir": "none",
+      "height": "low",
+      "actualHeight": 0.1,
+      "actualWidth": 1,
+      "actualDepth": 1,
+      "foundation": "none",
+      "foundationScale": 1,
+      "foundationOffsetY": 0,
+      "gridW": 1,
+      "gridD": 1,
+      "neighborModelsLeft": [],
+      "neighborModelsRight": [],
+      "neighborModelsFront": [],
+      "neighborModelsBack": [],
+      "roadConnectLeft": false,
+      "roadConnectRight": true,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "end",
+      "isTerminal": true,
+      "lightRadius": 0,
+      "lightColor": "#fffbe6",
+      "lightOnByDefault": true,
+      "scale": 2,
+      "offsetY": 0,
+      "tags": [
+        "road"
+      ],
+      "notes": "",
+      "attractors": [
+        {
+          "id": "a2",
+          "type": "walk",
+          "position": {
+            "x": -0.45,
+            "y": 0.065,
+            "z": -0.45
+          },
+          "nextAttractors": [],
+          "directions": [
+            90,
+            180
+          ]
+        },
+        {
+          "id": "a3",
+          "type": "walk",
+          "position": {
+            "x": -0.45,
+            "y": 0.065,
+            "z": 0.45
+          },
+          "nextAttractors": [],
+          "directions": [
+            0,
+            90
+          ]
+        }
+      ],
+      "lights": [
+        {
+          "id": "6486f5f8",
+          "lampModel": "light-curved",
+          "position": [
+            0,
+            0,
+            0.45
+          ],
+          "rotation": 0,
+          "color": "#fffbe6",
+          "intensity": 2,
+          "distance": 6,
+          "showSphere": true
+        },
+        {
+          "id": "7bd7d41f",
+          "lampModel": "light-curved",
+          "position": [
+            0,
+            0,
+            -0.45
+          ],
+          "rotation": [
+            0,
+            180,
+            0
+          ],
+          "color": "#fffbe6",
+          "intensity": 2,
+          "distance": 6,
+          "showSphere": true
+        },
+        {
+          "id": "ed27d0cc",
+          "lampModel": "light-curved",
+          "position": [
+            -0.45,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            -90,
+            0
+          ],
+          "color": "#fffbe6",
+          "intensity": 2,
+          "distance": 6,
+          "showSphere": true
+        }
+      ]
+    },
+    "roads/road-square": {
+      "name": "road-square",
+      "pack": "roads",
+      "modelType": "road",
+      "rotation": 0,
+      "frontDir": "none",
+      "height": "low",
+      "actualHeight": 0.1,
+      "actualWidth": 1,
+      "actualDepth": 1,
+      "foundation": "none",
+      "foundationScale": 1,
+      "foundationOffsetY": 0,
+      "gridW": 1,
+      "gridD": 1,
+      "neighborModelsLeft": [],
+      "neighborModelsRight": [],
+      "neighborModelsFront": [],
+      "neighborModelsBack": [],
+      "roadConnectLeft": false,
+      "roadConnectRight": false,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "none",
+      "isTerminal": false,
+      "lightRadius": 0,
+      "lightColor": "#fffbe6",
+      "lightOnByDefault": true,
+      "scale": 1,
+      "offsetY": 0,
+      "tags": [
+        "road"
+      ],
+      "notes": ""
+    },
+    "roads/tile-low": {
+      "name": "tile-low",
+      "pack": "roads",
+      "modelType": "tile",
+      "rotation": 0,
+      "frontDir": "none",
+      "height": "low",
+      "actualHeight": 0.05,
+      "actualWidth": 1,
+      "actualDepth": 1,
+      "foundation": "none",
+      "foundationScale": 1,
+      "foundationOffsetY": 0,
+      "gridW": 1,
+      "gridD": 1,
+      "neighborModelsLeft": [],
+      "neighborModelsRight": [],
+      "neighborModelsFront": [],
+      "neighborModelsBack": [],
+      "roadConnectLeft": false,
+      "roadConnectRight": false,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "none",
+      "isTerminal": false,
+      "lightRadius": 0,
+      "lightColor": "#fffbe6",
+      "lightOnByDefault": true,
+      "scale": 1,
+      "offsetY": 0,
+      "tags": [
+        "tile"
+      ],
+      "notes": ""
+    },
+    "roads/tile-high": {
+      "name": "tile-high",
+      "pack": "roads",
+      "modelType": "tile",
+      "rotation": 0,
+      "frontDir": "none",
+      "height": "medium",
+      "actualHeight": 1,
+      "actualWidth": 1,
+      "actualDepth": 1,
+      "foundation": "none",
+      "foundationScale": 1,
+      "foundationOffsetY": 0,
+      "gridW": 1,
+      "gridD": 1,
+      "neighborModelsLeft": [],
+      "neighborModelsRight": [],
+      "neighborModelsFront": [],
+      "neighborModelsBack": [],
+      "roadConnectLeft": false,
+      "roadConnectRight": false,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "none",
+      "isTerminal": false,
+      "lightRadius": 0,
+      "lightColor": "#fffbe6",
+      "lightOnByDefault": true,
+      "scale": 1,
+      "offsetY": 0,
+      "tags": [
+        "tile",
+        "wall"
+      ],
+      "notes": ""
+    },
+    "roads/road-bend-sidewalk": {
+      "name": "road-bend-sidewalk",
+      "pack": "roads",
+      "modelType": "road",
+      "rotation": 0,
+      "scale": 1,
+      "offsetY": 0,
+      "gridW": 1,
+      "gridD": 1,
+      "roadConnectLeft": false,
+      "roadConnectRight": false,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "none",
+      "isTerminal": false,
+      "tags": [],
+      "notes": ""
+    },
+    "roads/road-bend-square": {
+      "name": "road-bend-square",
+      "pack": "roads",
+      "modelType": "road",
+      "rotation": 0,
+      "scale": 2,
+      "offsetY": 0,
+      "gridW": 1,
+      "gridD": 1,
+      "roadConnectLeft": true,
+      "roadConnectRight": false,
+      "roadConnectFront": false,
+      "roadConnectBack": true,
+      "roadType": "bend",
+      "isTerminal": false,
+      "tags": [],
+      "notes": "",
+      "attractors": [
+        {
+          "id": "a2",
+          "type": "walk",
+          "position": {
+            "x": 0.45,
+            "y": 0.065,
+            "z": -0.45
+          },
+          "nextAttractors": [],
+          "directions": [
+            180,
+            270
+          ]
+        },
+        {
+          "id": "a3",
+          "type": "walk",
+          "position": {
+            "x": -0.45,
+            "y": 0.065,
+            "z": 0.45
+          },
+          "nextAttractors": [],
+          "directions": [
+            0,
+            90
+          ]
+        }
+      ],
+      "lights": [
+        {
+          "id": "db6de82c",
+          "lampModel": "light-curved",
+          "position": [
+            0.45,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            90,
+            0
+          ],
+          "color": "#fffbe6",
+          "intensity": 2,
+          "distance": 6,
+          "showSphere": true,
+          "scale": 1
+        },
+        {
+          "id": "692709e2",
+          "lampModel": "light-curved",
+          "position": [
+            0,
+            0,
+            -0.45
+          ],
+          "rotation": [
+            0,
+            -180,
+            0
+          ],
+          "color": "#fffbe6",
+          "intensity": 2,
+          "distance": 6,
+          "showSphere": true,
+          "scale": 1
+        }
+      ]
+    },
+    "roads/road-crossing": {
+      "name": "road-crossing",
+      "pack": "roads",
+      "modelType": "road",
+      "rotation": 0,
+      "scale": 2,
+      "offsetY": 0,
+      "gridW": 1,
+      "gridD": 1,
+      "roadConnectLeft": true,
+      "roadConnectRight": true,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "straight",
+      "isTerminal": false,
+      "tags": [
+        "crosswalk"
+      ],
+      "notes": "",
+      "attractors": [
+        {
+          "id": "a1",
+          "type": "walk",
+          "position": {
+            "x": 0,
+            "y": 0.065,
+            "z": 0.45
+          },
+          "directions": [
+            0,
+            270
+          ],
+          "crossingDirections": [
+            270
+          ]
+        },
+        {
+          "id": "a2",
+          "type": "walk",
+          "position": {
+            "x": 0,
+            "y": 0.065,
+            "z": -0.45
+          },
+          "directions": [
+            180
+          ],
+          "crossingDirections": []
+        }
+      ],
+      "lights": [
+        {
+          "id": "705055c9",
+          "lampModel": "light-curved",
+          "position": [
+            0,
+            0,
+            0.45
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#fffbe6",
+          "intensity": 2,
+          "distance": 6,
+          "showSphere": true,
+          "scale": 1
+        },
+        {
+          "id": "08a94156",
+          "lampModel": "light-curved",
+          "position": [
+            0,
+            0,
+            -0.45
+          ],
+          "rotation": [
+            0,
+            180,
+            0
+          ],
+          "color": "#fffbe6",
+          "intensity": 2,
+          "distance": 6,
+          "showSphere": true
+        }
+      ]
+    },
+    "roads/road-crossroad-line": {
+      "name": "road-crossroad-line",
+      "pack": "roads",
+      "modelType": "road",
+      "rotation": 0,
+      "scale": 1,
+      "offsetY": 0,
+      "gridW": 1,
+      "gridD": 1,
+      "roadConnectLeft": false,
+      "roadConnectRight": false,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "none",
+      "isTerminal": false,
+      "tags": [],
+      "notes": ""
+    },
+    "roads/road-crossroad-path": {
+      "name": "road-crossroad-path",
+      "pack": "roads",
+      "modelType": "road",
+      "rotation": 0,
+      "scale": 1,
+      "offsetY": 0,
+      "gridW": 1,
+      "gridD": 1,
+      "roadConnectLeft": false,
+      "roadConnectRight": false,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "none",
+      "isTerminal": false,
+      "tags": [
+        "crosswalk"
+      ],
+      "notes": ""
+    },
+    "roads/road-end-round": {
+      "name": "road-end-round",
+      "pack": "roads",
+      "modelType": "road",
+      "rotation": 0,
+      "scale": 1,
+      "offsetY": 0,
+      "gridW": 1,
+      "gridD": 1,
+      "roadConnectLeft": false,
+      "roadConnectRight": false,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "none",
+      "isTerminal": false,
+      "tags": [],
+      "notes": ""
+    },
+    "roads/road-intersection-line": {
+      "name": "road-intersection-line",
+      "pack": "roads",
+      "modelType": "road",
+      "rotation": 0,
+      "scale": 1,
+      "offsetY": 0,
+      "gridW": 1,
+      "gridD": 1,
+      "roadConnectLeft": false,
+      "roadConnectRight": false,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "none",
+      "isTerminal": false,
+      "tags": [],
+      "notes": ""
+    },
+    "roads/road-intersection-path": {
+      "name": "road-intersection-path",
+      "pack": "roads",
+      "modelType": "road",
+      "rotation": 0,
+      "scale": 1,
+      "offsetY": 0,
+      "gridW": 1,
+      "gridD": 1,
+      "roadConnectLeft": false,
+      "roadConnectRight": false,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "none",
+      "isTerminal": false,
+      "tags": [
+        "crosswalk"
+      ],
+      "notes": ""
+    },
+    "Models/building-a": {
+      "name": "building-a",
+      "pack": "Models",
+      "modelType": "building",
+      "rotation": 0,
+      "scale": 1.5,
+      "offsetY": 0,
+      "gridW": 2,
+      "gridD": 2,
+      "roadConnectLeft": false,
+      "roadConnectRight": false,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "none",
+      "isTerminal": false,
+      "tags": [
+        "building",
+        "residential"
+      ],
+      "notes": "",
+      "frontDir": "front",
+      "actualWidth": 1,
+      "foundation": "low",
+      "lightOnByDefault": false,
+      "height": "medium",
+      "actualDepth": 1,
+      "actualHeight": 1.3,
+      "lightRadius": 0,
+      "lightColor": "#000000",
+      "foundationScale": 0.6
+    },
+    "Models/building-b": {
+      "name": "building-b",
+      "pack": "Models",
+      "modelType": "building",
+      "rotation": 0,
+      "scale": 1.5,
+      "offsetY": 0,
+      "gridW": 2,
+      "gridD": 2,
+      "roadConnectLeft": false,
+      "roadConnectRight": false,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "none",
+      "isTerminal": false,
+      "tags": [
+        "building",
+        "residential"
+      ],
+      "notes": "",
+      "frontDir": "front",
+      "height": "medium",
+      "actualWidth": 1,
+      "actualDepth": 1,
+      "actualHeight": 1.3,
+      "foundation": "low",
+      "foundationScale": 0.6
+    },
+    "Models/building-c": {
+      "name": "building-c",
+      "pack": "Models",
+      "modelType": "building",
+      "rotation": 0,
+      "scale": 1.5,
+      "offsetY": 0,
+      "gridW": 2,
+      "gridD": 2,
+      "roadConnectLeft": false,
+      "roadConnectRight": false,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "none",
+      "isTerminal": false,
+      "tags": [
+        "building",
+        "residential"
+      ],
+      "notes": "",
+      "frontDir": "front",
+      "height": "low",
+      "actualHeight": 0.9,
+      "actualWidth": 1,
+      "actualDepth": 1,
+      "foundation": "low",
+      "foundationScale": 0.6
+    },
+    "Models/building-d": {
+      "name": "building-d",
+      "pack": "Models",
+      "modelType": "building",
+      "rotation": 0,
+      "scale": 1.5,
+      "offsetY": 0,
+      "gridW": 2,
+      "gridD": 2,
+      "roadConnectLeft": false,
+      "roadConnectRight": false,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "none",
+      "isTerminal": false,
+      "tags": [
+        "building",
+        "residential"
+      ],
+      "notes": "",
+      "height": "medium",
+      "frontDir": "front",
+      "actualHeight": 1.3,
+      "actualWidth": 1,
+      "actualDepth": 1
+    },
+    "Models/building-e": {
+      "name": "building-e",
+      "pack": "Models",
+      "modelType": "building",
+      "rotation": 0,
+      "scale": 1.5,
+      "offsetY": 0,
+      "gridW": 2,
+      "gridD": 2,
+      "roadConnectLeft": false,
+      "roadConnectRight": false,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "none",
+      "isTerminal": false,
+      "tags": [
+        "building",
+        "commercial"
+      ],
+      "notes": "",
+      "actualWidth": 1.7,
+      "actualDepth": 1,
+      "actualHeight": 0.9,
+      "foundation": "low",
+      "foundationScale": 0.8
+    },
+    "Models/building-f": {
+      "name": "building-f",
+      "pack": "Models",
+      "modelType": "building",
+      "rotation": 0,
+      "scale": 1.5,
+      "offsetY": 0,
+      "gridW": 2,
+      "gridD": 2,
+      "roadConnectLeft": false,
+      "roadConnectRight": false,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "none",
+      "isTerminal": false,
+      "tags": [
+        "building",
+        "commercial"
+      ],
+      "notes": "",
+      "height": "high",
+      "actualHeight": 1.7,
+      "frontDir": "front",
+      "foundation": "low",
+      "actualWidth": 1,
+      "actualDepth": 1,
+      "foundationScale": 0.5
+    },
+    "Models/building-g": {
+      "name": "building-g",
+      "pack": "Models",
+      "modelType": "building",
+      "rotation": 0,
+      "scale": 1.5,
+      "offsetY": 0,
+      "gridW": 2,
+      "gridD": 2,
+      "roadConnectLeft": false,
+      "roadConnectRight": false,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "none",
+      "isTerminal": false,
+      "tags": [
+        "building",
+        "commercial"
+      ],
+      "notes": "",
+      "actualHeight": 1.7,
+      "height": "medium",
+      "actualWidth": 1,
+      "actualDepth": 1,
+      "foundation": "low",
+      "frontDir": "front",
+      "foundationScale": 0.5
+    },
+    "Models/building-h": {
+      "name": "building-h",
+      "pack": "Models",
+      "modelType": "building",
+      "rotation": 0,
+      "scale": 1.5,
+      "offsetY": 0,
+      "gridW": 2,
+      "gridD": 2,
+      "roadConnectLeft": false,
+      "roadConnectRight": false,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "none",
+      "isTerminal": false,
+      "tags": [
+        "building",
+        "commercial"
+      ],
+      "notes": "",
+      "frontDir": "front",
+      "actualHeight": 1.3,
+      "actualWidth": 1,
+      "actualDepth": 1,
+      "foundation": "low",
+      "foundationScale": 0.5
+    },
+    "Models/building-i": {
+      "name": "building-i",
+      "pack": "Models",
+      "modelType": "building",
+      "rotation": 0,
+      "scale": 1.5,
+      "offsetY": 0,
+      "gridW": 2,
+      "gridD": 2,
+      "roadConnectLeft": false,
+      "roadConnectRight": false,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "none",
+      "isTerminal": false,
+      "tags": [
+        "building",
+        "residential"
+      ],
+      "notes": "",
+      "height": "medium",
+      "frontDir": "front",
+      "actualHeight": 1.7,
+      "actualWidth": 1.3,
+      "actualDepth": 1.3,
+      "foundation": "low",
+      "foundationScale": 0.7
+    },
+    "Models/building-j": {
+      "name": "building-j",
+      "pack": "Models",
+      "modelType": "building",
+      "rotation": 0,
+      "scale": 1.5,
+      "offsetY": 0,
+      "gridW": 2,
+      "gridD": 2,
+      "roadConnectLeft": false,
+      "roadConnectRight": false,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "none",
+      "isTerminal": false,
+      "tags": [
+        "building",
+        "residential"
+      ],
+      "notes": "",
+      "height": "medium",
+      "frontDir": "front",
+      "actualHeight": 1.7,
+      "actualWidth": 2.1,
+      "actualDepth": 1.3,
+      "foundation": "low",
+      "foundationScale": 1.1
+    },
+    "Models/building-k": {
+      "name": "building-k",
+      "pack": "Models",
+      "modelType": "building",
+      "rotation": 0,
+      "scale": 1.5,
+      "offsetY": 0,
+      "gridW": 2,
+      "gridD": 2,
+      "roadConnectLeft": false,
+      "roadConnectRight": false,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "none",
+      "isTerminal": false,
+      "tags": [
+        "building",
+        "residential"
+      ],
+      "notes": "",
+      "height": "medium",
+      "actualHeight": 1.5,
+      "actualWidth": 2.1,
+      "actualDepth": 0.9,
+      "foundation": "low",
+      "foundationScale": 1.1,
+      "frontDir": "front"
+    },
+    "Models/building-l": {
+      "name": "building-l",
+      "pack": "Models",
+      "modelType": "building",
+      "rotation": 0,
+      "scale": 1.5,
+      "offsetY": 0,
+      "gridW": 2,
+      "gridD": 2,
+      "roadConnectLeft": false,
+      "roadConnectRight": false,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "none",
+      "isTerminal": false,
+      "tags": [
+        "building",
+        "commercial"
+      ],
+      "notes": "",
+      "foundation": "low",
+      "height": "medium",
+      "actualHeight": 2.3,
+      "actualWidth": 1.4,
+      "actualDepth": 1.3,
+      "foundationScale": 0.7,
+      "frontDir": "front"
+    },
+    "Models/building-m": {
+      "name": "building-m",
+      "pack": "Models",
+      "modelType": "building",
+      "rotation": 0,
+      "scale": 1.5,
+      "offsetY": 0,
+      "gridW": 2,
+      "gridD": 2,
+      "roadConnectLeft": false,
+      "roadConnectRight": false,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "none",
+      "isTerminal": false,
+      "tags": [
+        "building",
+        "commercial"
+      ],
+      "notes": "",
+      "actualHeight": 3.2,
+      "actualWidth": 1.3,
+      "actualDepth": 1.3,
+      "height": "high",
+      "foundation": "low",
+      "foundationScale": 0.7,
+      "frontDir": "front"
+    },
+    "Models/building-n": {
+      "name": "building-n",
+      "pack": "Models",
+      "modelType": "building",
+      "rotation": 0,
+      "scale": 1.5,
+      "offsetY": 0,
+      "gridW": 2,
+      "gridD": 2,
+      "roadConnectLeft": false,
+      "roadConnectRight": false,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "none",
+      "isTerminal": false,
+      "tags": [
+        "building",
+        "commercial"
+      ],
+      "notes": "",
+      "actualHeight": 2.5,
+      "actualWidth": 2.4,
+      "actualDepth": 1.8,
+      "height": "medium",
+      "foundationScale": 1.2,
+      "foundation": "low",
+      "frontDir": "front"
+    },
+    "Models/building-skyscraper-a": {
+      "name": "building-skyscraper-a",
+      "pack": "Models",
+      "modelType": "building",
+      "rotation": 0,
+      "scale": 1.5,
+      "offsetY": 0,
+      "gridW": 2,
+      "gridD": 2,
+      "roadConnectLeft": false,
+      "roadConnectRight": false,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "none",
+      "isTerminal": false,
+      "tags": [
+        "building",
+        "skyscraper"
+      ],
+      "notes": "",
+      "height": "medium",
+      "frontDir": "front",
+      "actualHeight": 3,
+      "actualWidth": 1.3,
+      "actualDepth": 1.3,
+      "foundation": "low",
+      "foundationScale": 0.7
+    },
+    "Models/building-skyscraper-b": {
+      "name": "building-skyscraper-b",
+      "pack": "Models",
+      "modelType": "building",
+      "rotation": 0,
+      "scale": 1.5,
+      "offsetY": 0,
+      "gridW": 2,
+      "gridD": 2,
+      "roadConnectLeft": false,
+      "roadConnectRight": false,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "none",
+      "isTerminal": false,
+      "tags": [
+        "building",
+        "skyscraper"
+      ],
+      "notes": "",
+      "frontDir": "front",
+      "actualHeight": 4.5,
+      "actualWidth": 1.3,
+      "actualDepth": 1.4,
+      "foundation": "low",
+      "foundationScale": 0.7
+    },
+    "Models/building-skyscraper-c": {
+      "name": "building-skyscraper-c",
+      "pack": "Models",
+      "modelType": "building",
+      "rotation": 0,
+      "scale": 1.5,
+      "offsetY": 0,
+      "gridW": 2,
+      "gridD": 2,
+      "roadConnectLeft": false,
+      "roadConnectRight": false,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "none",
+      "isTerminal": false,
+      "tags": [
+        "building",
+        "skyscraper"
+      ],
+      "notes": "",
+      "actualHeight": 4.1,
+      "actualWidth": 1.3,
+      "actualDepth": 1.2,
+      "foundation": "low",
+      "foundationScale": 0.7,
+      "frontDir": "front"
+    },
+    "Models/building-skyscraper-d": {
+      "name": "building-skyscraper-d",
+      "pack": "Models",
+      "modelType": "building",
+      "rotation": 0,
+      "scale": 1.5,
+      "offsetY": 0,
+      "gridW": 2,
+      "gridD": 2,
+      "roadConnectLeft": false,
+      "roadConnectRight": false,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "none",
+      "isTerminal": false,
+      "tags": [
+        "building",
+        "skyscraper"
+      ],
+      "notes": "",
+      "frontDir": "front",
+      "height": "medium",
+      "actualHeight": 5.5,
+      "actualWidth": 1.3,
+      "actualDepth": 1.2,
+      "foundation": "low",
+      "foundationScale": 0.7
+    },
+    "Models/building-skyscraper-e": {
+      "name": "building-skyscraper-e",
+      "pack": "Models",
+      "modelType": "building",
+      "rotation": 0,
+      "scale": 1.5,
+      "offsetY": 0,
+      "gridW": 2,
+      "gridD": 2,
+      "roadConnectLeft": false,
+      "roadConnectRight": false,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "none",
+      "isTerminal": false,
+      "tags": [
+        "building",
+        "skyscraper"
+      ],
+      "notes": "",
+      "actualHeight": 4.2,
+      "actualWidth": 1.3,
+      "actualDepth": 1.3,
+      "frontDir": "front",
+      "height": "medium",
+      "foundation": "low",
+      "foundationScale": 0.7
+    },
+    "roads/bridge-pillar": {
+      "name": "bridge-pillar",
+      "pack": "roads",
+      "modelType": "road",
+      "rotation": 0,
+      "scale": 1,
+      "offsetY": 0,
+      "gridW": 1,
+      "gridD": 1,
+      "roadConnectLeft": false,
+      "roadConnectRight": false,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "none",
+      "isTerminal": false,
+      "tags": [],
+      "notes": "",
+      "frontDir": "none",
+      "height": "low",
+      "actualHeight": 1,
+      "actualWidth": 1,
+      "actualDepth": 1,
+      "foundation": "none",
+      "foundationScale": 1,
+      "foundationOffsetY": 0,
+      "lightRadius": 0,
+      "lightColor": "#fffbe6",
+      "lightOnByDefault": true,
+      "attractors": [],
+      "lights": []
+    },
+    "characters/cube_guy": {
+      "name": "cube_guy",
+      "pack": "characters",
+      "modelType": "character",
+      "rotation": 0,
+      "scale": 0.2,
+      "offsetY": 0,
+      "gridW": 1,
+      "gridD": 1,
+      "roadConnectLeft": false,
+      "roadConnectRight": false,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "none",
+      "isTerminal": false,
+      "tags": [],
+      "notes": "",
+      "frontDir": "none",
+      "height": "low",
+      "actualHeight": 1,
+      "actualWidth": 1,
+      "actualDepth": 1,
+      "foundation": "none",
+      "foundationScale": 1,
+      "foundationOffsetY": 0,
+      "lightRadius": 0,
+      "lightColor": "#fffbe6",
+      "lightOnByDefault": true,
+      "speed": 0.25
+    },
+    "characters/cube_woman": {
+      "name": "cube_woman",
+      "pack": "characters",
+      "modelType": "character",
+      "rotation": 0,
+      "scale": 0.2,
+      "offsetY": 0,
+      "gridW": 1,
+      "gridD": 1,
+      "roadConnectLeft": false,
+      "roadConnectRight": false,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "none",
+      "isTerminal": false,
+      "tags": [],
+      "notes": "",
+      "frontDir": "none",
+      "height": "low",
+      "actualHeight": 1,
+      "actualWidth": 1,
+      "actualDepth": 1,
+      "foundation": "none",
+      "foundationScale": 1,
+      "foundationOffsetY": 0,
+      "lightRadius": 0,
+      "lightColor": "#fffbe6",
+      "lightOnByDefault": true,
+      "speed": 0.25
+    },
+    "characters/steve": {
+      "name": "steve",
+      "pack": "characters",
+      "modelType": "character",
+      "rotation": 0,
+      "scale": 0.2,
+      "offsetY": 0,
+      "gridW": 1,
+      "gridD": 1,
+      "roadConnectLeft": false,
+      "roadConnectRight": false,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "none",
+      "isTerminal": false,
+      "tags": [],
+      "notes": "",
+      "frontDir": "none",
+      "height": "low",
+      "actualHeight": 1,
+      "actualWidth": 1,
+      "actualDepth": 1,
+      "foundation": "none",
+      "foundationScale": 1,
+      "foundationOffsetY": 0,
+      "lightRadius": 0,
+      "lightColor": "#fffbe6",
+      "lightOnByDefault": true,
+      "speed": 0.25
+    },
+    "props/traffic-light": {
+      "name": "traffic-light",
+      "pack": "props",
+      "modelType": "prop",
+      "rotation": 0,
+      "scale": 1,
+      "offsetY": 0,
+      "speed": 1,
+      "gridW": 1,
+      "gridD": 1,
+      "roadConnectLeft": false,
+      "roadConnectRight": false,
+      "roadConnectFront": false,
+      "roadConnectBack": false,
+      "roadType": "none",
+      "isTerminal": false,
+      "tags": [],
+      "notes": "",
+      "frontDir": "none",
+      "height": "low",
+      "actualHeight": 1,
+      "actualWidth": 1,
+      "actualDepth": 1,
+      "foundation": "none",
+      "foundationScale": 1,
+      "foundationOffsetY": 0,
+      "lights": []
+    }
+  }
+}
