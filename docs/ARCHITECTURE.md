@@ -4,7 +4,7 @@ Nightwatcher Clean is one Next.js 16 App Router project. The UI lives under `src
 
 ## Level pipeline
 
-`data/model-configs.json` is input only for the server-side seeded generator in `src/server/level-builder.ts`. `GET /api/levels/generate?seed=...` deterministically creates a district and returns the normalized preset. The client sends the seed and receives only model URLs, transforms, routes, and game values; it never imports model tags or generator rules. `tools/build-levels.ts` produces a checked-in example preset for the default seed, and the other level routes serve the index/example. Client modules never import `src/server/` or `data/model-configs.json`.
+`data/model-configs.json` is input only for the server-side seeded generator in `src/server/level-builder.ts`. `GET /api/levels` lists four named seed presets. `GET /api/levels/[id]` builds the selected catalog entry, while `GET /api/levels/generate?seed=...` builds a custom seed. Both return normalized presets. The client receives only model URLs, transforms, routes, and game values; it never imports model tags or generator rules. `tools/build-levels.ts` produces a checked-in example preset without changing the catalog. Client modules never import `src/server/` or `data/model-configs.json`.
 
 ## Game state
 

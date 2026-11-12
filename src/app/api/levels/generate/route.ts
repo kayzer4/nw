@@ -6,7 +6,8 @@ export async function GET(request: Request) {
     return Response.json({ error: "Provide a seed between 1 and 64 characters." }, { status: 400 });
   }
   try {
-    return Response.json(buildLevel(seed));
+    const preset = buildLevel(seed);
+    return Response.json({ ...preset, id: "custom", title: "Custom District", subtitle: `Generated from seed ${seed}.` });
   } catch (error) {
     return Response.json({ error: error instanceof Error ? error.message : "Could not build level." }, { status: 500 });
   }

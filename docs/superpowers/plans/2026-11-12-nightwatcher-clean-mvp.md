@@ -55,7 +55,7 @@
 
 **Files:** `src/client/GameScreen.tsx`, `src/client/CityScene.tsx`, `src/client/BuildingView.tsx`, `src/client/LampView.tsx`, `src/client/CitizenView.tsx`, `src/client/GameHud.tsx`, `src/client/LevelSelect.tsx`, `app/page.tsx`.
 
-- [x] Load a seeded preset from the API with clear loading/error states; allow typed and random seeds before starting a shift.
+- [x] Load a preset from the API with clear loading/error states; select a catalog district or type/generate a custom seed before starting a shift.
 - [x] Build static geometry once from preset placements; use instancing for repeated simple lamps/citizens when asset format allows.
 - [x] Render lamps from discrete on/off state; use frame callbacks only for object interpolation and never set React state from them.
 - [x] Keep HUD subscriptions focused on energy, satisfaction, and shift time; add start, lamp toggle, restart, and continue controls.
