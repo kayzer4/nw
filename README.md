@@ -10,7 +10,7 @@ bun run build:levels
 bun run dev
 ```
 
-Open http://localhost:3000. The API serves checked-in level presets from `/api/levels`; model metadata is only used by the offline level builder.
+Open http://localhost:3000. Generate a seeded district with `GET /api/levels/generate?seed=night-01`; the client receives a ready preset. Model metadata stays on the server. The offline builder writes the default example preset.
 
 ## Checks
 

@@ -1,7 +1,8 @@
 [
   {
     "id": "first-shift",
+    "seed": "night-01",
     "title": "First Shift",
-    "subtitle": "Keep the crossroad lit until sunrise."
+    "subtitle": "Keep the district lit until sunrise."
   }
 ]

@@ -4,7 +4,7 @@
 
 **Goal:** Build a clean Next.js city-night game where the player manages lamps through one playable shift and progress persists locally.
 
-**Architecture:** One Next.js app provides the UI and API Route Handlers. An offline builder turns server-only model metadata into checked-in level presets; the API serves those presets, while pure game rules and client rendering consume only the public preset contract.
+**Architecture:** One Next.js app provides the UI and API Route Handlers. A server-only seeded builder converts model metadata into a normalized level preset on request; the client sends a seed and consumes only that public preset contract. The offline tool writes a checked-in default example.
 
 **Tech Stack:** Next.js 16.3, React 19, TypeScript, Three.js, React Three Fiber, Drei, Ant Design, Bun.
 
@@ -14,7 +14,7 @@
 
 - Use one repository and one Next.js project; API endpoints live in `app/api`.
 - Keep model selection metadata and level building outside the client import graph.
-- Serve deterministic checked-in JSON levels; do not generate a city in an API request.
+- Generate deterministic levels on explicit API requests: the same seed returns the same preset, while different seeds vary the district layout.
 - Persist campaign progress in versioned `localStorage`; no accounts or database.
 - Keep simulation off the render loop; only discrete actions and a fixed one-second simulation tick update gameplay.
 - Preserve the original repository and its uncommitted changes.
@@ -29,15 +29,15 @@
 - [x] Add the product-facing README with install, development, level-build, lint, and production build commands.
 - [x] Confirm the dependency manifest and Next configuration parse; run lint/build once the source files exist.
 
-### Task 2: Define the public level contract and offline builder
+### Task 2: Define the public level contract and seeded builder
 
-**Files:** `src/game/level.ts`, `src/server/level-builder.ts`, `tools/build-levels.ts`, `data/model-configs.json`, `data/levels/level-01.json`, `data/levels/index.json`, `app/api/levels/route.ts`, `app/api/levels/[id]/route.ts`.
+**Files:** `src/game/level.ts`, `src/server/level-builder.ts`, `tools/build-levels.ts`, `data/model-configs.json`, `data/levels/first-shift.json`, `data/levels/index.json`, `app/api/levels/route.ts`, `app/api/levels/[id]/route.ts`, `app/api/levels/generate/route.ts`.
 
 - [x] Define `LevelPreset`, `PlacedBuilding`, `PlacedLamp`, `CitizenRoute`, and `GameRules` as serializable values with asset URLs and transforms only.
 - [x] Copy the source model config JSON to server-only builder input and select the smallest useful GLB subset for roads, buildings, lamps, and citizens.
-- [x] Implement deterministic hand-authored grid placement from the config catalog; normalize only render/game fields and validate every referenced model file.
+- [x] Implement deterministic grid generation from a caller-provided seed; normalize only render/game fields and validate every referenced model file.
 - [x] Generate and check in one playable preset plus a level index.
-- [x] Implement GET handlers that read generated JSON and return 404 for unknown IDs; they never import the builder or raw model config.
+- [x] Implement GET handlers for the index/example and `GET /api/levels/generate?seed=...`; generation returns a ready preset and does not expose raw model metadata.
 - [x] Run the builder twice and compare generated output; run lint/build.
 
 ### Task 3: Implement pure gameplay and local campaign state
@@ -55,7 +55,7 @@
 
 **Files:** `src/client/GameScreen.tsx`, `src/client/CityScene.tsx`, `src/client/BuildingView.tsx`, `src/client/LampView.tsx`, `src/client/CitizenView.tsx`, `src/client/GameHud.tsx`, `src/client/LevelSelect.tsx`, `app/page.tsx`.
 
-- [x] Load level list and a selected preset from the API with clear loading/error states.
+- [x] Load a seeded preset from the API with clear loading/error states; allow typed and random seeds before starting a shift.
 - [x] Build static geometry once from preset placements; use instancing for repeated simple lamps/citizens when asset format allows.
 - [x] Render lamps from discrete on/off state; use frame callbacks only for object interpolation and never set React state from them.
 - [x] Keep HUD subscriptions focused on energy, satisfaction, and shift time; add start, lamp toggle, restart, and continue controls.

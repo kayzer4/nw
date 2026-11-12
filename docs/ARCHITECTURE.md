@@ -4,7 +4,7 @@ Nightwatcher Clean is one Next.js 16 App Router project. The UI lives under `src
 
 ## Level pipeline
 
-`data/model-configs.json` is input for the offline `tools/build-levels.ts` command. The builder normalizes model choices and placement into `data/levels/*.json`. Runtime handlers in `src/app/api/levels/` only read these generated files. `src/game/level.ts` describes the public preset shared by the API and client; it contains model URLs and display/game values, not selection tags or generator rules. Client modules never import `src/server/` or `data/model-configs.json`.
+`data/model-configs.json` is input only for the server-side seeded generator in `src/server/level-builder.ts`. `GET /api/levels/generate?seed=...` deterministically creates a district and returns the normalized preset. The client sends the seed and receives only model URLs, transforms, routes, and game values; it never imports model tags or generator rules. `tools/build-levels.ts` produces a checked-in example preset for the default seed, and the other level routes serve the index/example. Client modules never import `src/server/` or `data/model-configs.json`.
 
 ## Game state
 
@@ -14,7 +14,7 @@ The HUD subscribes to session values; each lamp subscribes only to its own on/of
 
 ## Progress
 
-Campaign completion is saved under `nightwatcher-clean.progress` in `localStorage`, with schema version `1`. Invalid, unavailable, or outdated storage falls back to the initial campaign state.
+Campaign completion and the last used seed are saved under `nightwatcher-clean.progress` in `localStorage`, with schema version `1`. Invalid, unavailable, or outdated storage falls back to the initial campaign state.
 
 ## Commands
 

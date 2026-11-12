@@ -2,6 +2,7 @@
 
 import { useGameStore } from "@/game/game-store";
 import type { LevelPreset } from "@/game/level";
+import SeedControls from "./SeedControls";
 
 function meter(value: number, max: number) { return `${Math.max(0, Math.min(100, (value / max) * 100))}%`; }
 function formatTime(seconds: number) {
@@ -10,7 +11,12 @@ function formatTime(seconds: number) {
   return `${minutes}:${remainder}`;
 }
 
-export default function GameHud({ level }: { level: LevelPreset }) {
+export default function GameHud({ level, isGenerating, generationError, onGenerateSeed }: {
+  level: LevelPreset;
+  isGenerating: boolean;
+  generationError: string | null;
+  onGenerateSeed: (seed: string) => void;
+}) {
   const session = useGameStore((state) => state.session);
   const lamps = useGameStore((state) => state.lampStates);
   const start = useGameStore((state) => state.start);
@@ -33,6 +39,7 @@ export default function GameHud({ level }: { level: LevelPreset }) {
         <div className="eyebrow">DISTRICT 01 <span>·</span> NIGHT SHIFT</div>
         <h1>{headline}</h1>
         <p>{session.phase === "ready" ? level.subtitle : session.phase === "won" ? "The neighborhood made it safely to morning." : session.phase === "lost" ? "Restore the lights and try a different strategy." : "Keep enough of the neighborhood illuminated."}</p>
+        <SeedControls key={level.seed} seed={level.seed} disabled={session.phase === "playing"} loading={isGenerating} error={generationError} onGenerate={onGenerateSeed} />
         <div className="meters">
           <div className="meter-block"><div className="meter-label"><span>GRID POWER</span><b>{Math.ceil(session.energy)} <small>kWh</small></b></div><div className="meter-track"><i className="energy-fill" style={{ width: meter(session.energy, level.rules.startingEnergy) }} /></div></div>
           <div className="meter-block"><div className="meter-label"><span>RESIDENT COMFORT</span><b>{Math.round(session.satisfaction)}<small>%</small></b></div><div className="meter-track"><i className="comfort-fill" style={{ width: meter(session.satisfaction, 100) }} /></div></div>

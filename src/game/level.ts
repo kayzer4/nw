@@ -32,6 +32,7 @@ export interface GameRules {
 
 export interface LevelPreset {
   id: string;
+  seed: string;
   title: string;
   subtitle: string;
   grid: { width: number; depth: number; cellSize: number };
@@ -42,4 +43,4 @@ export interface LevelPreset {
   rules: GameRules;
 }
 
-export interface LevelSummary { id: string; title: string; subtitle: string }
+export interface LevelSummary { id: string; seed: string; title: string; subtitle: string }

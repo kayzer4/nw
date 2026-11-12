@@ -1,11 +1,12 @@
 export interface CampaignProgress {
   version: 1;
+  lastSeed?: string;
   unlockedLevelIds: string[];
   completedLevelIds: string[];
 }
 
 const STORAGE_KEY = "nightwatcher-clean.progress";
-export const EMPTY_PROGRESS: CampaignProgress = { version: 1, unlockedLevelIds: ["first-shift"], completedLevelIds: [] };
+export const EMPTY_PROGRESS: CampaignProgress = { version: 1, lastSeed: "night-01", unlockedLevelIds: ["first-shift"], completedLevelIds: [] };
 
 type StorageLike = Pick<Storage, "getItem" | "setItem">;
 function browserStorage(): StorageLike | null {
@@ -22,7 +23,12 @@ export function loadProgress(storage: StorageLike | null = browserStorage()): Ca
     if (value.version !== 1 || !Array.isArray(value.unlockedLevelIds) || !Array.isArray(value.completedLevelIds)) {
       return { ...EMPTY_PROGRESS, unlockedLevelIds: [...EMPTY_PROGRESS.unlockedLevelIds], completedLevelIds: [] };
     }
-    return { version: 1, unlockedLevelIds: value.unlockedLevelIds.filter((id): id is string => typeof id === "string"), completedLevelIds: value.completedLevelIds.filter((id): id is string => typeof id === "string") };
+    return {
+      version: 1,
+      lastSeed: typeof value.lastSeed === "string" ? value.lastSeed : "night-01",
+      unlockedLevelIds: value.unlockedLevelIds.filter((id): id is string => typeof id === "string"),
+      completedLevelIds: value.completedLevelIds.filter((id): id is string => typeof id === "string"),
+    };
   } catch {
     return { ...EMPTY_PROGRESS, unlockedLevelIds: [...EMPTY_PROGRESS.unlockedLevelIds], completedLevelIds: [] };
   }
@@ -35,6 +41,7 @@ export function saveProgress(progress: CampaignProgress, storage: StorageLike | 
 export function completeLevel(progress: CampaignProgress, levelId: string): CampaignProgress {
   return {
     version: 1,
+    lastSeed: progress.lastSeed,
     completedLevelIds: progress.completedLevelIds.includes(levelId) ? progress.completedLevelIds : [...progress.completedLevelIds, levelId],
     unlockedLevelIds: progress.unlockedLevelIds,
   };
