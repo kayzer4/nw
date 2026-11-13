@@ -45,15 +45,18 @@ export default function GameHud({ level, onExit }: {
         </div>
       </section>
 
-      <section className="control-panel glass-panel">
+      <aside className="lamp-panel glass-panel" aria-label="Street lamp controls">
         <div className="panel-heading"><div><div className="eyebrow">FIELD CONTROLS</div><h2>Street lamps <span>{Object.values(lamps).filter(Boolean).length}/{level.lamps.length} online</span></h2></div><div className="tap-hint">SELECT A LAMP IN THE CITY OR HERE</div></div>
         <div className="lamp-list">
           {level.lamps.map((lamp, index) => {
             const on = lamps[lamp.id] ?? lamp.initiallyOn;
             const disabled = session.phase !== "playing";
-            return <button key={lamp.id} type="button" className={`lamp-switch ${on ? "is-on" : ""}`} disabled={disabled} onClick={() => toggleLamp(lamp.id)} aria-pressed={on} aria-label={`${on ? "Turn off" : "Turn on"} street lamp ${index + 1}`}><span className="lamp-glyph">✳</span><span>{String(index + 1).padStart(2, "0")}</span><i /></button>;
+            return <button key={lamp.id} type="button" className={`lamp-switch ${on ? "is-on" : ""}`} disabled={disabled} onClick={() => toggleLamp(lamp.id)} aria-pressed={on} aria-label={`${on ? "Turn off" : "Turn on"} street lamp ${index + 1}`}><span className="lamp-glyph">✳</span><span>LAMP {String(index + 1).padStart(2, "0")}</span><i /></button>;
           })}
         </div>
+      </aside>
+
+      <section className="control-panel glass-panel" aria-label="Shift controls">
         <div className="panel-footer"><span className="footnote">POWER DRAIN <b>{(Object.values(lamps).filter(Boolean).length * level.rules.energyPerLampSecond).toFixed(1)} kWh / sec</b></span>
           {session.phase === "ready" ? <button type="button" className="primary-button" onClick={start}>START NIGHT SHIFT <span>→</span></button> : session.phase === "playing" ? <div className="running-note"><span className="status-dot live" /> PATROL ACTIVE</div> : <button type="button" className="primary-button" onClick={restart}>RESTART SHIFT <span>↻</span></button>}
         </div>
