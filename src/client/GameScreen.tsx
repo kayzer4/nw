@@ -10,6 +10,7 @@ import LevelPicker from "./LevelPicker";
 import { GameTicker } from "./GameTicker";
 import { ProgressRecorder } from "./ProgressRecorder";
 import ComicIntro from "./ComicIntro";
+import ScenePreloader from "./ScenePreloader";
 
 const CityScene = dynamic(() => import("./CityScene"), { ssr: false, loading: () => <div className="scene-loading">LOADING THE DISTRICT…</div> });
 
@@ -19,6 +20,9 @@ export default function GameScreen() {
   const [levels, setLevels] = useState<LevelSummary[]>([]);
   const [level, setLevel] = useState<LevelPreset | null>(null);
   const [pendingLevel, setPendingLevel] = useState<LevelPreset | null>(null);
+  const [assetsReady, setAssetsReady] = useState(false);
+  const [sceneCodeReady, setSceneCodeReady] = useState(false);
+  const [preloadError, setPreloadError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [completedIds, setCompletedIds] = useState<string[]>([]);
@@ -49,6 +53,9 @@ export default function GameScreen() {
       if (!response.ok || "error" in result) throw new Error("error" in result ? result.error : "Could not load this district.");
       const preset = result as LevelPreset;
       saveProgress({ ...loadProgress(), lastLevelId: id });
+      setAssetsReady(false);
+      setSceneCodeReady(false);
+      setPreloadError(null);
       setPendingLevel(preset);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Could not load this district.");
@@ -56,6 +63,17 @@ export default function GameScreen() {
       setLoadingId(null);
     }
   }, [loadingId]);
+
+  useEffect(() => {
+    if (!pendingLevel) return;
+    let cancelled = false;
+    void import("./CityScene").then(() => {
+      if (!cancelled) setSceneCodeReady(true);
+    }).catch(() => {
+      if (!cancelled) setPreloadError("Не удалось загрузить сцену. Вернись к районам и попробуй снова.");
+    });
+    return () => { cancelled = true; };
+  }, [pendingLevel]);
 
   const exitLevel = useCallback(() => {
     useGameStore.getState().quit();
@@ -70,10 +88,19 @@ export default function GameScreen() {
     setLevel(pendingLevel);
     setPendingLevel(null);
   }, [pendingLevel]);
+  const assetsLoaded = useCallback(() => setAssetsReady(true), []);
+  const assetLoadFailed = useCallback(() => setPreloadError("Не удалось загрузить модели. Вернись к районам и попробуй снова."), []);
+  const startRenderedLevel = useCallback(() => {
+    const store = useGameStore.getState();
+    if (store.session?.phase === "ready") store.start();
+  }, []);
 
   if (!level && pendingLevel) {
     const summary = levels.find((item) => item.id === pendingLevel.id) ?? pendingLevel;
-    return <ComicIntro level={summary} levels={levels} onStart={startLevel} onBack={leaveComic} />;
+    return <>
+      <ScenePreloader key={pendingLevel.id} level={pendingLevel} onReady={assetsLoaded} onError={assetLoadFailed} />
+      <ComicIntro level={summary} levels={levels} ready={assetsReady && sceneCodeReady} error={preloadError} onStart={startLevel} onBack={leaveComic} />
+    </>;
   }
 
   if (!level) return <LevelPicker levels={levels} completedIds={completedIds} loadingId={loadingId} error={error} onSelect={(id) => void selectLevel(id)} onRetry={() => void loadCatalog()} />;
@@ -83,7 +110,7 @@ export default function GameScreen() {
       onPointerDownCapture={(event) => { pointerStart.current = [event.clientX, event.clientY]; dragRef.current = false; }}
       onPointerMoveCapture={(event) => { if (pointerStart.current && Math.hypot(event.clientX - pointerStart.current[0], event.clientY - pointerStart.current[1]) > 6) dragRef.current = true; }}
       onPointerUpCapture={() => { pointerStart.current = null; }}
-    ><CityScene level={level} dragRef={dragRef} /></div>
+    ><CityScene level={level} dragRef={dragRef} onReady={startRenderedLevel} /></div>
     <div className="vignette" />
     <GameHud level={level} onExit={exitLevel} />
     <GameTicker />

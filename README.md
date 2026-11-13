@@ -9,7 +9,7 @@ bun install
 bun run dev
 ```
 
-Open http://localhost:3000. Choose one of five ready districts on the level screen, then use **LEVELS** to return from the playground. Toggle lamps during the shift: leaving all of them on exhausts energy, while leaving them all off makes residents uncomfortable. The radius shown in the HUD matches the simulated and drawn ground footprint. Progress is saved in local storage.
+Open http://localhost:3000. Choose one of five ready districts. Its comic plays while the scene loads, then the shift starts automatically. Use **LEVELS** to return from the playground. Toggle lamps during the shift: leaving all of them on exhausts energy, while leaving them all off makes residents uncomfortable. The radius shown in the HUD matches the simulated and drawn ground footprint. Progress is saved in local storage.
 
 ## Generate levels locally
 

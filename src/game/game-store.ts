@@ -41,8 +41,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
     return { session };
   }),
   restart: () => {
-    const { level, loadLevel } = get();
-    if (level) loadLevel(level);
+    const { level, loadLevel, start } = get();
+    if (level) { loadLevel(level); start(); }
   },
   quit: () => { gameClock.reset(); set({ level: null, session: null, lampStates: {} }); },
 }));

@@ -173,7 +173,17 @@ function Citizen({ citizen }: { citizen: CitizenRoute }) {
   return <group ref={group} position={[initial[0], 0, initial[1]]}><primitive object={clone} /><sprite position={[0, citizen.scale * 1.75 + 0.22, 0]} scale={[0.34, 0.34, 1]}><spriteMaterial map={statusTexture(lit)} transparent depthTest={false} toneMapped={false} /></sprite></group>;
 }
 
-function District({ level, dragRef }: { level: LevelPreset; dragRef: RefObject<boolean> }) {
+function StartWhenRendered({ onReady }: { onReady: () => void }) {
+  const started = useRef(false);
+  useFrame(() => {
+    if (started.current) return;
+    started.current = true;
+    onReady();
+  });
+  return null;
+}
+
+function District({ level, dragRef, onReady }: { level: LevelPreset; dragRef: RefObject<boolean>; onReady: () => void }) {
   return (
     <>
       <color attach="background" args={["#080d15"]} />
@@ -190,15 +200,16 @@ function District({ level, dragRef }: { level: LevelPreset; dragRef: RefObject<b
       {level.buildings.map((building) => <StaticAsset key={building.id} item={building} />)}
       {level.lamps.map((lamp) => <Lamp key={lamp.id} lamp={lamp} dragRef={dragRef} />)}
       {level.citizens.map((citizen) => <Citizen key={citizen.id} citizen={citizen} />)}
+      <StartWhenRendered onReady={onReady} />
       <OrbitControls target={[0, 0, 0]} minDistance={9} maxDistance={26} maxPolarAngle={1.35} enableDamping dampingFactor={0.08} />
     </>
   );
 }
 
-export default function CityScene({ level, dragRef }: { level: LevelPreset; dragRef: RefObject<boolean> }) {
+export default function CityScene({ level, dragRef, onReady }: { level: LevelPreset; dragRef: RefObject<boolean>; onReady: () => void }) {
   return (
     <Canvas shadows camera={{ position: [12, 13, 14], fov: 42 }} dpr={[1, 1.5]} gl={{ antialias: true, powerPreference: "low-power" }}>
-      <District level={level} dragRef={dragRef} />
+      <District level={level} dragRef={dragRef} onReady={onReady} />
     </Canvas>
   );
 }

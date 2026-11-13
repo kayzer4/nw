@@ -1,8 +1,8 @@
 "use client";
 
-import { ArrowLeftOutlined, ArrowRightOutlined, ThunderboltFilled } from "@ant-design/icons";
-import { Button, Progress, Tag } from "antd";
-import { useMemo, useState } from "react";
+import { ThunderboltFilled } from "@ant-design/icons";
+import { Progress, Tag } from "antd";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { getComicChapter, type ComicChapter, type ComicMood, type ComicPanel } from "@/game/comics";
 import type { LevelSummary } from "@/game/level";
 
@@ -37,12 +37,12 @@ function SceneArt({ chapter, panel, active }: { chapter: ComicChapter; panel: nu
   </div>;
 }
 
-function ComicPanelCard({ chapter, panel, active, onSelect }: { chapter: ComicChapter; panel: ComicPanel; active: boolean; onSelect: () => void }) {
+function ComicPanelCard({ chapter, panel, active }: { chapter: ComicChapter; panel: ComicPanel; active: boolean }) {
   const index = chapter.panels.indexOf(panel);
   const sceneLabel = ["ПРИБЫТИЕ", "НАБЛЮДЕНИЕ", "РЕШЕНИЕ"][index] ?? "СЦЕНА";
-  return <button type="button" onClick={onSelect} aria-label={`Открыть панель ${index + 1}: ${panel.title}`} style={{ animationDelay: `${index * 120}ms` }} className={`comic-panel-pop group relative block w-full text-left transition duration-200 ${active ? "z-10 -translate-y-1 rotate-[-.4deg]" : "rotate-[.35deg] opacity-85 hover:-translate-y-0.5 hover:opacity-100"}`}>
+  return <article aria-label={`Панель ${index + 1}: ${panel.title}`} style={{ animationDelay: `${index * 120}ms` }} className={`comic-panel-pop group relative block w-full text-left transition duration-200 ${active ? "z-10 -translate-y-1 rotate-[-.4deg]" : "rotate-[.35deg] opacity-85"}`}>
     <div className="absolute -inset-1 bg-[#202126] shadow-[7px_8px_0_rgba(0,0,0,.24)]" />
-    <div className="relative overflow-hidden bg-[#eee9dc] p-1 text-[#202126]">
+    <div className={`relative overflow-hidden bg-[#eee9dc] p-1 text-[#202126] ${active ? "comic-card-rock" : ""}`}>
       <SceneArt chapter={chapter} panel={index} active={active} />
       <div className="min-h-[190px] p-4 sm:min-h-[210px] sm:p-5">
         <div className="flex items-start justify-between gap-3"><span className="text-[8px] font-black tracking-[.16em] text-[#997949]">{panel.kicker}</span><span className="font-serif text-xl text-[#9d9481]">{String(index + 1).padStart(2, "0")}</span></div>
@@ -52,12 +52,18 @@ function ComicPanelCard({ chapter, panel, active, onSelect }: { chapter: ComicCh
         {panel.speech && <div className="comic-bubble relative mt-4 border-2 border-[#24262a] bg-[#faf6e9] p-3 text-[11px] font-medium leading-4 shadow-[3px_3px_0_#c9bfa9] before:absolute before:-bottom-2 before:left-5 before:h-3 before:w-3 before:rotate-45 before:border-b-2 before:border-r-2 before:border-[#24262a] before:bg-[#faf6e9]">«{panel.speech}»</div>}
       </div>
     </div>
-  </button>;
+  </article>;
 }
 
-export default function ComicIntro({ level, levels, onStart, onBack }: { level: LevelSummary; levels: readonly LevelSummary[]; onStart: () => void; onBack: () => void }) {
+function readingDuration(panel: ComicPanel) {
+  const words = `${panel.title} ${panel.text} ${panel.speech ?? ""}`.trim().split(/\s+/).length;
+  return Math.max(4500, Math.min(7000, words * 180));
+}
+
+export default function ComicIntro({ level, levels, ready, error, onStart, onBack }: { level: LevelSummary; levels: readonly LevelSummary[]; ready: boolean; error: string | null; onStart: () => void; onBack: () => void }) {
   const chapter = getComicChapter(level.id);
   const [panel, setPanel] = useState(0);
+  const started = useRef(false);
   const currentIndex = Math.max(0, levels.findIndex((item) => item.id === level.id));
   const fallback = useMemo<ComicChapter>(() => ({
     levelId: level.id,
@@ -69,8 +75,21 @@ export default function ComicIntro({ level, levels, onStart, onBack }: { level: 
     panels: [{ kicker: "НОЧНАЯ ЛИНИЯ", title: level.title, text: level.subtitle }],
   }), [currentIndex, level.id, level.subtitle, level.title]);
   const story = chapter ?? fallback;
-  const isLastPanel = panel === story.panels.length - 1;
+  const storyRead = panel >= story.panels.length;
+  const visiblePanel = Math.min(panel, story.panels.length - 1);
   const style = moodStyles[story.mood];
+
+  useEffect(() => {
+    if (storyRead) return;
+    const timer = window.setTimeout(() => setPanel((value) => value + 1), readingDuration(story.panels[panel]));
+    return () => window.clearTimeout(timer);
+  }, [panel, story, storyRead]);
+
+  useEffect(() => {
+    if (!storyRead || !ready || error || started.current) return;
+    started.current = true;
+    onStart();
+  }, [storyRead, ready, error, onStart]);
 
   return <main className="min-h-screen overflow-y-auto bg-[#d2c4a8] text-[#202126] selection:bg-[#d6b16e] selection:text-[#11161b]">
     <div className="min-h-screen bg-[radial-gradient(rgba(43,39,34,.13)_1px,transparent_1px)] [background-size:5px_5px]">
@@ -90,14 +109,14 @@ export default function ComicIntro({ level, levels, onStart, onBack }: { level: 
           </div>
 
           <div className="grid flex-1 items-start gap-5 md:grid-cols-3 md:gap-6">
-            {story.panels.map((item, index) => <div key={`${story.levelId}-${index}`} className="relative md:after:absolute md:after:-right-5 md:after:top-1/2 md:after:h-1 md:after:w-5 md:after:bg-[#202126] md:after:content-[''] last:after:hidden"><ComicPanelCard chapter={story} panel={item} active={panel === index} onSelect={() => setPanel(index)} /></div>)}
+            {story.panels.map((item, index) => <div key={`${story.levelId}-${index}`} className="relative md:after:absolute md:after:-right-5 md:after:top-1/2 md:after:h-1 md:after:w-5 md:after:bg-[#202126] md:after:content-[''] last:after:hidden"><ComicPanelCard chapter={story} panel={item} active={visiblePanel === index} /></div>)}
           </div>
 
           <footer className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t-4 border-[#202126] pt-5">
-            <div><div className="text-[9px] font-black tracking-[.2em]">ПАНЕЛЬ {panel + 1} / {story.panels.length}</div><div className="mt-1 text-[10px] font-medium tracking-[.08em] text-[#665d50]">НАЖМИ НА ПАНЕЛЬ, ЧТОБЫ ПЕРЕКЛЮЧИТЬ ФОКУС</div></div>
-            <div className="flex items-center gap-3">
-              {panel > 0 && <Button ghost icon={<ArrowLeftOutlined />} onClick={() => setPanel((value) => value - 1)} className="!border-[#202126] !text-[#202126]">Назад</Button>}
-              {isLastPanel ? <Button type="primary" icon={<ArrowRightOutlined />} iconPlacement="end" onClick={onStart} className="!h-11 !border-0 !bg-[#202126] !px-5 !font-bold !text-[#f0e8d5]">Принять смену</Button> : <Button type="primary" icon={<ArrowRightOutlined />} iconPlacement="end" onClick={() => setPanel((value) => value + 1)} className="!h-11 !border-0 !bg-[#202126] !px-5 !font-bold !text-[#f0e8d5]">Следующая панель</Button>}
+            <div><div className="text-[9px] font-black tracking-[.2em]">ПАНЕЛЬ {visiblePanel + 1} / {story.panels.length}</div><div className="mt-1 text-[10px] font-medium tracking-[.08em] text-[#665d50]">ИСТОРИЯ ПРОДОЛЖИТСЯ АВТОМАТИЧЕСКИ</div></div>
+            <div className="flex items-center gap-3 text-[10px] font-bold tracking-[.12em]" role="status" aria-live="polite">
+              {!error && <span className="comic-loading-lamp text-xl text-[#9b7441]" aria-hidden="true">✳</span>}
+              <span>{error ?? (!ready ? storyRead ? "ИСТОРИЯ ПРОЧИТАНА · ЗАГРУЖАЕМ РАЙОН" : "ЗАГРУЖАЕМ РАЙОН" : storyRead ? "ОТКРЫВАЕМ РАЙОН" : "РАЙОН ГОТОВ · ЧИТАЕМ ИСТОРИЮ")}</span>
             </div>
           </footer>
         </section>

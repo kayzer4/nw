@@ -153,13 +153,17 @@ button { font: inherit; }
 .comic-watcher-1 .comic-watcher-arm { transform: rotate(-4deg); }
 .comic-watcher-2 { left: 68%; transform: scale(1.08); }
 .comic-watcher-2 .comic-watcher-arm { transform: rotate(24deg); }
+.comic-card-rock { animation: comic-card-rock 3.6s ease-in-out infinite; transform-origin: center 15%; }
+.comic-loading-lamp { display: inline-block; animation: comic-loading-sway 1.8s ease-in-out infinite; transform-origin: center top; }
+@keyframes comic-card-rock { 0%,100% { transform: translateY(0) rotate(-.35deg); } 50% { transform: translateY(-4px) rotate(.35deg); } }
+@keyframes comic-loading-sway { 0%,100% { transform: rotate(-14deg); } 50% { transform: rotate(14deg); } }
 @keyframes comic-panel-pop { 0% { opacity: 0; transform: translateY(28px) rotate(2deg) scale(.94); } 100% { opacity: 1; transform: translateY(0) rotate(.35deg) scale(1); } }
 @keyframes comic-title-slam { 0% { opacity: 0; transform: translateX(-28px) skewX(-8deg) scaleX(1.08); } 70% { transform: translateX(3px) skewX(1deg); } 100% { opacity: 1; transform: translateX(0) skewX(0) scaleX(1); } }
 @keyframes comic-sfx { 0% { opacity: 0; transform: scale(.55) rotate(-10deg); } 75% { transform: scale(1.16) rotate(2deg); } 100% { opacity: 1; transform: scale(1) rotate(0); } }
 @keyframes comic-bubble { 0% { opacity: 0; transform: scale(.5) rotate(-4deg); } 100% { opacity: 1; transform: scale(1) rotate(0); } }
 @keyframes comic-speed-lines { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) {
-  .comic-panel-pop, .comic-title-slam, .comic-sfx, .comic-bubble, .comic-speed-lines { animation: none; opacity: 1; transform: none; }
+  .comic-panel-pop, .comic-title-slam, .comic-sfx, .comic-bubble, .comic-speed-lines, .comic-card-rock, .comic-loading-lamp { animation: none; opacity: 1; transform: none; }
   .comic-watcher { transition: none; }
 }
 @keyframes spin { to { transform: rotate(360deg); } }

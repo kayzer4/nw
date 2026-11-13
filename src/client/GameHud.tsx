@@ -17,7 +17,6 @@ export default function GameHud({ level, onExit }: {
 }) {
   const session = useGameStore((state) => state.session);
   const lamps = useGameStore((state) => state.lampStates);
-  const start = useGameStore((state) => state.start);
   const restart = useGameStore((state) => state.restart);
   const toggleLamp = useGameStore((state) => state.toggleLamp);
   if (!session) return null;
@@ -58,7 +57,7 @@ export default function GameHud({ level, onExit }: {
 
       <section className="control-panel glass-panel" aria-label="Shift controls">
         <div className="panel-footer"><span className="footnote">POWER DRAIN <b>{(Object.values(lamps).filter(Boolean).length * level.rules.energyPerLampSecond).toFixed(1)} kWh / sec</b></span>
-          {session.phase === "ready" ? <button type="button" className="primary-button" onClick={start}>START NIGHT SHIFT <span>→</span></button> : session.phase === "playing" ? <div className="running-note"><span className="status-dot live" /> PATROL ACTIVE</div> : <button type="button" className="primary-button" onClick={restart}>RESTART SHIFT <span>↻</span></button>}
+          {session.phase === "ready" ? <div className="running-note"><span className="status-dot live" /> STARTING SHIFT</div> : session.phase === "playing" ? <div className="running-note"><span className="status-dot live" /> PATROL ACTIVE</div> : <button type="button" className="primary-button" onClick={restart}>RESTART SHIFT <span>↻</span></button>}
         </div>
       </section>
 
