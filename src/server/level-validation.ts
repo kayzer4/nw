@@ -13,6 +13,7 @@ function outcome(level: LevelPreset, states: Record<string, boolean>, firstDurat
 
 export function assessLevel(level: LevelPreset): number {
   if (!level.citizens.length || !level.lamps.length || level.lamps.length > 10) throw new Error("Level needs residents and 1–10 lamps.");
+  if (level.citizens.some((citizen) => !Number.isFinite(citizen.speed) || citizen.speed <= 0)) throw new Error("Resident walking speed must be positive.");
   for (const building of level.buildings) {
     if (modelFootprintRadius(building.asset) * building.scale > 0.881) throw new Error(`Building ${building.id} overlaps its road clearance.`);
   }

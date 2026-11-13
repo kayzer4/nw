@@ -21,7 +21,7 @@ export interface CitizenRoute {
   asset: string;
   scale: number;
   route: readonly Position2[];
-  secondsPerPoint: number;
+  speed: number;
 }
 
 export interface GameRules {

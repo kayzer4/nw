@@ -345,18 +345,12 @@ function makeCitizenRoutes(roadCells: { x: number; z: number; tile: RoadTile }[]
     const offset = randomInt(0, cycle.length - 1, random);
     const ordered = [...cycle.slice(offset), ...cycle.slice(0, offset)];
     const route = ordered.map((node) => node.position);
-    const length = route.reduce((sum, point, routeIndex) => {
-      const next = route[(routeIndex + 1) % route.length];
-      return sum + Math.hypot(next[0] - point[0], next[1] - point[1]);
-    }, 0);
-    const averageSegment = length / Math.max(1, route.length);
-    const speed = person.speed ?? 0.25;
     return {
       id: `walker-${String(index + 1).padStart(2, "0")}`,
       asset: `/models/${person.pack}/${person.name}.glb`,
       scale: person.scale ?? 0.2,
       route,
-      secondsPerPoint: Math.max(0.5, averageSegment / speed),
+      speed: person.speed ?? 0.25,
     };
   });
 }

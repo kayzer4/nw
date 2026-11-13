@@ -583,7 +583,7 @@
           5.9
         ]
       ],
-      "secondsPerPoint": 7.840000000000001
+      "speed": 0.25
     },
     {
       "id": "walker-02",
@@ -607,7 +607,7 @@
           1.9
         ]
       ],
-      "secondsPerPoint": 9.4
+      "speed": 0.25
     },
     {
       "id": "walker-03",
@@ -659,7 +659,7 @@
           1.9
         ]
       ],
-      "secondsPerPoint": 7.127272727272729
+      "speed": 0.25
     },
     {
       "id": "walker-04",
@@ -743,7 +743,7 @@
           0.09999999999999998
         ]
       ],
-      "secondsPerPoint": 7.873684210526317
+      "speed": 0.25
     },
     {
       "id": "walker-05",
@@ -759,7 +759,7 @@
           1.9
         ]
       ],
-      "secondsPerPoint": 4.4
+      "speed": 0.25
     },
     {
       "id": "walker-06",
@@ -811,7 +811,7 @@
           3
         ]
       ],
-      "secondsPerPoint": 7.127272727272728
+      "speed": 0.25
     }
   ],
   "rules": {

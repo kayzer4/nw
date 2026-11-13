@@ -26,12 +26,21 @@ describe("ready level contracts", () => {
 test("rendered route and lighting state use the same interpolated position", () => {
   const level = load("first-shift");
   const citizen = level.citizens[0];
-  const halfway = routePosition(citizen, citizen.secondsPerPoint / 2);
+  const halfwayTime = Math.hypot(citizen.route[1][0] - citizen.route[0][0], citizen.route[1][1] - citizen.route[0][1]) / citizen.speed / 2;
+  const halfway = routePosition(citizen, halfwayTime);
   expect(halfway[0]).toBeCloseTo((citizen.route[0][0] + citizen.route[1][0]) / 2);
   expect(halfway[1]).toBeCloseTo((citizen.route[0][1] + citizen.route[1][1]) / 2);
   const states = Object.fromEntries(level.lamps.map((lamp) => [lamp.id, true]));
   const expected = level.lamps.some((lamp) => lampLightsPoint(lamp, halfway));
-  expect(citizenLighting(level, states, citizen.secondsPerPoint / 2)[citizen.id]).toBe(expected);
+  expect(citizenLighting(level, states, halfwayTime)[citizen.id]).toBe(expected);
+});
+
+test("resident speed is constant across short and long route segments", () => {
+  const citizen = { id: "test", asset: "", scale: 1, speed: 1, route: [[0, 0], [1, 0], [1, 3], [0, 3]] };
+  expect(routePosition(citizen, 0.4)).toEqual([0.4, 0]);
+  expect(routePosition(citizen, 1.4)[1]).toBeCloseTo(0.4);
+  expect(routePosition(citizen, 2.4)[1]).toBeCloseTo(1.4);
+  expect(routePosition(citizen, 8.4)[0]).toBeCloseTo(0.4);
 });
 
 test("light radius is measured from the rendered lamp head", () => {

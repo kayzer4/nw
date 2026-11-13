@@ -6,13 +6,31 @@ export interface SessionSnapshot {
   citizenLit: Record<string, boolean>;
 }
 const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, n));
+const routeDistances = new WeakMap<CitizenRoute, { cumulative: number[]; total: number }>();
+function distancesFor(citizen: CitizenRoute) {
+  const cached = routeDistances.get(citizen);
+  if (cached) return cached;
+  const cumulative = [0];
+  for (let index = 0; index < citizen.route.length; index++) {
+    const a = citizen.route[index], b = citizen.route[(index + 1) % citizen.route.length];
+    cumulative.push(cumulative[index] + Math.hypot(b[0] - a[0], b[1] - a[1]));
+  }
+  const distances = { cumulative, total: cumulative.at(-1) ?? 0 };
+  routeDistances.set(citizen, distances);
+  return distances;
+}
 export function routePosition(citizen: CitizenRoute, elapsedSeconds: number): Position2 {
   if (!citizen.route.length) return [0, 0];
-  const progress = elapsedSeconds / citizen.secondsPerPoint;
-  const index = Math.floor(progress) % citizen.route.length;
-  const fraction = progress - Math.floor(progress);
-  const a = citizen.route[index], b = citizen.route[(index + 1) % citizen.route.length];
-  return [a[0] + (b[0] - a[0]) * fraction, a[1] + (b[1] - a[1]) * fraction];
+  const { cumulative, total } = distancesFor(citizen);
+  if (total <= 0 || citizen.speed <= 0) return citizen.route[0];
+  const distance = (Math.max(0, elapsedSeconds) * citizen.speed) % total;
+  for (let index = 0; index < citizen.route.length; index++) {
+    if (distance >= cumulative[index + 1]) continue;
+    const a = citizen.route[index], b = citizen.route[(index + 1) % citizen.route.length];
+    const fraction = (distance - cumulative[index]) / (cumulative[index + 1] - cumulative[index]);
+    return [a[0] + (b[0] - a[0]) * fraction, a[1] + (b[1] - a[1]) * fraction];
+  }
+  return citizen.route[0];
 }
 export function citizenLighting(level: LevelPreset, states: Readonly<Record<string, boolean>>, elapsed: number) {
   return Object.fromEntries(level.citizens.map((citizen) => {
