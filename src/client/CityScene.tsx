@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, type RefObject } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
-import { AdditiveBlending, AnimationMixer, Box3, CanvasTexture, Color, LoopRepeat, Object3D, type Group } from "three";
+import { AdditiveBlending, AnimationMixer, Box3, CanvasTexture, Color, LoopRepeat, Mesh, Object3D, type Group } from "three";
 import { clone as skeletonClone } from "three/examples/jsm/utils/SkeletonUtils.js";
 import type { CitizenRoute, LevelPreset, PlacedAsset, PlacedLamp } from "@/game/level";
 import { useGameStore } from "@/game/game-store";
@@ -29,18 +29,47 @@ void main() {
   #include <colorspace_fragment>
 }`;
 
-function Model({ asset, scale = 1 }: { asset: string; scale?: number }) {
+function Model({ asset, scale = 1, castShadow = true }: { asset: string; scale?: number; castShadow?: boolean }) {
   const { scene } = useGLTF(asset);
-  const clone = useMemo(() => scene.clone(true), [scene]);
+  const clone = useMemo(() => {
+    const model = scene.clone(true);
+    model.traverse((object) => {
+      if (object instanceof Mesh) {
+        object.castShadow = castShadow;
+        object.receiveShadow = true;
+      }
+    });
+    return model;
+  }, [scene, castShadow]);
   return <primitive object={clone} scale={scale} />;
 }
 
-function StaticAsset({ item }: { item: PlacedAsset }) {
+function StaticAsset({ item, castShadow = true }: { item: PlacedAsset; castShadow?: boolean }) {
   return (
     <group position={[item.position[0], item.position[1], item.position[2]]} rotation={[0, item.rotationY, 0]}>
-      <Model asset={item.asset} scale={item.scale} />
+      <Model asset={item.asset} scale={item.scale} castShadow={castShadow} />
     </group>
   );
+}
+
+function BuildingPlot({ item, cellSize }: { item: PlacedAsset; cellSize: number }) {
+  return <group position={[item.position[0], item.position[1], item.position[2]]}>
+    <mesh position={[0, -0.01, 0]} receiveShadow castShadow>
+      <boxGeometry args={[cellSize, 0.1, cellSize]} />
+      <meshStandardMaterial color="#87929b" roughness={1} />
+    </mesh>
+    <mesh position={[0, 0.041, 0]} receiveShadow>
+      <boxGeometry args={[0.014, 0.002, cellSize]} />
+      <meshStandardMaterial color="#47525c" roughness={1} />
+    </mesh>
+    <mesh position={[0, 0.041, 0]} receiveShadow>
+      <boxGeometry args={[cellSize, 0.002, 0.014]} />
+      <meshStandardMaterial color="#47525c" roughness={1} />
+    </mesh>
+    <group position={[0, 0.04, 0]} rotation={[0, item.rotationY, 0]}>
+      <Model asset={item.asset} scale={item.scale} />
+    </group>
+  </group>;
 }
 
 function Lamp({ lamp, dragRef }: { lamp: PlacedLamp; dragRef: RefObject<boolean> }) {
@@ -63,7 +92,7 @@ function Lamp({ lamp, dragRef }: { lamp: PlacedLamp; dragRef: RefObject<boolean>
       ><Model asset={lamp.asset} scale={lamp.scale} /></group>
       <primitive object={spotlightTarget} />
       {on && <>
-        <spotLight position={[0, spotlightOriginHeight, LAMP_HEAD[1] * lamp.scale]} target={spotlightTarget} color={lamp.color} intensity={lamp.intensity} distance={0} angle={cone.angle} penumbra={0.02} decay={0} />
+        <spotLight position={[0, spotlightOriginHeight, LAMP_HEAD[1] * lamp.scale]} target={spotlightTarget} color={lamp.color} intensity={lamp.intensity} distance={0} angle={cone.angle} penumbra={0.02} decay={0} castShadow shadow-mapSize-width={512} shadow-mapSize-height={512} shadow-bias={-0.00015} shadow-normalBias={0.015} />
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.012, LAMP_HEAD[1] * lamp.scale]}>
           <circleGeometry args={[lamp.radius, 64]} />
           <shaderMaterial vertexShader={glowVertexShader} fragmentShader={glowFragmentShader} uniforms={glowUniforms} transparent blending={AdditiveBlending} depthWrite={false} toneMapped={false} />
@@ -107,6 +136,12 @@ function Citizen({ citizen }: { citizen: CitizenRoute }) {
     const character = skeletonClone(scene);
     character.scale.setScalar(scale);
     character.position.y = -bounds.min.y * scale;
+    character.traverse((object) => {
+      if (object instanceof Mesh) {
+        object.castShadow = true;
+        object.receiveShadow = true;
+      }
+    });
     return character;
   }, [scene, citizen.scale]);
   const walkClip = useMemo(() => animations.find((clip) => /walk/i.test(clip.name)), [animations]);
@@ -142,14 +177,14 @@ function District({ level, dragRef }: { level: LevelPreset; dragRef: RefObject<b
       <color attach="background" args={["#080d15"]} />
       <fog attach="fog" args={["#080d15", 18, 38]} />
       <ambientLight intensity={0.22} color="#9baec8" />
-      <directionalLight position={[-5, 12, 6]} intensity={0.3} color="#a9c5f0" />
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.08, 0]}>
+      <directionalLight position={[-5, 12, 6]} intensity={0.3} color="#a9c5f0" castShadow shadow-mapSize-width={1024} shadow-mapSize-height={1024} shadow-camera-left={-12} shadow-camera-right={12} shadow-camera-top={12} shadow-camera-bottom={-12} shadow-normalBias={0.02} />
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.08, 0]} receiveShadow>
         <planeGeometry args={[30, 30]} />
         <meshStandardMaterial color="#141c25" roughness={1} />
       </mesh>
       <gridHelper args={[18, 36, "#26323d", "#18232d"]} position={[0, -0.06, 0]} />
-      {level.roads.map((road) => <StaticAsset key={road.id} item={road} />)}
-      {level.buildings.map((building) => <StaticAsset key={building.id} item={building} />)}
+      {level.roads.map((road) => <StaticAsset key={road.id} item={road} castShadow={false} />)}
+      {level.buildings.map((building) => <BuildingPlot key={building.id} item={building} cellSize={level.grid.cellSize} />)}
       {level.lamps.map((lamp) => <Lamp key={lamp.id} lamp={lamp} dragRef={dragRef} />)}
       {level.citizens.map((citizen) => <Citizen key={citizen.id} citizen={citizen} />)}
       <OrbitControls target={[0, 0, 0]} minDistance={9} maxDistance={26} maxPolarAngle={1.35} enableDamping dampingFactor={0.08} />
@@ -159,7 +194,7 @@ function District({ level, dragRef }: { level: LevelPreset; dragRef: RefObject<b
 
 export default function CityScene({ level, dragRef }: { level: LevelPreset; dragRef: RefObject<boolean> }) {
   return (
-    <Canvas camera={{ position: [12, 13, 14], fov: 42 }} dpr={[1, 1.35]} gl={{ antialias: false, powerPreference: "low-power" }}>
+    <Canvas shadows camera={{ position: [12, 13, 14], fov: 42 }} dpr={[1, 1.35]} gl={{ antialias: false, powerPreference: "low-power" }}>
       <District level={level} dragRef={dragRef} />
     </Canvas>
   );
