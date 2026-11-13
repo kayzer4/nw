@@ -197,7 +197,7 @@ function District({ level, dragRef }: { level: LevelPreset; dragRef: RefObject<b
 
 export default function CityScene({ level, dragRef }: { level: LevelPreset; dragRef: RefObject<boolean> }) {
   return (
-    <Canvas shadows camera={{ position: [12, 13, 14], fov: 42 }} dpr={[1, 1.35]} gl={{ antialias: false, powerPreference: "low-power" }}>
+    <Canvas shadows camera={{ position: [12, 13, 14], fov: 42 }} dpr={[1, 1.5]} gl={{ antialias: true, powerPreference: "low-power" }}>
       <District level={level} dragRef={dragRef} />
     </Canvas>
   );
