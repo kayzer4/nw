@@ -9,6 +9,7 @@ import GameHud from "./GameHud";
 import LevelPicker from "./LevelPicker";
 import { GameTicker } from "./GameTicker";
 import { ProgressRecorder } from "./ProgressRecorder";
+import ComicIntro from "./ComicIntro";
 
 const CityScene = dynamic(() => import("./CityScene"), { ssr: false, loading: () => <div className="scene-loading">LOADING THE DISTRICT…</div> });
 
@@ -17,6 +18,7 @@ export default function GameScreen() {
   const pointerStart = useRef<[number, number] | null>(null);
   const [levels, setLevels] = useState<LevelSummary[]>([]);
   const [level, setLevel] = useState<LevelPreset | null>(null);
+  const [pendingLevel, setPendingLevel] = useState<LevelPreset | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [completedIds, setCompletedIds] = useState<string[]>([]);
@@ -46,9 +48,8 @@ export default function GameScreen() {
       const result = await response.json() as LevelPreset | { error?: string };
       if (!response.ok || "error" in result) throw new Error("error" in result ? result.error : "Could not load this district.");
       const preset = result as LevelPreset;
-      useGameStore.getState().loadLevel(preset);
       saveProgress({ ...loadProgress(), lastLevelId: id });
-      setLevel(preset);
+      setPendingLevel(preset);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Could not load this district.");
     } finally {
@@ -61,6 +62,19 @@ export default function GameScreen() {
     setCompletedIds(loadProgress().completedLevelIds);
     setLevel(null);
   }, []);
+
+  const leaveComic = useCallback(() => setPendingLevel(null), []);
+  const startLevel = useCallback(() => {
+    if (!pendingLevel) return;
+    useGameStore.getState().loadLevel(pendingLevel);
+    setLevel(pendingLevel);
+    setPendingLevel(null);
+  }, [pendingLevel]);
+
+  if (!level && pendingLevel) {
+    const summary = levels.find((item) => item.id === pendingLevel.id) ?? pendingLevel;
+    return <ComicIntro level={summary} levels={levels} onStart={startLevel} onBack={leaveComic} />;
+  }
 
   if (!level) return <LevelPicker levels={levels} completedIds={completedIds} loadingId={loadingId} error={error} onSelect={(id) => void selectLevel(id)} onRetry={() => void loadCatalog()} />;
 
