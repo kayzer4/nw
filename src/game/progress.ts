@@ -6,7 +6,7 @@ export interface CampaignProgress {
 }
 
 const STORAGE_KEY = "nightwatcher-clean.progress";
-export const EMPTY_PROGRESS: CampaignProgress = { version: 1, lastSeed: "night-01", unlockedLevelIds: ["first-shift"], completedLevelIds: [] };
+export const EMPTY_PROGRESS: CampaignProgress = { version: 1, lastSeed: "1001", unlockedLevelIds: ["first-shift"], completedLevelIds: [] };
 
 type StorageLike = Pick<Storage, "getItem" | "setItem">;
 function browserStorage(): StorageLike | null {
@@ -25,7 +25,7 @@ export function loadProgress(storage: StorageLike | null = browserStorage()): Ca
     }
     return {
       version: 1,
-      lastSeed: typeof value.lastSeed === "string" ? value.lastSeed : "night-01",
+      lastSeed: typeof value.lastSeed === "string" && /^\d{1,10}$/.test(value.lastSeed) && Number(value.lastSeed) <= 4_294_967_295 ? value.lastSeed : "1001",
       unlockedLevelIds: value.unlockedLevelIds.filter((id): id is string => typeof id === "string"),
       completedLevelIds: value.completedLevelIds.filter((id): id is string => typeof id === "string"),
     };

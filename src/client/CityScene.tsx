@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
-import type { Group } from "three";
+import { AnimationMixer, Box3, LoopRepeat, Object3D, type Group } from "three";
+import { clone as skeletonClone } from "three/examples/jsm/utils/SkeletonUtils.js";
 import type { CitizenRoute, LevelPreset, PlacedAsset, PlacedLamp } from "@/game/level";
 import { useGameStore } from "@/game/game-store";
 
@@ -24,6 +25,12 @@ function StaticAsset({ item }: { item: PlacedAsset }) {
 function Lamp({ lamp }: { lamp: PlacedLamp }) {
   const on = useGameStore((state) => state.lampStates[lamp.id] ?? lamp.initiallyOn);
   const toggle = useGameStore((state) => state.toggleLamp);
+  const spotlightOriginHeight = 0.62 * lamp.scale;
+  const spotlightTarget = useMemo(() => {
+    const target = new Object3D();
+    target.position.set(0, -5 * lamp.scale, -0.15 * lamp.scale);
+    return target;
+  }, [lamp.scale]);
   return (
     <group
       position={[lamp.position[0], lamp.position[1], lamp.position[2]]}
@@ -33,11 +40,8 @@ function Lamp({ lamp }: { lamp: PlacedLamp }) {
       onPointerOut={() => { document.body.style.cursor = ""; }}
     >
       <Model asset={lamp.asset} scale={lamp.scale} />
-      <mesh position={[0, 1.75, 0]}>
-        <sphereGeometry args={[0.13, 10, 8]} />
-        <meshBasicMaterial color={on ? "#ffe6a0" : "#59616a"} />
-      </mesh>
-      {on && <pointLight position={[0, 1.75, 0]} color="#ffd58c" intensity={2.2} distance={lamp.radius} decay={2} />}
+      <primitive object={spotlightTarget} />
+      {on && <spotLight position={[0, spotlightOriginHeight, -0.15 * lamp.scale]} target={spotlightTarget} color={lamp.color} intensity={lamp.intensity} distance={lamp.radius} angle={Math.PI / 5} penumbra={0.4} decay={2} />}
     </group>
   );
 }
@@ -46,10 +50,35 @@ function Citizen({ citizen }: { citizen: CitizenRoute }) {
   const group = useRef<Group>(null);
   const progress = useRef(0);
   const isPlaying = useGameStore((state) => state.session?.phase === "playing");
-  const { scene } = useGLTF(citizen.asset);
-  const clone = useMemo(() => scene.clone(true), [scene]);
+  const { scene, animations } = useGLTF(citizen.asset);
+  const clone = useMemo(() => {
+    scene.updateMatrixWorld(true);
+    const bounds = new Box3().setFromObject(scene);
+    const sourceHeight = bounds.max.y - bounds.min.y;
+    const targetHeight = 1.75 * citizen.scale;
+    const scale = sourceHeight > 1e-5 ? targetHeight / sourceHeight : 1;
+    const character = skeletonClone(scene);
+    character.scale.setScalar(scale);
+    character.position.y = -bounds.min.y * scale;
+    return character;
+  }, [scene, citizen.scale]);
+  const walkClip = useMemo(() => animations.find((clip) => /walk/i.test(clip.name)), [animations]);
+  const mixer = useMemo(() => new AnimationMixer(clone), [clone]);
+  useEffect(() => {
+    if (!isPlaying || !walkClip) {
+      mixer.stopAllAction();
+      return;
+    }
+    const action = mixer.clipAction(walkClip);
+    action.reset().setLoop(LoopRepeat, Infinity).fadeIn(0.15).play();
+    return () => {
+      action.fadeOut(0.15);
+      mixer.stopAllAction();
+    };
+  }, [isPlaying, mixer, walkClip]);
   useEffect(() => { if (!isPlaying) progress.current = 0; }, [isPlaying]);
   useFrame((_, delta) => {
+    if (isPlaying) mixer.update(delta);
     if (!group.current || !isPlaying || citizen.route.length === 0) return;
     progress.current = (progress.current + delta / citizen.secondsPerPoint) % citizen.route.length;
     const segment = Math.floor(progress.current);
@@ -60,7 +89,7 @@ function Citizen({ citizen }: { citizen: CitizenRoute }) {
     group.current.rotation.y = Math.atan2(to[0] - from[0], to[1] - from[1]);
   });
   const initial = citizen.route[0] ?? [0, 0];
-  return <group ref={group} position={[initial[0], 0, initial[1]]}><primitive object={clone} scale={citizen.scale} /></group>;
+  return <group ref={group} position={[initial[0], 0, initial[1]]}><primitive object={clone} /></group>;
 }
 
 function District({ level }: { level: LevelPreset }) {

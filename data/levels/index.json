@@ -1,25 +1,25 @@
 [
   {
     "id": "first-shift",
-    "seed": "night-01",
+    "seed": "1001",
     "title": "First Shift",
     "subtitle": "Keep the district lit until sunrise."
   },
   {
     "id": "market-lights",
-    "seed": "market-63",
+    "seed": "2063",
     "title": "Market Lights",
     "subtitle": "Watch the streets around the late market."
   },
   {
     "id": "north-gate",
-    "seed": "north-gate-12",
+    "seed": "3012",
     "title": "North Gate",
     "subtitle": "Hold the northern crossing through the night."
   },
   {
     "id": "west-end",
-    "seed": "west-end-1",
+    "seed": "4001",
     "title": "West End",
     "subtitle": "Keep the west side moving until morning."
   }

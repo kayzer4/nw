@@ -11,9 +11,9 @@ interface SeedControlsProps {
 }
 
 function makeRandomSeed() {
-  const values = new Uint32Array(2);
-  window.crypto.getRandomValues(values);
-  return [...values].map((value) => value.toString(36)).join("").slice(0, 10);
+  const value = new Uint32Array(1);
+  window.crypto.getRandomValues(value);
+  return String(value[0]);
 }
 
 export default function SeedControls({ seed, disabled, loading, error, onGenerate }: SeedControlsProps) {
@@ -21,8 +21,8 @@ export default function SeedControls({ seed, disabled, loading, error, onGenerat
   const [inputError, setInputError] = useState<string | null>(null);
   function generate() {
     const value = draft.trim();
-    if (!value || value.length > 64) {
-      setInputError("Use 1–64 characters.");
+    if (!/^\d{1,10}$/.test(value) || Number(value) > 4_294_967_295) {
+      setInputError("Use a number from 0 to 4294967295.");
       return;
     }
     setInputError(null);
@@ -32,7 +32,7 @@ export default function SeedControls({ seed, disabled, loading, error, onGenerat
     <div className="seed-controls">
       <label htmlFor="level-seed">WORLD SEED</label>
       <div className="seed-input-row">
-        <input id="level-seed" maxLength={64} value={draft} disabled={disabled || loading} onChange={(event) => setDraft(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") generate(); }} />
+        <input id="level-seed" type="text" inputMode="numeric" pattern="[0-9]*" maxLength={10} value={draft} disabled={disabled || loading} onChange={(event) => setDraft(event.target.value.replace(/\D/g, ""))} onKeyDown={(event) => { if (event.key === "Enter") generate(); }} />
         <button className="seed-random" type="button" disabled={disabled || loading} onClick={() => { setDraft(makeRandomSeed()); setInputError(null); }} aria-label="Create random seed">↻</button>
         <button className="seed-generate" type="button" disabled={disabled || loading} onClick={generate}>{loading ? "BUILDING…" : "GENERATE"}</button>
       </div>

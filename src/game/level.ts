@@ -11,6 +11,8 @@ export interface PlacedAsset {
 
 export interface PlacedLamp extends PlacedAsset {
   radius: number;
+  color: string;
+  intensity: number;
   initiallyOn: boolean;
 }
 

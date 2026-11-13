@@ -9,7 +9,7 @@ import GameHud from "./GameHud";
 import { GameTicker } from "./GameTicker";
 import { ProgressRecorder } from "./ProgressRecorder";
 
-const DEFAULT_SEED = "night-01";
+const DEFAULT_SEED = "1001";
 const CityScene = dynamic(() => import("./CityScene"), { ssr: false, loading: () => <div className="scene-loading">BUILDING THE NIGHT DISTRICT…</div> });
 
 export default function GameScreen() {

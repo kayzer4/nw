@@ -2,8 +2,8 @@ import { buildLevel } from "@/server/level-builder";
 
 export async function GET(request: Request) {
   const seed = new URL(request.url).searchParams.get("seed")?.trim();
-  if (!seed || seed.length > 64) {
-    return Response.json({ error: "Provide a seed between 1 and 64 characters." }, { status: 400 });
+  if (!seed || !/^\d{1,10}$/.test(seed) || Number(seed) > 4_294_967_295) {
+    return Response.json({ error: "Provide a seed number between 0 and 4294967295." }, { status: 400 });
   }
   try {
     const preset = buildLevel(seed);
