@@ -1,6 +1,7 @@
 import type { LevelPreset, PlacedLamp } from "@/game/level";
 import { lampLightsPoint } from "@/game/light";
-import { advanceSession, createSession, routePosition } from "@/game/simulation";
+import { advanceSession, createSession } from "@/game/simulation";
+import { findMinimumActionPlan } from "./action-planner";
 import { coverageSamples } from "./coverage-samples";
 import { modelFootprintRadius } from "./model-footprint";
 import { walkSegmentAllowed } from "./walk-geometry";
@@ -51,21 +52,8 @@ export function assessLevel(level: LevelPreset): number {
   const shift = level.rules.shiftSeconds;
   if (outcome(level, on, shift).phase !== "lost") throw new Error("Leaving every lamp on must lose.");
   if (outcome(level, off, shift).phase !== "lost") throw new Error("Leaving every lamp off must lose.");
-  if (outcome(level, on, shift * 0.7, off).phase !== "won") throw new Error("No baseline winning strategy found.");
 
-  let requiredFraction = 0;
-  for (let t = 0; t < shift; t += 10) {
-    const points = level.citizens.map((citizen) => routePosition(citizen, t));
-    let minimum = level.lamps.length;
-    for (let mask = 1; mask < 2 ** level.lamps.length; mask++) {
-      const count = level.lamps.reduce((sum, _, index) => sum + Number(Boolean(mask & (1 << index))), 0);
-      if (count >= minimum) continue;
-      const lit = points.filter((point) => level.lamps.some((lamp, index) => Boolean(mask & (1 << index)) && lampLightsPoint(lamp, point))).length;
-      if (lit >= Math.ceil(points.length / 2)) minimum = count;
-    }
-    requiredFraction += minimum / level.lamps.length;
-  }
-  const pressure = requiredFraction / (shift / 10) / 0.72;
-  // The fewer simultaneous lamps needed, and the wider their reach, the easier the shift.
-  return Math.max(1, Math.min(5, Math.round(2 + pressure * 4 + (3.8 - firstLamp.radius) * 1.2 - (level.lamps.length - 6) * 0.3)));
+  const plan = findMinimumActionPlan(level);
+  if (!plan) throw new Error("No winning lamp-switching plan found.");
+  return Math.max(1, Math.min(5, Math.round(1 + plan.actions * 0.45 + (shift - 40) * 0.03)));
 }

@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "bun test",
-    "build:levels": "bun tools/build-levels.ts"
+    "build:levels": "bun tools/build-levels.ts",
+    "measure:apm": "bun tools/measure-apm.ts"
   },
   "dependencies": {
     "@ant-design/icons": "^6.3.4",

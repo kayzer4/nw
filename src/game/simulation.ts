@@ -45,19 +45,22 @@ export function createSession(level: LevelPreset): SessionSnapshot {
 export function advanceSession(level: LevelPreset, current: SessionSnapshot, states: Readonly<Record<string, boolean>>, elapsed: number): SessionSnapshot {
   if (current.phase !== "playing") return current;
   const nextTime = Math.min(level.rules.shiftSeconds, Math.max(current.elapsedSeconds, elapsed));
-  const dt = nextTime - current.elapsedSeconds;
   const onCount = level.lamps.filter((lamp) => states[lamp.id]).length;
-  const energy = Math.max(0, current.energy - onCount * level.rules.energyPerLampSecond * dt);
+  let energy = current.energy;
   let satisfaction = current.satisfaction;
   // Integrate along the route, including after a throttled background tab resumes.
   for (let time = current.elapsedSeconds; time < nextTime;) {
     const step = Math.min(0.25, nextTime - time);
     const lighting = citizenLighting(level, states, time + step / 2);
     const litCount = Object.values(lighting).filter(Boolean).length;
-    satisfaction = clamp(satisfaction + (litCount >= Math.ceil(level.citizens.length / 2) ? 0.35 : -0.6) * step, 0, 100);
+    satisfaction = clamp(satisfaction + (litCount >= level.rules.requiredLitResidents ? level.rules.comfortGainPerSecond : -level.rules.comfortLossPerSecond) * step, 0, 100);
+    energy = Math.max(0, energy - onCount * level.rules.energyPerLampSecond * step);
     time += step;
+    if (energy <= 0 || satisfaction <= level.rules.minimumSatisfaction) {
+      return { phase: "lost", elapsedSeconds: time, energy, satisfaction, citizenLit: citizenLighting(level, states, time) };
+    }
   }
   const citizenLit = citizenLighting(level, states, nextTime);
-  const phase = energy <= 0 || satisfaction <= level.rules.minimumSatisfaction ? "lost" : nextTime >= level.rules.shiftSeconds ? "won" : "playing";
+  const phase = nextTime >= level.rules.shiftSeconds ? "won" : "playing";
   return { phase, elapsedSeconds: nextTime, energy, satisfaction, citizenLit };
 }

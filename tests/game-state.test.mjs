@@ -7,6 +7,7 @@ import { walkSegmentAllowed } from "../src/server/walk-geometry";
 import { modelFootprintRadius } from "../src/server/model-footprint";
 import { coverageSamples } from "../src/server/coverage-samples";
 import { buildLevel } from "../src/server/level-builder";
+import { findMinimumActionPlan } from "../src/server/action-planner";
 
 const ids = ["first-shift", "market-lights", "north-gate", "west-end", "south-crossing"];
 const load = (id) => JSON.parse(fs.readFileSync(`data/levels/${id}.json`, "utf8"));
@@ -20,10 +21,24 @@ describe("ready level contracts", () => {
     const allOn = Object.fromEntries(level.lamps.map((lamp) => [lamp.id, true]));
     const allOff = Object.fromEntries(level.lamps.map((lamp) => [lamp.id, false]));
     const start = { ...createSession(level), phase: "playing" };
-    expect(advanceSession(level, start, allOn, 100).phase).toBe("lost");
-    expect(advanceSession(level, start, allOff, 100).phase).toBe("lost");
-    const partial = advanceSession(level, start, allOn, 70);
-    expect(advanceSession(level, partial, allOff, 100).phase).toBe("won");
+    expect(advanceSession(level, start, allOn, level.rules.shiftSeconds).phase).toBe("lost");
+    const darkOutcome = advanceSession(level, start, allOff, level.rules.shiftSeconds);
+    expect(darkOutcome.phase).toBe("lost");
+    expect(darkOutcome.elapsedSeconds).toBeLessThan(level.rules.shiftSeconds);
+    const passive = Object.fromEntries(level.lamps.map((lamp) => [lamp.id, lamp.initiallyOn]));
+    expect(advanceSession(level, start, passive, level.rules.shiftSeconds).phase).toBe("lost");
+    const plan = findMinimumActionPlan(level);
+    expect(plan).not.toBeNull();
+    expect(plan.actionsPerMinute).toBeGreaterThanOrEqual(4.5);
+    expect(plan.actionsPerMinute).toBeLessThanOrEqual(8);
+    let session = start;
+    let states = Object.fromEntries(level.lamps.map((lamp) => [lamp.id, lamp.initiallyOn]));
+    for (const action of plan.steps) {
+      session = advanceSession(level, session, states, action.time);
+      expect(session.phase).toBe("playing");
+      states = Object.fromEntries(level.lamps.map((lamp, index) => [lamp.id, Boolean(action.mask & (1 << index))]));
+    }
+    expect(advanceSession(level, session, states, level.rules.shiftSeconds).phase).toBe("won");
   });
 });
 
@@ -33,7 +48,15 @@ test("lamp target scales with road count for other seeds", () => {
     const target = Math.max(3, Math.ceil(level.roads.length * 5 / 11));
     expect(level.lamps.length).toBeLessThanOrEqual(target);
     expect(Math.min(...lampExclusiveShares(level.lamps, coverageSamples(level.roads, level.citizens)))).toBeGreaterThanOrEqual(0.04);
+    const plan = findMinimumActionPlan(level);
+    expect(plan).not.toBeNull();
+    expect(plan.actions).toBeGreaterThanOrEqual(3);
   }
+});
+
+test("regenerated catalog seeds retain their action target", () => {
+  const level = buildLevel("12345", 4);
+  expect(findMinimumActionPlan(level).actions).toBeGreaterThanOrEqual(7);
 });
 
 test("rendered route and lighting state use the same interpolated position", () => {

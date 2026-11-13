@@ -16,7 +16,7 @@ if (!selected.length) throw new Error(`Unknown catalog id: ${args[idIndex + 1]}`
 if (seedIndex >= 0) selected[0].seed = args[seedIndex + 1];
 
 for (const summary of selected) {
-  const level = { ...buildLevel(summary.seed), ...summary };
+  const level = { ...buildLevel(summary.seed, catalog.findIndex((entry) => entry.id === summary.id)), ...summary };
   fs.writeFileSync(path.join(directory, `${summary.id}.json`), `${JSON.stringify(level, null, 2)}\n`);
   console.log(`${summary.id}: ${level.roads.length} roads, ${level.lamps.length} lamps, ${level.citizens.length} residents`);
 }

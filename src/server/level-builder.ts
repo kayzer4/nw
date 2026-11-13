@@ -4,6 +4,7 @@ import type { CitizenRoute, LevelPreset, PlacedAsset, PlacedLamp, Position2 } fr
 import { lampLightsPoint } from "@/game/light";
 import { coverageSamples, type CoverageSample } from "./coverage-samples";
 import { assessLevel, lampExclusiveShares } from "./level-validation";
+import { balanceGeneratedLevel } from "./level-balance";
 import { modelFootprintRadius } from "./model-footprint";
 import { walkSegmentAllowed } from "./walk-geometry";
 
@@ -452,12 +453,11 @@ function completeRouteCoverage(
   return placed.map((lamp, index) => ({ ...lamp, id: `lamp-${index + 1}` }));
 }
 
-function chooseInitiallyOn(lamps: PlacedLamp[], citizens: CitizenRoute[]): PlacedLamp[] {
+function chooseInitiallyOn(lamps: PlacedLamp[], citizens: CitizenRoute[], maxContinuousLights = Math.max(1, Math.floor(lamps.length * 0.72))): PlacedLamp[] {
   const anchors = [...new Map(citizens.flatMap((citizen) => citizen.route)
     .map((point) => [`${point[0].toFixed(2)},${point[1].toFixed(2)}`, point] as const)).values()];
   const uncovered = new Set(anchors.map((_, index) => index));
   const selected = new Set<string>();
-  const maxContinuousLights = Math.max(1, Math.floor(lamps.length * 0.72));
   while (selected.size < maxContinuousLights && uncovered.size > 0) {
     let best: PlacedLamp | undefined;
     let bestIndices: number[] = [];
@@ -473,7 +473,15 @@ function chooseInitiallyOn(lamps: PlacedLamp[], citizens: CitizenRoute[]): Place
   return lamps.map((lamp) => ({ ...lamp, initiallyOn: selected.has(lamp.id) }));
 }
 
-export function buildLevel(seedInput: string): LevelPreset {
+const CHALLENGES = [
+  { shiftSeconds: 40, lampSeconds: 63, requiredLitResidents: 6, minimumSatisfaction: 88, minimumActions: 3 },
+  { shiftSeconds: 50, lampSeconds: 80, requiredLitResidents: 5, minimumSatisfaction: 90, minimumActions: 5 },
+  { shiftSeconds: 55, lampSeconds: 121, requiredLitResidents: 5, minimumSatisfaction: 90, minimumActions: 6 },
+  { shiftSeconds: 60, lampSeconds: 96, requiredLitResidents: 5, minimumSatisfaction: 90, minimumActions: 6 },
+  { shiftSeconds: 65, lampSeconds: 91, requiredLitResidents: 5, minimumSatisfaction: 90, minimumActions: 7 },
+] as const;
+
+export function buildLevel(seedInput: string, challengeIndex?: number): LevelPreset {
   const seed = seedInput.trim();
   if (!/^\d{1,10}$/.test(seed) || Number(seed) > 4_294_967_295) {
     throw new Error("Seed must be a number between 0 and 4294967295.");
@@ -531,7 +539,8 @@ export function buildLevel(seedInput: string): LevelPreset {
     if (candidateLamps.length <= targetLampCount && leastExclusive >= 0.04) { lamps = candidateLamps; break; }
   }
   if (!lamps.length) lamps = bestLamps ?? [];
-  lamps = chooseInitiallyOn(lamps, citizens);
+  const challenge = CHALLENGES[Math.max(0, Math.min(CHALLENGES.length - 1, challengeIndex ?? 0))];
+  lamps = chooseInitiallyOn(lamps, citizens, challengeIndex === undefined || challengeIndex === 0 ? 1 : Math.max(1, Math.floor(lamps.length * 0.72)));
 
   const level: LevelPreset = {
     id: "custom", seed, title: "Custom District", subtitle: `Generated from seed ${seed}.`,
@@ -541,7 +550,17 @@ export function buildLevel(seedInput: string): LevelPreset {
     buildings,
     lamps,
     citizens,
-    rules: { shiftSeconds: 100, startingEnergy: lamps.length * 0.32 * 100 * 0.72, energyPerLampSecond: 0.32, startingSatisfaction: 68, minimumSatisfaction: 35 },
+    rules: {
+      shiftSeconds: challenge.shiftSeconds,
+      startingEnergy: challenge.lampSeconds * 0.7,
+      energyPerLampSecond: 0.7,
+      startingSatisfaction: 95,
+      minimumSatisfaction: challenge.minimumSatisfaction,
+      requiredLitResidents: Math.min(challenge.requiredLitResidents, citizens.length),
+      comfortGainPerSecond: 0.5,
+      comfortLossPerSecond: 1.2,
+    },
   };
-  return { ...level, difficulty: assessLevel(level) };
+  const balanced = balanceGeneratedLevel(level, challenge.minimumActions);
+  return { ...balanced, difficulty: assessLevel(balanced) };
 }

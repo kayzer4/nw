@@ -858,10 +858,13 @@
     }
   ],
   "rules": {
-    "shiftSeconds": 100,
-    "startingEnergy": 92.16,
-    "energyPerLampSecond": 0.32,
-    "startingSatisfaction": 68,
-    "minimumSatisfaction": 35
+    "shiftSeconds": 60,
+    "startingEnergy": 67.19999999999999,
+    "energyPerLampSecond": 0.7,
+    "startingSatisfaction": 95,
+    "minimumSatisfaction": 90,
+    "requiredLitResidents": 5,
+    "comfortGainPerSecond": 0.5,
+    "comfortLossPerSecond": 1.2
   }
 }
