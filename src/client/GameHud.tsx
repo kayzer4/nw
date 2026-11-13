@@ -6,8 +6,9 @@ import LevelSelect from "./LevelSelect";
 
 function meter(value: number, max: number) { return `${Math.max(0, Math.min(100, (value / max) * 100))}%`; }
 function formatTime(seconds: number) {
-  const minutes = Math.floor(seconds / 60).toString().padStart(2, "0");
-  const remainder = (seconds % 60).toString().padStart(2, "0");
+  const wholeSeconds = Math.ceil(Math.max(0, seconds));
+  const minutes = Math.floor(wholeSeconds / 60).toString().padStart(2, "0");
+  const remainder = (wholeSeconds % 60).toString().padStart(2, "0");
   return `${minutes}:${remainder}`;
 }
 
@@ -42,9 +43,11 @@ export default function GameHud({ level, levels, isLoading, loadError, onSelectL
         <p>{session.phase === "ready" ? level.subtitle : session.phase === "won" ? "The neighborhood made it safely to morning." : session.phase === "lost" ? "Restore the lights and try a different strategy." : "Keep enough of the neighborhood illuminated."}</p>
         <LevelSelect level={level} levels={levels} disabled={session.phase === "playing" || isLoading} onSelect={onSelectLevel} />
         {loadError && <p role="alert">{loadError}</p>}
+        <div className="level-facts"><span>DIFFICULTY <b>{level.difficulty}/5</b></span><span>LIGHT REACH <b>{level.lamps[0]?.radius.toFixed(1)} m</b></span></div>
         <div className="meters">
           <div className="meter-block"><div className="meter-label"><span>GRID POWER</span><b>{Math.ceil(session.energy)} <small>kWh</small></b></div><div className="meter-track"><i className="energy-fill" style={{ width: meter(session.energy, level.rules.startingEnergy) }} /></div></div>
           <div className="meter-block"><div className="meter-label"><span>RESIDENT COMFORT</span><b>{Math.round(session.satisfaction)}<small>%</small></b></div><div className="meter-track"><i className="comfort-fill" style={{ width: meter(session.satisfaction, 100) }} /></div></div>
+          <div className="resident-count">{Object.values(session.citizenLit).filter(Boolean).length}/{level.citizens.length} RESIDENTS IN LIGHT <span>✓ LIT &nbsp; ! DARK</span></div>
         </div>
       </section>
 

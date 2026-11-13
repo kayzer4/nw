@@ -39,5 +39,6 @@ export function assessLevel(level: LevelPreset): number {
     requiredFraction += minimum / level.lamps.length;
   }
   const pressure = requiredFraction / (shift / 10) / 0.72;
-  return Math.max(1, Math.min(5, Math.round(pressure * 4 + (level.lamps.length - 3) * 0.6 + (6.5 - firstLamp.radius) * 0.5)));
+  // The fewer simultaneous lamps needed, and the wider their reach, the easier the shift.
+  return Math.max(1, Math.min(5, Math.round(pressure * 6 + (6.5 - firstLamp.radius) * 1.2 - (level.lamps.length - 3) * 0.4)));
 }

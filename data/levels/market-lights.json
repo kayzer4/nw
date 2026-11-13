@@ -3,7 +3,7 @@
   "seed": "2063",
   "title": "Market Lights",
   "subtitle": "Watch the streets around the late market.",
-  "difficulty": 2,
+  "difficulty": 3,
   "grid": {
     "width": 6,
     "depth": 6,

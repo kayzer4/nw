@@ -1,24 +1,26 @@
 # Architecture
 
-Nightwatcher Clean is one Next.js 16 App Router project. The UI lives under `src/client/`; pages are under `src/app/`; Route Handlers are the backend interface.
+Nightwatcher Clean is a single Next.js project. `src/client` renders the game, `src/game` contains pure gameplay rules and shared light geometry, and `src/server` plus `tools` build and validate presets locally. The Next.js API reads checked-in JSON; it never runs the generator on requests.
 
 ## Level pipeline
 
-`data/model-configs.json` is input only for the server-side seeded generator in `src/server/level-builder.ts`. It ports `CityGenerator`'s 6×6 field, randomized 3–6 cell blocks, one-cell streets around blocks, road/building cell marking, and 20 layout attempts when road connections do not match. Road cells choose a configured tile by `roadConnect*` values; required GLBs from the original model pack are included so bends, ends, intersections, and crossings render. Buildings fill the marked block cells and face the nearest road. Citizen routes are made from configured road attractors and their direction vectors; character `scale` comes from JSON and is applied after normalizing the model to the shared 1.75-unit base height. Lamp candidates come from each placed road tile's JSON `lights`; a greedy set cover selects candidates for every 0.5-unit sample along every resident's cyclic route, considering configured range and building occlusion. Any remaining gap gets a curbside lamp from the configured lamp model. Initial on/off choices are selected separately within the energy budget. A numeric seed from 0 to 4294967295 uses the same Park–Miller random sequence as the original project. `GET /api/levels` lists four named seed presets. `GET /api/levels/[id]` builds the selected catalog entry, while `GET /api/levels/generate?seed=...` builds a custom seed. Both return normalized presets. The client receives only model URLs, transforms, routes, and game values; it never imports model tags or generator rules. `tools/build-levels.ts` produces a checked-in example preset without changing the catalog. Client modules never import `src/server/` or `data/model-configs.json`.
+`data/model-configs.json` supplies road cells, model transforms, attractors, walking vectors, resident sizes, and lamp models to `src/server/level-builder.ts`. The 6×6 block-and-street generator follows the original seeded layout algorithm. `tools/build-levels.ts` writes five ready presets in `data/levels` from the catalog. Run `bun run build:levels` to rebuild all, or `bun run build:levels --id north-gate --seed 12345` to rebuild one and update its seed. The browser can select only these catalog entries.
+
+`coverage-samples.ts` samples every road tile on a 0.25–0.5 unit grid and every continuous resident route. The builder greedily chooses configured lamp positions, adds curbside lamps for gaps, and raises the shared radius if necessary. All lamps in one preset have identical radius, color and intensity. `level-validation.ts` rejects any uncovered road or route sample and any level with more than seven lamps. It simulates all-on, all-off and a simple winning switch schedule. Difficulty 1–5 comes from the fraction of lamps needed to light half the residents, the available radius, and the number of alternatives.
 
 ## Game state
 
-`src/game/simulation.ts` owns deterministic session transitions and builds a citizen route point to nearby, unobstructed lamp index once when a level loads. Each one-second tick checks only those candidate lamps and updates energy, resident comfort, and shift phase. `src/game/game-store.ts` exposes these transitions through Zustand.
+`src/game/clock.ts` is the single monotonic game clock. `routePosition` computes interpolated resident positions from that time for both the Three.js model and the simulation. The simulation integrates comfort in 0.25-second slices, including when a tab resumes after throttling. Lamp toggles first settle elapsed time under the old switch states, then update lighting. Energy, comfort and resident status live in the same Zustand session snapshot. The renderer mutates model transforms in `useFrame` without React timer renders; only the HUD and each relevant lamp or resident status subscribe to store updates.
 
-The HUD subscribes to session values; each lamp subscribes only to its own on/off value. The 3D scene and its static GLB placements do not subscribe to the timer or energy. NPC position interpolation mutates Three.js groups in `useFrame` and never sets React state. The WebGL scene uses a Client Component dynamic import with SSR disabled, following the local Next.js client-boundary guide. React Strict Mode is disabled in development because R3F 9.7 schedules `forceContextLoss()` during its Canvas effect cleanup; Next dev replays that cleanup after mount, leaving a white canvas. Re-enable Strict Mode after upgrading R3F to a version that handles the replay correctly.
+`src/game/light.ts` defines the lamp head offset, footprint center, ground radius, cone angle, and building occlusion. The 3D spotlight and its ground footprint derive from the same `radius` as simulation and the HUD. Building occlusion is a footprint approximation using building bounds. Resident icons show current lit/dark status.
 
 ## Progress
 
-Campaign completion and the last used seed are saved under `nightwatcher-clean.progress` in `localStorage`, with schema version `1`. Invalid, unavailable, or outdated storage falls back to the initial campaign state.
+Completion and last selected level ID are stored in `localStorage` under `nightwatcher-clean.progress`, schema version 2. Version 1 completion records are retained. Invalid or unavailable storage falls back to the first level.
 
 ## Commands
 
-- `bun run build:levels` — rebuild checked-in level JSON from the model catalog.
-- `bun run dev` — start Next.js locally.
-- `bun run lint` — lint the source.
-- `bun run build` — create the production build.
+- `bun run build:levels` — rebuild and validate all five level JSON files.
+- `bun run build:levels --id first-shift --seed 12345` — regenerate one catalog level.
+- `bun run dev` — start the game.
+- `bun run lint`, `bun run test` and `bun run build` — check source, game rules and production bundle.

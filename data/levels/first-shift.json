@@ -3,7 +3,7 @@
   "seed": "1001",
   "title": "First Shift",
   "subtitle": "Keep the district lit until sunrise.",
-  "difficulty": 2,
+  "difficulty": 3,
   "grid": {
     "width": 6,
     "depth": 6,

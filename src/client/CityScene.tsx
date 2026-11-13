@@ -3,12 +3,12 @@
 import { useEffect, useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
-import { AnimationMixer, Box3, LoopRepeat, Object3D, type Group } from "three";
+import { AnimationMixer, Box3, CanvasTexture, LoopRepeat, Object3D, type Group } from "three";
 import { clone as skeletonClone } from "three/examples/jsm/utils/SkeletonUtils.js";
 import type { CitizenRoute, LevelPreset, PlacedAsset, PlacedLamp } from "@/game/level";
 import { useGameStore } from "@/game/game-store";
 import { gameClock } from "@/game/clock";
-import { lampCone } from "@/game/light";
+import { LAMP_HEAD, lampCone } from "@/game/light";
 import { routePosition } from "@/game/simulation";
 
 function Model({ asset, scale = 1 }: { asset: string; scale?: number }) {
@@ -32,7 +32,7 @@ function Lamp({ lamp }: { lamp: PlacedLamp }) {
   const cone = lampCone(lamp);
   const spotlightTarget = useMemo(() => {
     const target = new Object3D();
-    target.position.set(0, -5 * lamp.scale, -0.15 * lamp.scale);
+    target.position.set(0, -5 * lamp.scale, LAMP_HEAD[1] * lamp.scale);
     return target;
   }, [lamp.scale]);
   return (
@@ -45,9 +45,35 @@ function Lamp({ lamp }: { lamp: PlacedLamp }) {
     >
       <Model asset={lamp.asset} scale={lamp.scale} />
       <primitive object={spotlightTarget} />
-      {on && <spotLight position={[0, spotlightOriginHeight, -0.15 * lamp.scale]} target={spotlightTarget} color={lamp.color} intensity={lamp.intensity} distance={cone.distance} angle={cone.angle} penumbra={0.4} decay={2} />}
+      {on && <>
+        <spotLight position={[0, spotlightOriginHeight, LAMP_HEAD[1] * lamp.scale]} target={spotlightTarget} color={lamp.color} intensity={lamp.intensity} distance={cone.distance} angle={cone.angle} penumbra={0.4} decay={2} />
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.012, LAMP_HEAD[1] * lamp.scale]}>
+          <circleGeometry args={[lamp.radius, 64]} />
+          <meshBasicMaterial color={lamp.color} transparent opacity={0.065} depthWrite={false} />
+        </mesh>
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.015, LAMP_HEAD[1] * lamp.scale]}>
+          <ringGeometry args={[lamp.radius - 0.025, lamp.radius, 64]} />
+          <meshBasicMaterial color={lamp.color} transparent opacity={0.4} depthWrite={false} />
+        </mesh>
+      </>}
     </group>
   );
+}
+
+const statusTextures: Partial<Record<"lit" | "dark", CanvasTexture>> = {};
+function statusTexture(lit: boolean) {
+  const key = lit ? "lit" : "dark";
+  if (statusTextures[key]) return statusTextures[key];
+  const canvas = document.createElement("canvas");
+  canvas.width = canvas.height = 64;
+  const context = canvas.getContext("2d")!;
+  context.fillStyle = lit ? "#559d70" : "#c55755";
+  context.beginPath(); context.arc(32, 32, 28, 0, Math.PI * 2); context.fill();
+  context.fillStyle = "white"; context.textAlign = "center"; context.textBaseline = "middle";
+  context.font = "bold 37px Arial"; context.fillText(lit ? "✓" : "!", 32, 33);
+  const texture = new CanvasTexture(canvas);
+  statusTextures[key] = texture;
+  return texture;
 }
 
 function Citizen({ citizen }: { citizen: CitizenRoute }) {
@@ -90,7 +116,7 @@ function Citizen({ citizen }: { citizen: CitizenRoute }) {
     group.current.rotation.y = Math.atan2(next[0] - point[0], next[1] - point[1]);
   });
   const initial = citizen.route[0] ?? [0, 0];
-  return <group ref={group} position={[initial[0], 0, initial[1]]}><primitive object={clone} /><sprite position={[0, citizen.scale * 1.75 + 0.12, 0]} scale={[0.18, 0.18, 1]}><spriteMaterial color={lit ? "#8fe5a6" : "#ff746b"} depthTest={false} /></sprite></group>;
+  return <group ref={group} position={[initial[0], 0, initial[1]]}><primitive object={clone} /><sprite position={[0, citizen.scale * 1.75 + 0.22, 0]} scale={[0.34, 0.34, 1]}><spriteMaterial map={statusTexture(lit)} transparent depthTest={false} toneMapped={false} /></sprite></group>;
 }
 
 function District({ level }: { level: LevelPreset }) {

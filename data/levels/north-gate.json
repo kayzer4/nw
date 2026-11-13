@@ -3,7 +3,7 @@
   "seed": "3012",
   "title": "North Gate",
   "subtitle": "Hold the northern crossing through the night.",
-  "difficulty": 2,
+  "difficulty": 3,
   "grid": {
     "width": 6,
     "depth": 6,

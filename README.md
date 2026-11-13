@@ -6,15 +6,24 @@ A small 3D night-shift game built with Next.js 16, React 19, Three.js, and React
 
 ```bash
 bun install
-bun run build:levels
 bun run dev
 ```
 
-Open http://localhost:3000. Choose a district from the in-game selector or enter a numeric seed from `0` to `4294967295`. The server uses the original 6×6 block-and-street generator and selects matching cell models from `data/model-configs.json`. It also places enough lamps to cover every resident route; the client receives only the ready preset. `GET /api/levels` lists districts, `GET /api/levels/[id]` generates the selected catalog preset, and `GET /api/levels/generate?seed=12345` builds a custom one. `bun run build:levels` writes the checked-in example preset.
+Open http://localhost:3000 and choose one of five ready districts. Toggle lamps during the shift: leaving all of them on exhausts energy, while leaving them all off makes residents uncomfortable. The radius shown in the HUD matches the simulated and drawn ground footprint. Progress is saved in local storage.
+
+## Generate levels locally
+
+```bash
+bun run build:levels
+bun run build:levels --id north-gate --seed 12345
+```
+
+The tool reads `data/model-configs.json`, validates road coverage and the win/loss scenarios, then writes the JSON presets used by `GET /api/levels` and `GET /api/levels/[id]`. The server serves these files and does no generation at request time. See [architecture](docs/ARCHITECTURE.md) for details.
 
 ## Checks
 
 ```bash
 bun run lint
+bun run test
 bun run build
 ```
