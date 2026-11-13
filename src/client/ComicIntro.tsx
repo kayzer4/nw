@@ -94,7 +94,7 @@ export default function ComicIntro({ level, levels, onStart, onBack }: { level: 
             <div><div className="text-[9px] font-black tracking-[.2em]">ПАНЕЛЬ {panel + 1} / {story.panels.length}</div><div className="mt-1 text-[10px] font-medium tracking-[.08em] text-[#665d50]">НАЖМИ НА ПАНЕЛЬ, ЧТОБЫ ПЕРЕКЛЮЧИТЬ ФОКУС</div></div>
             <div className="flex items-center gap-3">
               {panel > 0 && <Button ghost icon={<ArrowLeftOutlined />} onClick={() => setPanel((value) => value - 1)} className="!border-[#202126] !text-[#202126]">Назад</Button>}
-              {isLastPanel ? <Button type="primary" icon={<ArrowRightOutlined />} iconPosition="end" onClick={onStart} className="!h-11 !border-0 !bg-[#202126] !px-5 !font-bold !text-[#f0e8d5]">Принять смену</Button> : <Button type="primary" icon={<ArrowRightOutlined />} iconPosition="end" onClick={() => setPanel((value) => value + 1)} className="!h-11 !border-0 !bg-[#202126] !px-5 !font-bold !text-[#f0e8d5]">Следующая панель</Button>}
+              {isLastPanel ? <Button type="primary" icon={<ArrowRightOutlined />} iconPlacement="end" onClick={onStart} className="!h-11 !border-0 !bg-[#202126] !px-5 !font-bold !text-[#f0e8d5]">Принять смену</Button> : <Button type="primary" icon={<ArrowRightOutlined />} iconPlacement="end" onClick={() => setPanel((value) => value + 1)} className="!h-11 !border-0 !bg-[#202126] !px-5 !font-bold !text-[#f0e8d5]">Следующая панель</Button>}
             </div>
           </footer>
         </section>
