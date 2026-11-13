@@ -59,8 +59,8 @@ function ControlRoom({ levels, completedIds, loadingId, error, onSelect, onRetry
     <Watcher />
     <Telephone />
     <DeskFan />
-    <group position={[0, 1.995, -1.53]}>
-      <Html transform center distanceFactor={4.3} wrapperClass="level-monitor-html">
+    <group position={[0, 1.995, -1.22]}>
+      <Html transform center occlude distanceFactor={4.3} zIndexRange={[1000, 0]} wrapperClass="level-monitor-html">
         <div className="level-monitor-scale"><LevelMonitor levels={levels} completedIds={completedIds} loadingId={loadingId} error={error} onSelect={onSelect} onRetry={onRetry} /></div>
       </Html>
     </group>
