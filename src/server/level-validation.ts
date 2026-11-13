@@ -1,9 +1,23 @@
-import type { LevelPreset } from "@/game/level";
+import type { LevelPreset, PlacedLamp } from "@/game/level";
 import { lampLightsPoint } from "@/game/light";
 import { advanceSession, createSession, routePosition } from "@/game/simulation";
 import { coverageSamples } from "./coverage-samples";
 import { modelFootprintRadius } from "./model-footprint";
 import { walkSegmentAllowed } from "./walk-geometry";
+
+export function lampExclusiveShares(lamps: readonly PlacedLamp[], samples: ReturnType<typeof coverageSamples>): number[] {
+  const exclusive = lamps.map(() => 0);
+  for (const { position } of samples) {
+    let only = -1;
+    for (let index = 0; index < lamps.length; index++) {
+      if (!lampLightsPoint(lamps[index], position)) continue;
+      if (only >= 0) { only = -2; break; }
+      only = index;
+    }
+    if (only >= 0) exclusive[only]++;
+  }
+  return exclusive.map((count) => count / samples.length);
+}
 
 function outcome(level: LevelPreset, states: Record<string, boolean>, firstDuration: number, secondStates = states) {
   const start = { ...createSession(level), phase: "playing" as const };
@@ -12,7 +26,8 @@ function outcome(level: LevelPreset, states: Record<string, boolean>, firstDurat
 }
 
 export function assessLevel(level: LevelPreset): number {
-  if (!level.citizens.length || !level.lamps.length || level.lamps.length > 10) throw new Error("Level needs residents and 1–10 lamps.");
+  const maxLamps = Math.max(10, Math.ceil(level.roads.length * 5 / 11));
+  if (!level.citizens.length || !level.lamps.length || level.lamps.length > maxLamps) throw new Error(`Level needs residents and 1–${maxLamps} lamps.`);
   if (level.citizens.some((citizen) => !Number.isFinite(citizen.speed) || citizen.speed <= 0)) throw new Error("Resident walking speed must be positive.");
   for (const building of level.buildings) {
     if (modelFootprintRadius(building.asset) * building.scale > 0.881) throw new Error(`Building ${building.id} overlaps its road clearance.`);
@@ -29,6 +44,7 @@ export function assessLevel(level: LevelPreset): number {
   const samples = coverageSamples(level.roads, level.citizens);
   const missing = samples.filter(({ position }) => !level.lamps.some((lamp) => lampLightsPoint(lamp, position)));
   if (missing.length) throw new Error(`${missing.length} road or route samples cannot be lit.`);
+  if (lampExclusiveShares(level.lamps, samples).some((share) => share === 0)) throw new Error("Level contains a redundant lamp.");
 
   const on = Object.fromEntries(level.lamps.map((lamp) => [lamp.id, true]));
   const off = Object.fromEntries(level.lamps.map((lamp) => [lamp.id, false]));

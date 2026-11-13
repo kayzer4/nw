@@ -2,9 +2,11 @@ import { describe, expect, test } from "bun:test";
 import fs from "node:fs";
 import { lampCone, lampFootprintCenter, lampLightsPoint } from "../src/game/light";
 import { advanceSession, citizenLighting, createSession, routePosition } from "../src/game/simulation";
-import { assessLevel } from "../src/server/level-validation";
+import { assessLevel, lampExclusiveShares } from "../src/server/level-validation";
 import { walkSegmentAllowed } from "../src/server/walk-geometry";
 import { modelFootprintRadius } from "../src/server/model-footprint";
+import { coverageSamples } from "../src/server/coverage-samples";
+import { buildLevel } from "../src/server/level-builder";
 
 const ids = ["first-shift", "market-lights", "north-gate", "west-end", "south-crossing"];
 const load = (id) => JSON.parse(fs.readFileSync(`data/levels/${id}.json`, "utf8"));
@@ -13,6 +15,8 @@ describe("ready level contracts", () => {
   for (const id of ids) test(id, () => {
     const level = load(id);
     expect(assessLevel(level)).toBe(level.difficulty);
+    expect(level.lamps.length).toBeLessThanOrEqual(Math.max(3, Math.ceil(level.roads.length * 5 / 11)));
+    expect(Math.min(...lampExclusiveShares(level.lamps, coverageSamples(level.roads, level.citizens)))).toBeGreaterThanOrEqual(0.04);
     const allOn = Object.fromEntries(level.lamps.map((lamp) => [lamp.id, true]));
     const allOff = Object.fromEntries(level.lamps.map((lamp) => [lamp.id, false]));
     const start = { ...createSession(level), phase: "playing" };
@@ -21,6 +25,15 @@ describe("ready level contracts", () => {
     const partial = advanceSession(level, start, allOn, 70);
     expect(advanceSession(level, partial, allOff, 100).phase).toBe("won");
   });
+});
+
+test("lamp target scales with road count for other seeds", () => {
+  for (const seed of [4, 6, 11, 25]) {
+    const level = buildLevel(String(seed));
+    const target = Math.max(3, Math.ceil(level.roads.length * 5 / 11));
+    expect(level.lamps.length).toBeLessThanOrEqual(target);
+    expect(Math.min(...lampExclusiveShares(level.lamps, coverageSamples(level.roads, level.citizens)))).toBeGreaterThanOrEqual(0.04);
+  }
 });
 
 test("rendered route and lighting state use the same interpolated position", () => {

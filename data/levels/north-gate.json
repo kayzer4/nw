@@ -3,7 +3,7 @@
   "seed": "3012",
   "title": "North Gate",
   "subtitle": "Hold the northern crossing through the night.",
-  "difficulty": 3,
+  "difficulty": 4,
   "grid": {
     "width": 6,
     "depth": 6,
@@ -420,7 +420,7 @@
       ],
       "rotationY": -1.5707963267948966,
       "scale": 1,
-      "radius": 2.8,
+      "radius": 3.4,
       "color": "#fffbe6",
       "intensity": 2,
       "initiallyOn": true
@@ -435,7 +435,7 @@
       ],
       "rotationY": -1.5707963267948966,
       "scale": 1,
-      "radius": 2.8,
+      "radius": 3.4,
       "color": "#fffbe6",
       "intensity": 2,
       "initiallyOn": true
@@ -444,13 +444,13 @@
       "id": "lamp-3",
       "asset": "/models/lamps/light-curved.glb",
       "position": [
-        -3,
+        -5,
         0,
         1.9
       ],
       "rotationY": 0,
       "scale": 1,
-      "radius": 2.8,
+      "radius": 3.4,
       "color": "#fffbe6",
       "intensity": 2,
       "initiallyOn": false
@@ -465,82 +465,7 @@
       ],
       "rotationY": -1.5707963267948966,
       "scale": 1,
-      "radius": 2.8,
-      "color": "#fffbe6",
-      "intensity": 2,
-      "initiallyOn": true
-    },
-    {
-      "id": "lamp-5",
-      "asset": "/models/lamps/light-curved.glb",
-      "position": [
-        3,
-        0,
-        0.09999999999999998
-      ],
-      "rotationY": -3.141592653589793,
-      "scale": 1,
-      "radius": 2.8,
-      "color": "#fffbe6",
-      "intensity": 2,
-      "initiallyOn": true
-    },
-    {
-      "id": "lamp-6",
-      "asset": "/models/lamps/light-curved.glb",
-      "position": [
-        -5,
-        0,
-        1.9
-      ],
-      "rotationY": 0,
-      "scale": 1,
-      "radius": 2.8,
-      "color": "#fffbe6",
-      "intensity": 2,
-      "initiallyOn": true
-    },
-    {
-      "id": "lamp-7",
-      "asset": "/models/lamps/light-curved.glb",
-      "position": [
-        5.9,
-        0,
-        5
-      ],
-      "rotationY": -4.71238898038469,
-      "scale": 1,
-      "radius": 2.8,
-      "color": "#fffbe6",
-      "intensity": 2,
-      "initiallyOn": true
-    },
-    {
-      "id": "lamp-8",
-      "asset": "/models/lamps/light-curved.glb",
-      "position": [
-        -1,
-        0,
-        0.09999999999999998
-      ],
-      "rotationY": -3.141592653589793,
-      "scale": 1,
-      "radius": 2.8,
-      "color": "#fffbe6",
-      "intensity": 2,
-      "initiallyOn": false
-    },
-    {
-      "id": "lamp-9",
-      "asset": "/models/lamps/light-curved.glb",
-      "position": [
-        5.9,
-        0,
-        1
-      ],
-      "rotationY": 1.5707963267948966,
-      "scale": 1,
-      "radius": 2.8,
+      "radius": 3.4,
       "color": "#fffbe6",
       "intensity": 2,
       "initiallyOn": false
@@ -982,7 +907,7 @@
   ],
   "rules": {
     "shiftSeconds": 100,
-    "startingEnergy": 207.35999999999999,
+    "startingEnergy": 92.16,
     "energyPerLampSecond": 0.32,
     "startingSatisfaction": 68,
     "minimumSatisfaction": 35

@@ -3,7 +3,7 @@ import path from "node:path";
 import type { CitizenRoute, LevelPreset, PlacedAsset, PlacedLamp, Position2 } from "@/game/level";
 import { lampLightsPoint } from "@/game/light";
 import { coverageSamples, type CoverageSample } from "./coverage-samples";
-import { assessLevel } from "./level-validation";
+import { assessLevel, lampExclusiveShares } from "./level-validation";
 import { modelFootprintRadius } from "./model-footprint";
 import { walkSegmentAllowed } from "./walk-geometry";
 
@@ -442,10 +442,14 @@ function completeRouteCoverage(
     const key = `${lamp.position[0].toFixed(2)},${lamp.position[2].toFixed(2)},${lamp.asset}`;
     if (!unique.has(key)) unique.set(key, lamp);
   }
-  const placed = [...unique.values()].map((lamp, index) => ({ ...lamp, id: `lamp-${index + 1}` }));
+  const placed = [...unique.values()];
+  // Greedy choices made early can become unnecessary after curbside gap fills.
+  for (let index = placed.length - 1; index >= 0; index--) {
+    if (samples.every(({ position }) => placed.some((lamp, other) => other !== index && lampLightsPoint(lamp, position)))) placed.splice(index, 1);
+  }
   const stillUncovered = samples.filter((sample) => !placed.some((lamp) => lampLightsPoint(lamp, sample.position)));
   if (stillUncovered.length > 0) throw new Error(`Could not fully light road samples: ${stillUncovered.length}`);
-  return placed;
+  return placed.map((lamp, index) => ({ ...lamp, id: `lamp-${index + 1}` }));
 }
 
 function chooseInitiallyOn(lamps: PlacedLamp[], citizens: CitizenRoute[]): PlacedLamp[] {
@@ -515,13 +519,18 @@ export function buildLevel(seedInput: string): LevelPreset {
   const uniformColor = baseCandidates[0]?.color ?? "#fff8e7";
   const uniformIntensity = baseCandidates[0]?.intensity ?? 2;
   let lamps: PlacedLamp[] = [];
+  let bestLamps: PlacedLamp[] | null = null;
   const baseRadius = 2.8 + Number(seed) % 3 * 0.2;
-  for (let step = 0; baseRadius + step * 0.2 <= 3.801; step++) {
+  const targetLampCount = Math.max(3, Math.ceil(roads.length * 5 / 11));
+  for (let step = 0; baseRadius + step * 0.2 <= 5.401; step++) {
     const radius = Math.round((baseRadius + step * 0.2) * 10) / 10;
     const candidates = baseCandidates.map((lamp) => ({ ...lamp, radius, color: uniformColor, intensity: uniformIntensity }));
-    lamps = completeRouteCoverage(candidates, samples, buildings);
-    if (lamps.length <= 10) break;
+    const candidateLamps = completeRouteCoverage(candidates, samples, buildings);
+    const leastExclusive = Math.min(...lampExclusiveShares(candidateLamps, samples));
+    if (!bestLamps || candidateLamps.length < bestLamps.length || (candidateLamps.length === bestLamps.length && leastExclusive > Math.min(...lampExclusiveShares(bestLamps, samples)))) bestLamps = candidateLamps;
+    if (candidateLamps.length <= targetLampCount && leastExclusive >= 0.04) { lamps = candidateLamps; break; }
   }
+  if (!lamps.length) lamps = bestLamps ?? [];
   lamps = chooseInitiallyOn(lamps, citizens);
 
   const level: LevelPreset = {
