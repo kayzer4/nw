@@ -2,6 +2,8 @@ import type { LevelPreset } from "@/game/level";
 import { lampLightsPoint } from "@/game/light";
 import { advanceSession, createSession, routePosition } from "@/game/simulation";
 import { coverageSamples } from "./coverage-samples";
+import { modelFootprintRadius } from "./model-footprint";
+import { walkSegmentAllowed } from "./walk-geometry";
 
 function outcome(level: LevelPreset, states: Record<string, boolean>, firstDuration: number, secondStates = states) {
   const start = { ...createSession(level), phase: "playing" as const };
@@ -10,7 +12,15 @@ function outcome(level: LevelPreset, states: Record<string, boolean>, firstDurat
 }
 
 export function assessLevel(level: LevelPreset): number {
-  if (!level.citizens.length || !level.lamps.length || level.lamps.length > 7) throw new Error("Level needs residents and 1–7 lamps.");
+  if (!level.citizens.length || !level.lamps.length || level.lamps.length > 10) throw new Error("Level needs residents and 1–10 lamps.");
+  for (const building of level.buildings) {
+    if (modelFootprintRadius(building.asset) * building.scale > 0.881) throw new Error(`Building ${building.id} overlaps its road clearance.`);
+  }
+  for (const citizen of level.citizens) for (let index = 0; index < citizen.route.length; index++) {
+    if (!walkSegmentAllowed(citizen.route[index], citizen.route[(index + 1) % citizen.route.length], level.roads, level.grid)) {
+      throw new Error(`Resident ${citizen.id} leaves a sidewalk or an authorized crossing.`);
+    }
+  }
   const [firstLamp] = level.lamps;
   if (level.lamps.some((lamp) => lamp.radius !== firstLamp.radius || lamp.color !== firstLamp.color || lamp.intensity !== firstLamp.intensity)) {
     throw new Error("Lamp power, color and radius must be uniform within a level.");
@@ -40,5 +50,5 @@ export function assessLevel(level: LevelPreset): number {
   }
   const pressure = requiredFraction / (shift / 10) / 0.72;
   // The fewer simultaneous lamps needed, and the wider their reach, the easier the shift.
-  return Math.max(1, Math.min(5, Math.round(pressure * 6 + (6.5 - firstLamp.radius) * 1.2 - (level.lamps.length - 3) * 0.4)));
+  return Math.max(1, Math.min(5, Math.round(2 + pressure * 4 + (3.8 - firstLamp.radius) * 1.2 - (level.lamps.length - 6) * 0.3)));
 }

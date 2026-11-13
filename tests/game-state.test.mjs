@@ -3,6 +3,8 @@ import fs from "node:fs";
 import { lampFootprintCenter, lampLightsPoint } from "../src/game/light";
 import { advanceSession, citizenLighting, createSession, routePosition } from "../src/game/simulation";
 import { assessLevel } from "../src/server/level-validation";
+import { walkSegmentAllowed } from "../src/server/walk-geometry";
+import { modelFootprintRadius } from "../src/server/model-footprint";
 
 const ids = ["first-shift", "market-lights", "north-gate", "west-end", "south-crossing"];
 const load = (id) => JSON.parse(fs.readFileSync(`data/levels/${id}.json`, "utf8"));
@@ -37,4 +39,24 @@ test("light radius is measured from the rendered lamp head", () => {
   const center = lampFootprintCenter(lamp);
   expect(lampLightsPoint(lamp, center, [])).toBe(true);
   expect(lampLightsPoint(lamp, [center[0] + lamp.radius + 0.01, center[1]], [])).toBe(false);
+});
+
+test("residents cross the road only on a marked crossing model", () => {
+  const level = load("first-shift");
+  const crossing = level.roads.find((road) => road.asset.endsWith("/road-crossing.glb"));
+  const straight = level.roads.find((road) => road.asset.endsWith("/road-straight.glb"));
+  expect(crossing).toBeDefined();
+  expect(straight).toBeDefined();
+  const crossingPoints = (road) => {
+    const x = road.position[0], z = road.position[2], rotation = road.rotationY;
+    return [[x - Math.sin(rotation) * 0.9, z - Math.cos(rotation) * 0.9], [x + Math.sin(rotation) * 0.9, z + Math.cos(rotation) * 0.9]];
+  };
+  expect(walkSegmentAllowed(...crossingPoints(crossing), level.roads, level.grid)).toBe(true);
+  expect(walkSegmentAllowed(...crossingPoints(straight), level.roads, level.grid)).toBe(false);
+});
+
+test("placed building geometry stays inside its cell", () => {
+  for (const id of ids) for (const building of load(id).buildings) {
+    expect(modelFootprintRadius(building.asset) * building.scale).toBeLessThanOrEqual(0.881);
+  }
 });

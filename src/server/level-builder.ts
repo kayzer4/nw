@@ -4,6 +4,8 @@ import type { CitizenRoute, LevelPreset, PlacedAsset, PlacedLamp, Position2 } fr
 import { lampLightsPoint } from "@/game/light";
 import { coverageSamples, type CoverageSample } from "./coverage-samples";
 import { assessLevel } from "./level-validation";
+import { modelFootprintRadius } from "./model-footprint";
+import { walkSegmentAllowed } from "./walk-geometry";
 
 type RawConfig = {
   name: string; pack: string; modelType: string; roadType?: string;
@@ -199,12 +201,13 @@ function placeBuildings(map: CellType[][], blocks: Block[], models: ReturnType<t
         if (map[x]?.[z] !== "building") continue;
         const { config } = pick(models, random);
         const [worldX, worldZ] = toWorldPosition(x, z);
+        const asset = `/models/${config.pack}/${config.name}.glb`;
         placed.push({
           id: `building-${x}-${z}`,
-          asset: `/models/${config.pack}/${config.name}.glb`,
+          asset,
           position: [worldX, 0, worldZ],
           rotationY: buildingRotation(nearestRoadDirection(x, z, map)),
-          scale: CELL_SIZE / Math.max(config.actualWidth ?? 1, config.actualDepth ?? 1),
+          scale: Math.min(CELL_SIZE / Math.max(config.actualWidth ?? 1, config.actualDepth ?? 1), 0.88 / modelFootprintRadius(asset)),
         });
       }
     }
@@ -276,7 +279,7 @@ function directionAllowed(from: WalkNode, to: WalkNode) {
   });
 }
 
-function linkWalkNodes(nodes: WalkNode[]) {
+function linkWalkNodes(nodes: WalkNode[], roads: readonly PlacedAsset[]) {
   for (const from of nodes) {
     for (const to of nodes) {
       if (from.id === to.id || !directionAllowed(from, to)) continue;
@@ -289,6 +292,7 @@ function linkWalkNodes(nodes: WalkNode[]) {
           : Math.abs(from.position[0] - to.position[0]);
         if (lateral > CELL_SIZE * 0.15) continue;
       }
+      if (!walkSegmentAllowed(from.position, to.position, roads, { width: WIDTH, depth: DEPTH, cellSize: CELL_SIZE })) continue;
       from.next.push(to.id);
     }
   }
@@ -328,9 +332,9 @@ function findWalkCycles(nodes: WalkNode[]): WalkNode[][] {
   return cycles;
 }
 
-function makeCitizenRoutes(roads: { x: number; z: number; tile: RoadTile }[], random: () => number): CitizenRoute[] {
-  const nodes = makeWalkNodes(roads);
-  linkWalkNodes(nodes);
+function makeCitizenRoutes(roadCells: { x: number; z: number; tile: RoadTile }[], roads: PlacedAsset[], random: () => number): CitizenRoute[] {
+  const nodes = makeWalkNodes(roadCells);
+  linkWalkNodes(nodes, roads);
   const cycles = findWalkCycles(nodes);
   const people = characterModels();
   if (cycles.length === 0 || people.length === 0) return [];
@@ -455,7 +459,7 @@ function chooseInitiallyOn(lamps: PlacedLamp[], citizens: CitizenRoute[], buildi
     .map((point) => [`${point[0].toFixed(2)},${point[1].toFixed(2)}`, point] as const)).values()];
   const uncovered = new Set(anchors.map((_, index) => index));
   const selected = new Set<string>();
-  const maxContinuousLights = Math.floor(190 / (0.32 * 100));
+  const maxContinuousLights = Math.max(1, Math.floor(lamps.length * 0.72));
   while (selected.size < maxContinuousLights && uncovered.size > 0) {
     let best: PlacedLamp | undefined;
     let bestIndices: number[] = [];
@@ -511,16 +515,18 @@ export function buildLevel(seedInput: string): LevelPreset {
   }
 
   const buildings = placeBuildings(map, blocks, models, random);
-  const citizens = makeCitizenRoutes(roadCells, random);
+  const citizens = makeCitizenRoutes(roadCells, roads, random);
   const samples = coverageSamples(roads, citizens);
   const baseCandidates = createLampCandidates(roadCells);
   const uniformColor = baseCandidates[0]?.color ?? "#fff8e7";
   const uniformIntensity = baseCandidates[0]?.intensity ?? 2;
   let lamps: PlacedLamp[] = [];
-  for (let radius = 5.5 + Number(seed) % 3 * 0.5; radius <= 8; radius += 0.5) {
+  const baseRadius = 2.8 + Number(seed) % 3 * 0.2;
+  for (let step = 0; baseRadius + step * 0.2 <= 3.801; step++) {
+    const radius = Math.round((baseRadius + step * 0.2) * 10) / 10;
     const candidates = baseCandidates.map((lamp) => ({ ...lamp, radius, color: uniformColor, intensity: uniformIntensity }));
     lamps = completeRouteCoverage(candidates, samples, buildings);
-    if (lamps.length <= 7) break;
+    if (lamps.length <= 10) break;
   }
   lamps = chooseInitiallyOn(lamps, citizens, buildings);
 

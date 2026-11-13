@@ -12,7 +12,7 @@ export function lampCone(lamp: PlacedLamp) {
 }
 function hitsBuilding(a: Position2, b: Position2, x: number, z: number) {
   let lo = 0, hi = 1;
-  for (const [origin, delta, min, max] of [[a[0], b[0] - a[0], x - 1.05, x + 1.05], [a[1], b[1] - a[1], z - 1.05, z + 1.05]]) {
+  for (const [origin, delta, min, max] of [[a[0], b[0] - a[0], x - 0.88, x + 0.88], [a[1], b[1] - a[1], z - 0.88, z + 0.88]]) {
     if (Math.abs(delta) < 1e-8) { if (origin < min || origin > max) return false; continue; }
     const t1 = (min - origin) / delta, t2 = (max - origin) / delta;
     lo = Math.max(lo, Math.min(t1, t2)); hi = Math.min(hi, Math.max(t1, t2));

@@ -142,7 +142,7 @@
         -5
       ],
       "rotationY": 0,
-      "scale": 0.9523809523809523
+      "scale": 0.844696694274832
     },
     {
       "id": "building-1-0",
@@ -153,7 +153,7 @@
         -5
       ],
       "rotationY": 0,
-      "scale": 2
+      "scale": 1.7462200582982104
     },
     {
       "id": "building-2-0",
@@ -164,7 +164,7 @@
         -5
       ],
       "rotationY": 0,
-      "scale": 1.5384615384615383
+      "scale": 1.268110736229069
     },
     {
       "id": "building-3-0",
@@ -175,7 +175,7 @@
         -5
       ],
       "rotationY": 0,
-      "scale": 1.1764705882352942
+      "scale": 1.073170663060925
     },
     {
       "id": "building-4-0",
@@ -186,7 +186,7 @@
         -5
       ],
       "rotationY": -1.5707963267948966,
-      "scale": 1.5384615384615383
+      "scale": 1.359073279004585
     },
     {
       "id": "building-0-1",
@@ -197,7 +197,7 @@
         -3
       ],
       "rotationY": 0,
-      "scale": 0.8333333333333334
+      "scale": 0.7586205555624638
     },
     {
       "id": "building-1-1",
@@ -208,7 +208,7 @@
         -3
       ],
       "rotationY": 0,
-      "scale": 0.9523809523809523
+      "scale": 0.844696694274832
     },
     {
       "id": "building-2-1",
@@ -219,7 +219,7 @@
         -3
       ],
       "rotationY": 0,
-      "scale": 1.4285714285714286
+      "scale": 1.2941164991032577
     },
     {
       "id": "building-3-1",
@@ -230,7 +230,7 @@
         -3
       ],
       "rotationY": 0,
-      "scale": 0.9523809523809523
+      "scale": 0.844696694274832
     },
     {
       "id": "building-4-1",
@@ -241,7 +241,7 @@
         -3
       ],
       "rotationY": -1.5707963267948966,
-      "scale": 2
+      "scale": 1.7087371204835033
     },
     {
       "id": "building-0-2",
@@ -252,7 +252,7 @@
         -1
       ],
       "rotationY": 3.141592653589793,
-      "scale": 2
+      "scale": 1.9555553483374544
     },
     {
       "id": "building-1-2",
@@ -263,7 +263,7 @@
         -1
       ],
       "rotationY": 3.141592653589793,
-      "scale": 2
+      "scale": 1.8723403115572639
     },
     {
       "id": "building-2-2",
@@ -274,7 +274,7 @@
         -1
       ],
       "rotationY": 3.141592653589793,
-      "scale": 0.8333333333333334
+      "scale": 0.7586205555624638
     },
     {
       "id": "building-3-2",
@@ -285,7 +285,7 @@
         -1
       ],
       "rotationY": 3.141592653589793,
-      "scale": 2
+      "scale": 1.7087371204835033
     },
     {
       "id": "building-4-2",
@@ -296,7 +296,7 @@
         -1
       ],
       "rotationY": 3.141592653589793,
-      "scale": 0.9523809523809523
+      "scale": 0.844696694274832
     },
     {
       "id": "building-0-4",
@@ -307,7 +307,7 @@
         3
       ],
       "rotationY": 0,
-      "scale": 2
+      "scale": 1.7462200582982104
     },
     {
       "id": "building-1-4",
@@ -318,7 +318,7 @@
         3
       ],
       "rotationY": 0,
-      "scale": 2
+      "scale": 1.614678673045493
     },
     {
       "id": "building-2-4",
@@ -329,7 +329,7 @@
         3
       ],
       "rotationY": 0,
-      "scale": 2
+      "scale": 1.9555553483374544
     },
     {
       "id": "building-0-5",
@@ -340,7 +340,7 @@
         5
       ],
       "rotationY": 0,
-      "scale": 1.5384615384615383
+      "scale": 1.2941169528403922
     },
     {
       "id": "building-1-5",
@@ -351,7 +351,7 @@
         5
       ],
       "rotationY": 0,
-      "scale": 2
+      "scale": 1.7087371204835033
     },
     {
       "id": "building-2-5",
@@ -362,7 +362,7 @@
         5
       ],
       "rotationY": -1.5707963267948966,
-      "scale": 1.4285714285714286
+      "scale": 1.2553494383771757
     },
     {
       "id": "building-4-4",
@@ -373,7 +373,7 @@
         3
       ],
       "rotationY": 0,
-      "scale": 1.5384615384615383
+      "scale": 1.359073279004585
     },
     {
       "id": "building-5-4",
@@ -384,7 +384,7 @@
         3
       ],
       "rotationY": 0,
-      "scale": 1.5384615384615383
+      "scale": 1.268110736229069
     },
     {
       "id": "building-4-5",
@@ -395,7 +395,7 @@
         5
       ],
       "rotationY": 1.5707963267948966,
-      "scale": 1.1764705882352942
+      "scale": 1.073170663060925
     },
     {
       "id": "building-5-5",
@@ -406,7 +406,7 @@
         5
       ],
       "rotationY": 0,
-      "scale": 2
+      "scale": 1.9555553483374544
     }
   ],
   "lamps": [
@@ -420,7 +420,7 @@
       ],
       "rotationY": 3.141592653589793,
       "scale": 1,
-      "radius": 6.5,
+      "radius": 3.2,
       "color": "#fffbe6",
       "intensity": 2,
       "initiallyOn": true
@@ -429,13 +429,13 @@
       "id": "lamp-2",
       "asset": "/models/lamps/light-curved.glb",
       "position": [
-        4.1,
+        5.9,
         0,
-        -5
+        -3
       ],
-      "rotationY": -1.5707963267948966,
+      "rotationY": 1.5707963267948966,
       "scale": 1,
-      "radius": 6.5,
+      "radius": 3.2,
       "color": "#fffbe6",
       "intensity": 2,
       "initiallyOn": true
@@ -450,10 +450,70 @@
       ],
       "rotationY": 0,
       "scale": 1,
-      "radius": 6.5,
+      "radius": 3.2,
       "color": "#fffbe6",
       "intensity": 2,
       "initiallyOn": true
+    },
+    {
+      "id": "lamp-4",
+      "asset": "/models/lamps/light-curved.glb",
+      "position": [
+        1.9,
+        0,
+        5
+      ],
+      "rotationY": -4.71238898038469,
+      "scale": 1,
+      "radius": 3.2,
+      "color": "#fffbe6",
+      "intensity": 2,
+      "initiallyOn": true
+    },
+    {
+      "id": "lamp-5",
+      "asset": "/models/lamps/light-curved.glb",
+      "position": [
+        5,
+        0,
+        1.9
+      ],
+      "rotationY": 0,
+      "scale": 1,
+      "radius": 3.2,
+      "color": "#fffbe6",
+      "intensity": 2,
+      "initiallyOn": true
+    },
+    {
+      "id": "lamp-6",
+      "asset": "/models/lamps/light-curved.glb",
+      "position": [
+        -3,
+        0,
+        1.9
+      ],
+      "rotationY": 0,
+      "scale": 1,
+      "radius": 3.2,
+      "color": "#fffbe6",
+      "intensity": 2,
+      "initiallyOn": false
+    },
+    {
+      "id": "lamp-7",
+      "asset": "/models/lamps/light-curved.glb",
+      "position": [
+        4.1,
+        0,
+        -5
+      ],
+      "rotationY": -1.5707963267948966,
+      "scale": 1,
+      "radius": 3.2,
+      "color": "#fffbe6",
+      "intensity": 2,
+      "initiallyOn": false
     }
   ],
   "citizens": [
@@ -668,7 +728,7 @@
   ],
   "rules": {
     "shiftSeconds": 100,
-    "startingEnergy": 69.12,
+    "startingEnergy": 161.28,
     "energyPerLampSecond": 0.32,
     "startingSatisfaction": 68,
     "minimumSatisfaction": 35
