@@ -27,6 +27,7 @@ function SceneArt({ chapter, panel, active }: { chapter: ComicChapter; panel: nu
     {style.weather === "critical" && <div className="absolute left-6 top-8 border-2 border-[#e69a68]/60 px-2 py-1 text-[8px] font-bold tracking-[.2em] text-[#f1bc91]">SOUTH / OPEN</div>}
     <div className="absolute inset-x-0 bottom-0 h-[45%] bg-[#081019]/90 [clip-path:polygon(0_43%,17%_21%,34%_46%,49%_13%,65%_38%,82%_18%,100%_40%,100%_100%,0_100%)]" />
     <div className="absolute inset-x-[8%] bottom-[21%] h-1 bg-[#b9c2bd]/30 shadow-[0_0_18px_rgba(159,201,204,.18)]" />
+    <div className={`comic-watcher comic-watcher-${panel}`}><span className="comic-watcher-head" /><span className="comic-watcher-body" /><span className="comic-watcher-arm" /><span className="comic-watcher-beam" /></div>
     {Array.from({ length: lampCount }).map((_, index) => <div key={index} className="absolute bottom-[20%]" style={{ left: `${15 + index * (68 / Math.max(1, lampCount - 1))}%` }}>
       <div className="absolute -left-4 -top-6 h-8 w-8 rounded-full bg-[#f4c978]/10 blur-md" />
       <div className="relative h-16 w-[2px] bg-[#77828a]/80"><span className="absolute -left-[4px] -top-1 h-2 w-3 rounded-full bg-[#f5cf82] shadow-[0_0_12px_4px_rgba(245,207,130,.7)]" /></div>
@@ -38,12 +39,14 @@ function SceneArt({ chapter, panel, active }: { chapter: ComicChapter; panel: nu
 
 function ComicPanelCard({ chapter, panel, active, onSelect }: { chapter: ComicChapter; panel: ComicPanel; active: boolean; onSelect: () => void }) {
   const index = chapter.panels.indexOf(panel);
+  const sceneLabel = ["ПРИБЫТИЕ", "НАБЛЮДЕНИЕ", "РЕШЕНИЕ"][index] ?? "СЦЕНА";
   return <button type="button" onClick={onSelect} aria-label={`Открыть панель ${index + 1}: ${panel.title}`} style={{ animationDelay: `${index * 120}ms` }} className={`comic-panel-pop group relative block w-full text-left transition duration-200 ${active ? "z-10 -translate-y-1 rotate-[-.4deg]" : "rotate-[.35deg] opacity-85 hover:-translate-y-0.5 hover:opacity-100"}`}>
     <div className="absolute -inset-1 bg-[#202126] shadow-[7px_8px_0_rgba(0,0,0,.24)]" />
     <div className="relative overflow-hidden bg-[#eee9dc] p-1 text-[#202126]">
       <SceneArt chapter={chapter} panel={index} active={active} />
       <div className="min-h-[190px] p-4 sm:min-h-[210px] sm:p-5">
         <div className="flex items-start justify-between gap-3"><span className="text-[8px] font-black tracking-[.16em] text-[#997949]">{panel.kicker}</span><span className="font-serif text-xl text-[#9d9481]">{String(index + 1).padStart(2, "0")}</span></div>
+        <div className="mt-2 inline-block bg-[#202126] px-2 py-1 text-[8px] font-black tracking-[.18em] text-[#f0e8d5]">{sceneLabel}</div>
         <h2 className="mt-3 font-serif text-[27px] leading-[.98] tracking-[-.035em]">{panel.title}</h2>
         <p className="mt-3 text-[12px] leading-5 text-[#5d6061]">{panel.text}</p>
         {panel.speech && <div className="comic-bubble relative mt-4 border-2 border-[#24262a] bg-[#faf6e9] p-3 text-[11px] font-medium leading-4 shadow-[3px_3px_0_#c9bfa9] before:absolute before:-bottom-2 before:left-5 before:h-3 before:w-3 before:rotate-45 before:border-b-2 before:border-r-2 before:border-[#24262a] before:bg-[#faf6e9]">«{panel.speech}»</div>}
@@ -87,7 +90,7 @@ export default function ComicIntro({ level, levels, onStart, onBack }: { level: 
           </div>
 
           <div className="grid flex-1 items-start gap-5 md:grid-cols-3 md:gap-6">
-            {story.panels.map((item, index) => <ComicPanelCard key={`${story.levelId}-${index}`} chapter={story} panel={item} active={panel === index} onSelect={() => setPanel(index)} />)}
+            {story.panels.map((item, index) => <div key={`${story.levelId}-${index}`} className="relative md:after:absolute md:after:-right-5 md:after:top-1/2 md:after:h-1 md:after:w-5 md:after:bg-[#202126] md:after:content-[''] last:after:hidden"><ComicPanelCard chapter={story} panel={item} active={panel === index} onSelect={() => setPanel(index)} /></div>)}
           </div>
 
           <footer className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t-4 border-[#202126] pt-5">
