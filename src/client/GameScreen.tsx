@@ -9,42 +9,38 @@ import GameHud from "./GameHud";
 import { GameTicker } from "./GameTicker";
 import { ProgressRecorder } from "./ProgressRecorder";
 
-const DEFAULT_SEED = "1001";
+const DEFAULT_LEVEL = "first-shift";
 const CityScene = dynamic(() => import("./CityScene"), { ssr: false, loading: () => <div className="scene-loading">BUILDING THE NIGHT DISTRICT…</div> });
 
 export default function GameScreen() {
   const [level, setLevel] = useState<LevelPreset | null>(null);
   const [levels, setLevels] = useState<LevelSummary[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [isGenerating, setIsGenerating] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [completed, setCompleted] = useState(false);
 
-  const loadPreset = useCallback(async (url: string) => {
-    setIsGenerating(true);
+  const loadPreset = useCallback(async (levelId: string) => {
+    setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch(url, { cache: "no-store" });
+      const response = await fetch(`/api/levels/${encodeURIComponent(levelId)}`, { cache: "no-store" });
       const result = await response.json() as LevelPreset | { error?: string };
       if (!response.ok || "error" in result) throw new Error("error" in result ? result.error : "Could not load this district.");
       const preset = result as LevelPreset;
       useGameStore.getState().loadLevel(preset);
       const progress = loadProgress();
-      saveProgress({ ...progress, lastSeed: preset.seed });
+      saveProgress({ ...progress, lastLevelId: preset.id });
       setCompleted(progress.completedLevelIds.includes(preset.id));
       setLevel(preset);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Could not load this district.");
     } finally {
-      setIsGenerating(false);
+      setIsLoading(false);
     }
   }, []);
 
-  const loadSeed = useCallback((seed: string) => {
-    void loadPreset(`/api/levels/generate?seed=${encodeURIComponent(seed)}`);
-  }, [loadPreset]);
-
   const selectLevel = useCallback((levelId: string) => {
-    if (levelId !== "custom") void loadPreset(`/api/levels/${encodeURIComponent(levelId)}`);
+    void loadPreset(levelId);
   }, [loadPreset]);
 
   useEffect(() => {
@@ -56,29 +52,25 @@ export default function GameScreen() {
           const catalog = await response.json() as LevelSummary[];
           if (catalog.length === 0) throw new Error("No playable districts are available.");
           setLevels(catalog);
-          const savedSeed = loadProgress().lastSeed ?? DEFAULT_SEED;
-          const savedDistrict = catalog.find((entry) => entry.seed === savedSeed);
-          const url = savedDistrict
-            ? `/api/levels/${encodeURIComponent(savedDistrict.id)}`
-            : `/api/levels/generate?seed=${encodeURIComponent(savedSeed)}`;
-          await loadPreset(url);
+          const savedId = loadProgress().lastLevelId ?? DEFAULT_LEVEL;
+          await loadPreset(catalog.some((entry) => entry.id === savedId) ? savedId : catalog[0].id);
         } catch (cause) {
           setError(cause instanceof Error ? cause.message : "Could not load the district list.");
-          setIsGenerating(false);
+          setIsLoading(false);
         }
       })();
     }, 0);
     return () => window.clearTimeout(timer);
   }, [loadPreset]);
 
-  if (error && !level) return <main className="load-state"><div className="eyebrow">NIGHTWATCHER / CONNECTION ERROR</div><h1>Couldn’t load the district.</h1><p>{error}</p><button onClick={() => loadSeed(DEFAULT_SEED)}>TRY AGAIN</button></main>;
-  if (!level) return <main className="load-state"><div className="loader-orbit"><i /></div><div className="eyebrow">PREPARING YOUR SHIFT</div><h1>Generating the city…</h1><p>The server is building a district from its seed.</p></main>;
+  if (error && !level) return <main className="load-state"><div className="eyebrow">NIGHTWATCHER / CONNECTION ERROR</div><h1>Couldn’t load the district.</h1><p>{error}</p><button onClick={() => void loadPreset(DEFAULT_LEVEL)}>TRY AGAIN</button></main>;
+  if (!level) return <main className="load-state"><div className="loader-orbit"><i /></div><div className="eyebrow">PREPARING YOUR SHIFT</div><h1>Loading the city…</h1><p>Reading a ready district.</p></main>;
 
   return (
     <main className="game-shell">
       <div className="city-stage"><CityScene level={level} /></div>
       <div className="vignette" />
-      <GameHud level={level} levels={levels} isGenerating={isGenerating} generationError={error} onGenerateSeed={loadSeed} onSelectLevel={selectLevel} />
+      <GameHud level={level} levels={levels} isLoading={isLoading} loadError={error} onSelectLevel={selectLevel} />
       <GameTicker />
       <ProgressRecorder levelId={level.id} />
       {completed && <div className="record-chip">PREVIOUS SHIFT COMPLETED</div>}

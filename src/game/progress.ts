@@ -1,12 +1,12 @@
 export interface CampaignProgress {
-  version: 1;
-  lastSeed?: string;
+  version: 2;
+  lastLevelId?: string;
   unlockedLevelIds: string[];
   completedLevelIds: string[];
 }
 
 const STORAGE_KEY = "nightwatcher-clean.progress";
-export const EMPTY_PROGRESS: CampaignProgress = { version: 1, lastSeed: "1001", unlockedLevelIds: ["first-shift"], completedLevelIds: [] };
+export const EMPTY_PROGRESS: CampaignProgress = { version: 2, lastLevelId: "first-shift", unlockedLevelIds: ["first-shift"], completedLevelIds: [] };
 
 type StorageLike = Pick<Storage, "getItem" | "setItem">;
 function browserStorage(): StorageLike | null {
@@ -20,12 +20,12 @@ export function loadProgress(storage: StorageLike | null = browserStorage()): Ca
     const parsed: unknown = JSON.parse(storage.getItem(STORAGE_KEY) ?? "null");
     if (!parsed || typeof parsed !== "object") return { ...EMPTY_PROGRESS, unlockedLevelIds: [...EMPTY_PROGRESS.unlockedLevelIds], completedLevelIds: [] };
     const value = parsed as Partial<CampaignProgress>;
-    if (value.version !== 1 || !Array.isArray(value.unlockedLevelIds) || !Array.isArray(value.completedLevelIds)) {
+    if (!Array.isArray(value.unlockedLevelIds) || !Array.isArray(value.completedLevelIds)) {
       return { ...EMPTY_PROGRESS, unlockedLevelIds: [...EMPTY_PROGRESS.unlockedLevelIds], completedLevelIds: [] };
     }
     return {
-      version: 1,
-      lastSeed: typeof value.lastSeed === "string" && /^\d{1,10}$/.test(value.lastSeed) && Number(value.lastSeed) <= 4_294_967_295 ? value.lastSeed : "1001",
+      version: 2,
+      lastLevelId: value.version === 2 && typeof value.lastLevelId === "string" ? value.lastLevelId : "first-shift",
       unlockedLevelIds: value.unlockedLevelIds.filter((id): id is string => typeof id === "string"),
       completedLevelIds: value.completedLevelIds.filter((id): id is string => typeof id === "string"),
     };
@@ -40,8 +40,8 @@ export function saveProgress(progress: CampaignProgress, storage: StorageLike | 
 
 export function completeLevel(progress: CampaignProgress, levelId: string): CampaignProgress {
   return {
-    version: 1,
-    lastSeed: progress.lastSeed,
+    version: 2,
+    lastLevelId: progress.lastLevelId,
     completedLevelIds: progress.completedLevelIds.includes(levelId) ? progress.completedLevelIds : [...progress.completedLevelIds, levelId],
     unlockedLevelIds: progress.unlockedLevelIds,
   };

@@ -22,5 +22,11 @@
     "seed": "4001",
     "title": "West End",
     "subtitle": "Keep the west side moving until morning."
+  },
+  {
+    "id": "south-crossing",
+    "seed": "5005",
+    "title": "South Crossing",
+    "subtitle": "Guide the last walkers across the southern streets."
   }
 ]
