@@ -117,7 +117,7 @@ function ControlRoom({ levels, completedIds, loadingId, error, onSelect, onRetry
     <Box position={[0, 0.9, 1.45]} size={[7.8, 0.28, 2.2]} color="#171b1d" />
     <Box position={[0, 0.52, 2.15]} size={[7.8, 0.5, 0.2]} color="#0d1215" />
     <DeskProps />
-    <MonitorFrame position={[0, 3.05, -0.4]} size={[6.2, 3.7, 0.38]} main><Html transform position={[0, 0, 0.22]} distanceFactor={5.5} center><LevelMonitor levels={levels} completedIds={completedIds} loadingId={loadingId} error={error} onSelect={onSelect} onRetry={onRetry} /></Html></MonitorFrame>
+    <MonitorFrame position={[0, 3.05, -0.4]} size={[6.2, 3.7, 0.38]} main><Html transform position={[0, 0, 0.215]} distanceFactor={4.3} center wrapperClass="level-monitor-html"><LevelMonitor levels={levels} completedIds={completedIds} loadingId={loadingId} error={error} onSelect={onSelect} onRetry={onRetry} /></Html></MonitorFrame>
     <MonitorFrame position={[-4.2, 2.55, 0.2]} size={[2.35, 1.9, 0.28]}><MonitorDetails variant="city" /></MonitorFrame>
     <MonitorFrame position={[4.25, 2.65, 0.1]} size={[2.3, 1.85, 0.28]}><MonitorDetails variant="grid" /></MonitorFrame>
     <Watcher />
