@@ -3,7 +3,7 @@
 import { ArrowLeftOutlined, ArrowRightOutlined, ThunderboltFilled } from "@ant-design/icons";
 import { Button, Progress, Tag } from "antd";
 import { useMemo, useState } from "react";
-import { getComicChapter, type ComicChapter, type ComicMood } from "@/game/comics";
+import { getComicChapter, type ComicChapter, type ComicMood, type ComicPanel } from "@/game/comics";
 import type { LevelSummary } from "@/game/level";
 
 const moodStyles: Record<ComicMood, { sky: string; glow: string; accent: string; weather: string }> = {
@@ -14,24 +14,42 @@ const moodStyles: Record<ComicMood, { sky: string; glow: string; accent: string;
   critical: { sky: "from-[#261822] via-[#4b2630] to-[#0d1119]", glow: "bg-[#efaf70]", accent: "#e69a68", weather: "critical" },
 };
 
-function SceneArt({ chapter, panel }: { chapter: ComicChapter; panel: number }) {
+function SceneArt({ chapter, panel, active }: { chapter: ComicChapter; panel: number; active: boolean }) {
   const style = moodStyles[chapter.mood];
   const lampCount = panel + 2;
-  return <div className={`relative min-h-[280px] overflow-hidden bg-gradient-to-br ${style.sky} md:min-h-[420px]`} aria-label={`${chapter.title}: иллюстрация панели ${panel + 1}`}>
-    <div className="absolute inset-0 opacity-30 [background-image:linear-gradient(rgba(255,255,255,.07)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.07)_1px,transparent_1px)] [background-size:34px_34px]" />
-    <div className={`absolute right-[16%] top-[13%] h-20 w-20 rounded-full ${style.glow} opacity-80 blur-[1px] shadow-[0_0_60px_20px_rgba(244,201,120,.18)]`} />
-    {style.weather === "rain" && <div className="absolute inset-0 opacity-50 [background-image:repeating-linear-gradient(110deg,transparent_0_18px,rgba(188,220,230,.2)_19px,transparent_20px_35px)]" />}
-    {style.weather === "market" && <div className="absolute left-8 top-16 h-20 w-28 border border-[#e09b59]/50 bg-[#df9b59]/10 shadow-[0_0_35px_rgba(224,155,89,.2)]"><span className="absolute inset-x-3 top-5 border-t border-[#f4c978]/70" /><span className="absolute inset-x-3 top-11 border-t border-[#f4c978]/30" /></div>}
-    {style.weather === "gate" && <div className="absolute left-[17%] top-16 h-32 w-20 border-x-4 border-t-4 border-[#9ecad4]/60"><span className="absolute -left-5 top-12 h-2 w-32 rotate-[-12deg] bg-[#d8a35f]/70" /></div>}
-    {style.weather === "critical" && <div className="absolute left-10 top-12 rounded-sm border border-[#e69a68]/50 px-3 py-2 text-[10px] tracking-[.22em] text-[#f1bc91]">SOUTH / OPEN</div>}
-    <div className="absolute inset-x-0 bottom-0 h-[44%] bg-[#081019]/80 [clip-path:polygon(0_43%,17%_21%,34%_46%,49%_13%,65%_38%,82%_18%,100%_40%,100%_100%,0_100%)]" />
-    <div className="absolute inset-x-[8%] bottom-[21%] h-1 bg-[#b9c2bd]/20 shadow-[0_0_18px_rgba(159,201,204,.18)]" />
+  return <div className={`relative min-h-[190px] overflow-hidden border-b-[5px] border-[#202126] bg-gradient-to-br ${style.sky} ${active ? "" : "opacity-90"}`} aria-label={`${chapter.title}: иллюстрация панели ${panel + 1}`}>
+    <div className="absolute inset-0 opacity-30 [background-image:radial-gradient(rgba(255,255,255,.28)_1px,transparent_1px)] [background-size:7px_7px]" />
+    <div className="comic-speed-lines" />
+    <div className={`absolute right-[15%] top-[14%] h-14 w-14 rounded-full ${style.glow} opacity-80 shadow-[0_0_45px_14px_rgba(244,201,120,.18)]`} />
+    {style.weather === "rain" && <div className="absolute inset-0 opacity-60 [background-image:repeating-linear-gradient(110deg,transparent_0_14px,rgba(188,220,230,.25)_15px,transparent_16px_28px)]" />}
+    {style.weather === "market" && <div className="absolute left-6 top-11 h-16 w-24 border-2 border-[#e09b59]/60 bg-[#df9b59]/10"><span className="absolute inset-x-2 top-4 border-t border-[#f4c978]/70" /><span className="absolute inset-x-2 top-9 border-t border-[#f4c978]/30" /></div>}
+    {style.weather === "gate" && <div className="absolute left-[15%] top-10 h-24 w-16 border-x-4 border-t-4 border-[#9ecad4]/70"><span className="absolute -left-4 top-10 h-2 w-28 rotate-[-12deg] bg-[#d8a35f]/70" /></div>}
+    {style.weather === "critical" && <div className="absolute left-6 top-8 border-2 border-[#e69a68]/60 px-2 py-1 text-[8px] font-bold tracking-[.2em] text-[#f1bc91]">SOUTH / OPEN</div>}
+    <div className="absolute inset-x-0 bottom-0 h-[45%] bg-[#081019]/90 [clip-path:polygon(0_43%,17%_21%,34%_46%,49%_13%,65%_38%,82%_18%,100%_40%,100%_100%,0_100%)]" />
+    <div className="absolute inset-x-[8%] bottom-[21%] h-1 bg-[#b9c2bd]/30 shadow-[0_0_18px_rgba(159,201,204,.18)]" />
     {Array.from({ length: lampCount }).map((_, index) => <div key={index} className="absolute bottom-[20%]" style={{ left: `${15 + index * (68 / Math.max(1, lampCount - 1))}%` }}>
-      <div className="absolute -left-5 -top-8 h-10 w-10 rounded-full bg-[#f4c978]/10 blur-md" />
-      <div className="relative h-20 w-[2px] bg-[#77828a]/80"><span className="absolute -left-[5px] -top-1 h-2 w-3 rounded-full bg-[#f5cf82] shadow-[0_0_13px_4px_rgba(245,207,130,.7)]" /></div>
+      <div className="absolute -left-4 -top-6 h-8 w-8 rounded-full bg-[#f4c978]/10 blur-md" />
+      <div className="relative h-16 w-[2px] bg-[#77828a]/80"><span className="absolute -left-[4px] -top-1 h-2 w-3 rounded-full bg-[#f5cf82] shadow-[0_0_12px_4px_rgba(245,207,130,.7)]" /></div>
     </div>)}
-    <div className="absolute bottom-5 left-6 flex items-center gap-2 text-[9px] font-medium tracking-[.22em] text-[#bac8c5]/70 md:left-9"><ThunderboltFilled style={{ color: style.accent }} /> NIGHT LINE / FIELD NOTE {String(panel + 1).padStart(2, "0")}</div>
+    <div className="comic-sfx absolute bottom-3 left-4 flex items-center gap-2 text-[8px] font-bold tracking-[.18em] text-[#bac8c5]/70"><ThunderboltFilled style={{ color: style.accent }} /> {panel === 0 ? "HUM" : panel === 1 ? "CLICK" : "KEEP WATCH"}</div>
+    {panel === 1 && <div className="comic-sfx absolute right-4 top-4 rotate-[-8deg] border-2 border-[#f0c67d] px-2 py-1 text-[9px] font-black tracking-[.18em] text-[#f0c67d]">WATCH!</div>}
   </div>;
+}
+
+function ComicPanelCard({ chapter, panel, active, onSelect }: { chapter: ComicChapter; panel: ComicPanel; active: boolean; onSelect: () => void }) {
+  const index = chapter.panels.indexOf(panel);
+  return <button type="button" onClick={onSelect} aria-label={`Открыть панель ${index + 1}: ${panel.title}`} style={{ animationDelay: `${index * 120}ms` }} className={`comic-panel-pop group relative block w-full text-left transition duration-200 ${active ? "z-10 -translate-y-1 rotate-[-.4deg]" : "rotate-[.35deg] opacity-85 hover:-translate-y-0.5 hover:opacity-100"}`}>
+    <div className="absolute -inset-1 bg-[#202126] shadow-[7px_8px_0_rgba(0,0,0,.24)]" />
+    <div className="relative overflow-hidden bg-[#eee9dc] p-1 text-[#202126]">
+      <SceneArt chapter={chapter} panel={index} active={active} />
+      <div className="min-h-[190px] p-4 sm:min-h-[210px] sm:p-5">
+        <div className="flex items-start justify-between gap-3"><span className="text-[8px] font-black tracking-[.16em] text-[#997949]">{panel.kicker}</span><span className="font-serif text-xl text-[#9d9481]">{String(index + 1).padStart(2, "0")}</span></div>
+        <h2 className="mt-3 font-serif text-[27px] leading-[.98] tracking-[-.035em]">{panel.title}</h2>
+        <p className="mt-3 text-[12px] leading-5 text-[#5d6061]">{panel.text}</p>
+        {panel.speech && <div className="comic-bubble relative mt-4 border-2 border-[#24262a] bg-[#faf6e9] p-3 text-[11px] font-medium leading-4 shadow-[3px_3px_0_#c9bfa9] before:absolute before:-bottom-2 before:left-5 before:h-3 before:w-3 before:rotate-45 before:border-b-2 before:border-r-2 before:border-[#24262a] before:bg-[#faf6e9]">«{panel.speech}»</div>}
+      </div>
+    </div>
+  </button>;
 }
 
 export default function ComicIntro({ level, levels, onStart, onBack }: { level: LevelSummary; levels: readonly LevelSummary[]; onStart: () => void; onBack: () => void }) {
@@ -43,48 +61,44 @@ export default function ComicIntro({ level, levels, onStart, onBack }: { level: 
     chapter: `Глава ${String(currentIndex + 1).padStart(2, "0")}`,
     title: level.title,
     subtitle: level.subtitle,
-    mood: "clear" as const,
+    mood: "clear",
     principle: "Сохрани безопасный свет до рассвета.",
     panels: [{ kicker: "НОЧНАЯ ЛИНИЯ", title: level.title, text: level.subtitle }],
   }), [currentIndex, level.id, level.subtitle, level.title]);
   const story = chapter ?? fallback;
   const isLastPanel = panel === story.panels.length - 1;
-  const currentPanel = story.panels[panel];
   const style = moodStyles[story.mood];
 
-  return <main className="min-h-screen overflow-y-auto bg-[#070b11] text-[#ece9df] selection:bg-[#d6b16e] selection:text-[#11161b]">
-    <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-4 py-5 sm:px-8 lg:px-12">
-      <header className="flex items-center justify-between border-b border-white/[.09] pb-5">
-        <button type="button" onClick={onBack} className="group flex items-center gap-3 text-left text-[#d6b16e] transition hover:text-[#f1d29a]">
-          <span className="grid h-8 w-8 place-items-center border border-[#d6b16e]/50 text-sm">N</span>
-          <span><strong className="block text-[10px] tracking-[.2em]">NIGHTWATCHER</strong><small className="mt-1 block text-[8px] tracking-[.16em] text-[#74818b]">RETURN TO DISTRICTS</small></span>
-        </button>
-        <div className="hidden items-center gap-3 sm:flex"><span className="text-[9px] tracking-[.18em] text-[#74818b]">FIELD COMIC</span><Progress percent={Math.round(((currentIndex + 1) / Math.max(1, levels.length)) * 100)} showInfo={false} strokeColor="#d6b16e" trailColor="rgba(255,255,255,.12)" size="small" className="w-28" /></div>
-      </header>
+  return <main className="min-h-screen overflow-y-auto bg-[#d2c4a8] text-[#202126] selection:bg-[#d6b16e] selection:text-[#11161b]">
+    <div className="min-h-screen bg-[radial-gradient(rgba(43,39,34,.13)_1px,transparent_1px)] [background-size:5px_5px]">
+      <div className="mx-auto flex min-h-screen w-full max-w-[1440px] flex-col px-4 py-5 sm:px-8 lg:px-12">
+        <header className="flex items-center justify-between border-b-4 border-[#202126] pb-4">
+          <button type="button" onClick={onBack} className="group flex items-center gap-3 text-left text-[#202126] transition hover:-translate-y-0.5">
+            <span className="grid h-9 w-9 place-items-center border-2 border-[#202126] bg-[#e9dfca] font-serif text-lg shadow-[3px_3px_0_#202126]">N</span>
+            <span><strong className="block text-[10px] tracking-[.2em]">NIGHTWATCHER</strong><small className="mt-1 block text-[8px] font-bold tracking-[.16em] text-[#665d50]">RETURN TO DISTRICTS</small></span>
+          </button>
+          <div className="hidden items-center gap-3 sm:flex"><span className="text-[9px] font-bold tracking-[.18em] text-[#665d50]">FIELD COMIC</span><Progress percent={Math.round(((currentIndex + 1) / Math.max(1, levels.length)) * 100)} showInfo={false} strokeColor="#202126" railColor="rgba(32,33,38,.18)" size="small" className="w-28" /></div>
+        </header>
 
-      <section className="grid flex-1 items-center gap-8 py-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(320px,.85fr)] lg:gap-14 lg:py-12">
-        <div className="overflow-hidden border border-white/[.12] bg-[#101821] shadow-[0_28px_100px_rgba(0,0,0,.35)]">
-          <SceneArt chapter={story} panel={panel} />
-          <div className="border-t border-white/[.1] bg-[#ede8dc] p-5 text-[#20242a] sm:p-7">
-            <div className="mb-3 flex items-center justify-between gap-4"><span className="text-[9px] font-bold tracking-[.22em] text-[#8e7143]">{currentPanel.kicker}</span><span className="text-[10px] text-[#8c8a83]">{panel + 1} / {story.panels.length}</span></div>
-            <h1 className="max-w-xl font-serif text-3xl leading-[1.05] tracking-[-.03em] sm:text-5xl">{currentPanel.title}</h1>
-            <p className="mt-4 max-w-2xl text-sm leading-7 text-[#5d6061] sm:text-base">{currentPanel.text}</p>
-            {currentPanel.speech && <div className="relative mt-5 max-w-xl border border-[#bdab89] bg-[#f8f4e9] p-4 text-sm leading-6 text-[#353333] shadow-[3px_3px_0_#d6cbb5] before:absolute before:-bottom-2 before:left-8 before:h-3 before:w-3 before:rotate-45 before:border-b before:border-r before:border-[#bdab89] before:bg-[#f8f4e9]">«{currentPanel.speech}»</div>}
+        <section className="flex flex-1 flex-col py-8 lg:py-12">
+          <div className="mb-7 flex flex-wrap items-end justify-between gap-5">
+            <div><div className="mb-3 flex items-center gap-2"><Tag color={style.accent}>{story.chapter}</Tag><span className="text-[9px] font-bold tracking-[.2em] text-[#665d50]">{level.id.replaceAll("-", " ")}</span></div><h1 className="comic-title-slam max-w-4xl font-serif text-5xl leading-[.88] tracking-[-.05em] sm:text-7xl lg:text-8xl">{story.title}</h1><p className="mt-4 max-w-2xl text-sm font-medium leading-6 text-[#665d50] sm:text-base">{story.subtitle}</p></div>
+            <div className="max-w-[230px] border-2 border-[#202126] bg-[#eee9dc] p-4 shadow-[5px_5px_0_#202126]"><div className="text-[8px] font-black tracking-[.2em] text-[#997949]">NIGHT LINE / RULE</div><div className="mt-2 font-serif text-lg leading-tight">{story.principle}</div></div>
           </div>
-        </div>
 
-        <div className="max-w-lg lg:pb-5">
-          <div className="mb-5 flex flex-wrap items-center gap-2"><Tag color={style.accent}>{story.chapter}</Tag><span className="text-[9px] tracking-[.2em] text-[#75818a]">{level.id.replaceAll("-", " ")}</span></div>
-          <h2 className="max-w-md font-serif text-5xl leading-[.98] tracking-[-.04em] text-[#f1eee6] sm:text-7xl">{story.title}</h2>
-          <p className="mt-5 max-w-sm text-sm leading-7 text-[#93a0a7]">{story.subtitle}</p>
-          <div className="mt-8 border-l-2 border-[#d6b16e] pl-5"><div className="text-[9px] tracking-[.2em] text-[#7d8a90]">СЕГОДНЯШНИЙ ПРИНЦИП</div><div className="mt-2 font-serif text-2xl leading-tight text-[#e1c386]">{story.principle}</div></div>
-          <div className="mt-10 flex flex-wrap items-center gap-3">
-            {panel > 0 && <Button ghost icon={<ArrowLeftOutlined />} onClick={() => setPanel((value) => value - 1)} className="!border-white/20 !text-[#b8c0c1]">Назад</Button>}
-            {isLastPanel ? <Button type="primary" icon={<ArrowRightOutlined />} iconPosition="end" onClick={onStart} className="!h-11 !border-0 !bg-[#d6b16e] !px-5 !text-[#11161b]">Принять смену</Button> : <Button type="primary" icon={<ArrowRightOutlined />} iconPosition="end" onClick={() => setPanel((value) => value + 1)} className="!h-11 !border-0 !bg-[#d6b16e] !px-5 !text-[#11161b]">Дальше</Button>}
+          <div className="grid flex-1 items-start gap-5 md:grid-cols-3 md:gap-6">
+            {story.panels.map((item, index) => <ComicPanelCard key={`${story.levelId}-${index}`} chapter={story} panel={item} active={panel === index} onSelect={() => setPanel(index)} />)}
           </div>
-          <div className="mt-5 text-[9px] leading-5 tracking-[.12em] text-[#65727b]">ЧИТАЙ ПАНЕЛИ, ЗАТЕМ ВЫХОДИ НА МАРШРУТ</div>
-        </div>
-      </section>
+
+          <footer className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t-4 border-[#202126] pt-5">
+            <div><div className="text-[9px] font-black tracking-[.2em]">ПАНЕЛЬ {panel + 1} / {story.panels.length}</div><div className="mt-1 text-[10px] font-medium tracking-[.08em] text-[#665d50]">НАЖМИ НА ПАНЕЛЬ, ЧТОБЫ ПЕРЕКЛЮЧИТЬ ФОКУС</div></div>
+            <div className="flex items-center gap-3">
+              {panel > 0 && <Button ghost icon={<ArrowLeftOutlined />} onClick={() => setPanel((value) => value - 1)} className="!border-[#202126] !text-[#202126]">Назад</Button>}
+              {isLastPanel ? <Button type="primary" icon={<ArrowRightOutlined />} iconPosition="end" onClick={onStart} className="!h-11 !border-0 !bg-[#202126] !px-5 !font-bold !text-[#f0e8d5]">Принять смену</Button> : <Button type="primary" icon={<ArrowRightOutlined />} iconPosition="end" onClick={() => setPanel((value) => value + 1)} className="!h-11 !border-0 !bg-[#202126] !px-5 !font-bold !text-[#f0e8d5]">Следующая панель</Button>}
+            </div>
+          </footer>
+        </section>
+      </div>
     </div>
   </main>;
 }

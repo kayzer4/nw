@@ -93,6 +93,19 @@ button { font: inherit; }
 .picker-error button { margin-left: 12px; padding: 8px 12px; border: 1px solid #d6b16e; color: #d6b16e; background: transparent; cursor: pointer; }
 .loader-orbit { width: 32px; height: 32px; margin-bottom: 25px; border: 1px solid rgba(214,177,110,.25); border-radius: 50%; display: grid; place-items: center; animation: spin 2.5s linear infinite; }
 .loader-orbit i { width: 5px; height: 5px; border-radius: 50%; background: #e3bd77; box-shadow: 0 0 9px #e3bd77; }
+.comic-panel-pop { opacity: 0; animation: comic-panel-pop .62s cubic-bezier(.2,.85,.25,1.2) forwards; }
+.comic-title-slam { transform-origin: left center; animation: comic-title-slam .7s cubic-bezier(.2,.8,.2,1) both; }
+.comic-sfx { animation: comic-sfx .45s .35s cubic-bezier(.2,.8,.2,1) both; }
+.comic-bubble { animation: comic-bubble .45s .25s cubic-bezier(.2,.8,.2,1) both; transform-origin: 12% 100%; }
+.comic-speed-lines { position: absolute; inset: -25%; opacity: .22; background: repeating-conic-gradient(from 240deg at 50% 100%, transparent 0deg 4deg, rgba(255,255,255,.25) 4.5deg 5deg, transparent 5.5deg 12deg); animation: comic-speed-lines 7s linear infinite; }
+@keyframes comic-panel-pop { 0% { opacity: 0; transform: translateY(28px) rotate(2deg) scale(.94); } 100% { opacity: 1; transform: translateY(0) rotate(.35deg) scale(1); } }
+@keyframes comic-title-slam { 0% { opacity: 0; transform: translateX(-28px) skewX(-8deg) scaleX(1.08); } 70% { transform: translateX(3px) skewX(1deg); } 100% { opacity: 1; transform: translateX(0) skewX(0) scaleX(1); } }
+@keyframes comic-sfx { 0% { opacity: 0; transform: scale(.55) rotate(-10deg); } 75% { transform: scale(1.16) rotate(2deg); } 100% { opacity: 1; transform: scale(1) rotate(0); } }
+@keyframes comic-bubble { 0% { opacity: 0; transform: scale(.5) rotate(-4deg); } 100% { opacity: 1; transform: scale(1) rotate(0); } }
+@keyframes comic-speed-lines { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .comic-panel-pop, .comic-title-slam, .comic-sfx, .comic-bubble, .comic-speed-lines { animation: none; opacity: 1; transform: none; }
+}
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (max-width: 760px) {
   .game-shell { min-height: 700px; } .topbar { height: 66px; padding: 0 18px; } .brand { min-width: 0; } .brand-mark { width: 29px; height: 29px; } .brand strong { font-size: 9px; } .brand small { font-size: 7px; } .top-status { display: none; } .shift-clock { min-width: 110px; } .shift-clock strong { font-size: 17px; }
