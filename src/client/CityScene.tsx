@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, type RefObject } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
 import { AnimationMixer, Box3, CanvasTexture, LoopRepeat, Object3D, type Group } from "three";
@@ -25,7 +25,7 @@ function StaticAsset({ item }: { item: PlacedAsset }) {
   );
 }
 
-function Lamp({ lamp }: { lamp: PlacedLamp }) {
+function Lamp({ lamp, dragRef }: { lamp: PlacedLamp; dragRef: RefObject<boolean> }) {
   const on = useGameStore((state) => state.lampStates[lamp.id] ?? lamp.initiallyOn);
   const toggle = useGameStore((state) => state.toggleLamp);
   const spotlightOriginHeight = 0.62 * lamp.scale;
@@ -36,14 +36,12 @@ function Lamp({ lamp }: { lamp: PlacedLamp }) {
     return target;
   }, [lamp.scale]);
   return (
-    <group
-      position={[lamp.position[0], lamp.position[1], lamp.position[2]]}
-      rotation={[0, lamp.rotationY, 0]}
-      onClick={(event) => { event.stopPropagation(); toggle(lamp.id); }}
-      onPointerOver={() => { document.body.style.cursor = "pointer"; }}
-      onPointerOut={() => { document.body.style.cursor = ""; }}
-    >
-      <Model asset={lamp.asset} scale={lamp.scale} />
+    <group position={[lamp.position[0], lamp.position[1], lamp.position[2]]} rotation={[0, lamp.rotationY, 0]}>
+      <group
+        onClick={(event) => { event.stopPropagation(); if (!dragRef.current) toggle(lamp.id); }}
+        onPointerOver={() => { document.body.style.cursor = "pointer"; }}
+        onPointerOut={() => { document.body.style.cursor = ""; }}
+      ><Model asset={lamp.asset} scale={lamp.scale} /></group>
       <primitive object={spotlightTarget} />
       {on && <>
         <spotLight position={[0, spotlightOriginHeight, LAMP_HEAD[1] * lamp.scale]} target={spotlightTarget} color={lamp.color} intensity={lamp.intensity} distance={cone.distance} angle={cone.angle} penumbra={0.4} decay={2} />
@@ -119,7 +117,7 @@ function Citizen({ citizen }: { citizen: CitizenRoute }) {
   return <group ref={group} position={[initial[0], 0, initial[1]]}><primitive object={clone} /><sprite position={[0, citizen.scale * 1.75 + 0.22, 0]} scale={[0.34, 0.34, 1]}><spriteMaterial map={statusTexture(lit)} transparent depthTest={false} toneMapped={false} /></sprite></group>;
 }
 
-function District({ level }: { level: LevelPreset }) {
+function District({ level, dragRef }: { level: LevelPreset; dragRef: RefObject<boolean> }) {
   return (
     <>
       <color attach="background" args={["#080d15"]} />
@@ -133,17 +131,17 @@ function District({ level }: { level: LevelPreset }) {
       <gridHelper args={[18, 36, "#34404b", "#202a34"]} position={[0, -0.06, 0]} />
       {level.roads.map((road) => <StaticAsset key={road.id} item={road} />)}
       {level.buildings.map((building) => <StaticAsset key={building.id} item={building} />)}
-      {level.lamps.map((lamp) => <Lamp key={lamp.id} lamp={lamp} />)}
+      {level.lamps.map((lamp) => <Lamp key={lamp.id} lamp={lamp} dragRef={dragRef} />)}
       {level.citizens.map((citizen) => <Citizen key={citizen.id} citizen={citizen} />)}
       <OrbitControls target={[0, 0, 0]} minDistance={9} maxDistance={26} maxPolarAngle={1.35} enableDamping dampingFactor={0.08} />
     </>
   );
 }
 
-export default function CityScene({ level }: { level: LevelPreset }) {
+export default function CityScene({ level, dragRef }: { level: LevelPreset; dragRef: RefObject<boolean> }) {
   return (
     <Canvas camera={{ position: [12, 13, 14], fov: 42 }} dpr={[1, 1.35]} gl={{ antialias: false, powerPreference: "low-power" }}>
-      <District level={level} />
+      <District level={level} dragRef={dragRef} />
     </Canvas>
   );
 }

@@ -12,6 +12,7 @@ interface GameStore {
   toggleLamp: (lampId: string) => void;
   tick: () => void;
   restart: () => void;
+  quit: () => void;
 }
 
 export const useGameStore = create<GameStore>((set, get) => ({
@@ -43,4 +44,5 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const { level, loadLevel } = get();
     if (level) loadLevel(level);
   },
+  quit: () => { gameClock.reset(); set({ level: null, session: null, lampStates: {} }); },
 }));

@@ -1,8 +1,7 @@
 "use client";
 
 import { useGameStore } from "@/game/game-store";
-import type { LevelPreset, LevelSummary } from "@/game/level";
-import LevelSelect from "./LevelSelect";
+import type { LevelPreset } from "@/game/level";
 
 function meter(value: number, max: number) { return `${Math.max(0, Math.min(100, (value / max) * 100))}%`; }
 function formatTime(seconds: number) {
@@ -12,12 +11,9 @@ function formatTime(seconds: number) {
   return `${minutes}:${remainder}`;
 }
 
-export default function GameHud({ level, levels, isLoading, loadError, onSelectLevel }: {
+export default function GameHud({ level, onExit }: {
   level: LevelPreset;
-  levels: LevelSummary[];
-  isLoading: boolean;
-  loadError: string | null;
-  onSelectLevel: (levelId: string) => void;
+  onExit: () => void;
 }) {
   const session = useGameStore((state) => state.session);
   const lamps = useGameStore((state) => state.lampStates);
@@ -32,7 +28,7 @@ export default function GameHud({ level, levels, isLoading, loadError, onSelectL
   return (
     <div className="hud-shell">
       <header className="topbar">
-        <div className="brand"><span className="brand-mark">N</span><div><strong>NIGHTWATCHER</strong><small>AFTER HOURS DIVISION</small></div></div>
+        <div className="brand"><button type="button" className="back-button" onClick={onExit}>← LEVELS</button><div><strong>NIGHTWATCHER</strong><small>AFTER HOURS DIVISION</small></div></div>
         <div className="top-status"><span className={`status-dot ${session.phase === "playing" ? "live" : ""}`} />{phaseLabel}</div>
         <div className="shift-clock"><span>SHIFT ENDS IN</span><strong>{formatTime(remaining)}</strong></div>
       </header>
@@ -41,8 +37,6 @@ export default function GameHud({ level, levels, isLoading, loadError, onSelectL
         <div className="eyebrow">DISTRICT 01 <span>·</span> NIGHT SHIFT</div>
         <h1>{headline}</h1>
         <p>{session.phase === "ready" ? level.subtitle : session.phase === "won" ? "The neighborhood made it safely to morning." : session.phase === "lost" ? "Restore the lights and try a different strategy." : "Keep enough of the neighborhood illuminated."}</p>
-        <LevelSelect level={level} levels={levels} disabled={session.phase === "playing" || isLoading} onSelect={onSelectLevel} />
-        {loadError && <p role="alert">{loadError}</p>}
         <div className="level-facts"><span>DIFFICULTY <b>{level.difficulty}/5</b></span><span>LIGHT REACH <b>{level.lamps[0]?.radius.toFixed(1)} m</b></span></div>
         <div className="meters">
           <div className="meter-block"><div className="meter-label"><span>GRID POWER</span><b>{Math.ceil(session.energy)} <small>kWh</small></b></div><div className="meter-track"><i className="energy-fill" style={{ width: meter(session.energy, level.rules.startingEnergy) }} /></div></div>
