@@ -14,7 +14,7 @@ Nightwatcher Clean is a single Next.js project. `src/client` renders the game, `
 
 `src/game/light.ts` defines the lamp head offset, footprint center, ground radius, and cone angle. The 3D spotlight and its projected ground light derive from the same `radius` as simulation and the HUD. The spotlight uses no distance attenuation, while the additive ground light remains visible almost to the footprint edge. The simulation uses that same circular footprint. Buildings and residents cast shadows from the lamps and the dim directional night light. Shadows are visual; they do not reduce simulated coverage. Resident icons show current lit/dark status.
 
-Each building cell renders one raised concrete sidewalk slab using `level.grid.cellSize`. The building sits on its slab; its bounds remain within the cell, so sidewalks meet road tiles without overlapping them.
+Building cells share one flat sidewalk mesh generated from `level.grid.cellSize`. The sidewalk sits 1 cm above the road surface and has no separate cell edges; buildings remain within their cells, so the surface meets road tiles without overlapping them.
 
 The light footprint is rendered separately from its clickable lamp model. A pointer gesture that moves more than six screen pixels is treated as camera rotation and cannot toggle a lamp.
 

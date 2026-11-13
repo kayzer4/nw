@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, type RefObject } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
-import { AdditiveBlending, AnimationMixer, Box3, CanvasTexture, Color, LoopRepeat, Mesh, Object3D, type Group } from "three";
+import { AdditiveBlending, AnimationMixer, Box3, BufferGeometry, CanvasTexture, Color, Float32BufferAttribute, LoopRepeat, Mesh, Object3D, type Group } from "three";
 import { clone as skeletonClone } from "three/examples/jsm/utils/SkeletonUtils.js";
 import type { CitizenRoute, LevelPreset, PlacedAsset, PlacedLamp } from "@/game/level";
 import { useGameStore } from "@/game/game-store";
@@ -52,24 +52,26 @@ function StaticAsset({ item, castShadow = true }: { item: PlacedAsset; castShado
   );
 }
 
-function BuildingPlot({ item, cellSize }: { item: PlacedAsset; cellSize: number }) {
-  return <group position={[item.position[0], item.position[1], item.position[2]]}>
-    <mesh position={[0, -0.01, 0]} receiveShadow castShadow>
-      <boxGeometry args={[cellSize, 0.1, cellSize]} />
-      <meshStandardMaterial color="#87929b" roughness={1} />
-    </mesh>
-    <mesh position={[0, 0.041, 0]} receiveShadow>
-      <boxGeometry args={[0.014, 0.002, cellSize]} />
-      <meshStandardMaterial color="#47525c" roughness={1} />
-    </mesh>
-    <mesh position={[0, 0.041, 0]} receiveShadow>
-      <boxGeometry args={[cellSize, 0.002, 0.014]} />
-      <meshStandardMaterial color="#47525c" roughness={1} />
-    </mesh>
-    <group position={[0, 0.04, 0]} rotation={[0, item.rotationY, 0]}>
-      <Model asset={item.asset} scale={item.scale} />
-    </group>
-  </group>;
+function SidewalkGround({ buildings, cellSize }: { buildings: readonly PlacedAsset[]; cellSize: number }) {
+  const geometry = useMemo(() => {
+    const vertices: number[] = [];
+    const indices: number[] = [];
+    const half = cellSize / 2;
+    for (const building of buildings) {
+      const [x, , z] = building.position;
+      const start = vertices.length / 3;
+      vertices.push(x - half, 0, z - half, x - half, 0, z + half, x + half, 0, z + half, x + half, 0, z - half);
+      indices.push(start, start + 1, start + 2, start, start + 2, start + 3);
+    }
+    const result = new BufferGeometry();
+    result.setAttribute("position", new Float32BufferAttribute(vertices, 3));
+    result.setIndex(indices);
+    result.computeVertexNormals();
+    return result;
+  }, [buildings, cellSize]);
+  return <mesh geometry={geometry} receiveShadow>
+    <meshStandardMaterial color="#87929b" roughness={1} />
+  </mesh>;
 }
 
 function Lamp({ lamp, dragRef }: { lamp: PlacedLamp; dragRef: RefObject<boolean> }) {
@@ -184,7 +186,8 @@ function District({ level, dragRef }: { level: LevelPreset; dragRef: RefObject<b
       </mesh>
       <gridHelper args={[18, 36, "#26323d", "#18232d"]} position={[0, -0.06, 0]} />
       {level.roads.map((road) => <StaticAsset key={road.id} item={road} castShadow={false} />)}
-      {level.buildings.map((building) => <BuildingPlot key={building.id} item={building} cellSize={level.grid.cellSize} />)}
+      <SidewalkGround buildings={level.buildings} cellSize={level.grid.cellSize} />
+      {level.buildings.map((building) => <StaticAsset key={building.id} item={building} />)}
       {level.lamps.map((lamp) => <Lamp key={lamp.id} lamp={lamp} dragRef={dragRef} />)}
       {level.citizens.map((citizen) => <Citizen key={citizen.id} citizen={citizen} />)}
       <OrbitControls target={[0, 0, 0]} minDistance={9} maxDistance={26} maxPolarAngle={1.35} enableDamping dampingFactor={0.08} />
