@@ -64,7 +64,7 @@ function ControlRoom({ levels, completedIds, loadingId, error, onSelect, onRetry
         <div className="level-monitor-scale"><LevelMonitor levels={levels} completedIds={completedIds} loadingId={loadingId} error={error} onSelect={onSelect} onRetry={onRetry} /></div>
       </Html>
     </group>
-    <OrbitControls enableRotate={false} enablePan={false} enableZoom={false} target={[0, 1.7, -0.35]} />
+    <OrbitControls enablePan={false} enableZoom={false} minAzimuthAngle={-0.48} maxAzimuthAngle={0.48} minPolarAngle={1.28} maxPolarAngle={1.58} target={[0, 1.7, -0.35]} />
   </>;
 }
 
