@@ -122,13 +122,13 @@ function District({ level, dragRef }: { level: LevelPreset; dragRef: RefObject<b
     <>
       <color attach="background" args={["#080d15"]} />
       <fog attach="fog" args={["#080d15", 18, 38]} />
-      <ambientLight intensity={0.78} color="#9baec8" />
-      <directionalLight position={[-5, 12, 6]} intensity={1.5} color="#a9c5f0" />
+      <ambientLight intensity={0.22} color="#9baec8" />
+      <directionalLight position={[-5, 12, 6]} intensity={0.3} color="#a9c5f0" />
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.08, 0]}>
         <planeGeometry args={[30, 30]} />
         <meshStandardMaterial color="#141c25" roughness={1} />
       </mesh>
-      <gridHelper args={[18, 36, "#34404b", "#202a34"]} position={[0, -0.06, 0]} />
+      <gridHelper args={[18, 36, "#26323d", "#18232d"]} position={[0, -0.06, 0]} />
       {level.roads.map((road) => <StaticAsset key={road.id} item={road} />)}
       {level.buildings.map((building) => <StaticAsset key={building.id} item={building} />)}
       {level.lamps.map((lamp) => <Lamp key={lamp.id} lamp={lamp} dragRef={dragRef} />)}
