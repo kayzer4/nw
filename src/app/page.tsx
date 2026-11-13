@@ -1,3 +1,3 @@
-import GameScreen from "@/client/GameScreen";
+import { redirect } from "next/navigation";
 
-export default function Home() { return <GameScreen />; }
+export default function Home() { redirect("/levels"); }

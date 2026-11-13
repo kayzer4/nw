@@ -125,9 +125,9 @@ button { font: inherit; }
 .picker-content > h1 { margin: 18px 0 10px; color: #f0eee8; font: 500 clamp(36px,5vw,60px)/1.1 Georgia,serif; }
 .picker-content > p { margin: 0; max-width: 470px; color: #98a6ad; font-size: 13px; line-height: 1.7; }
 .level-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 14px; margin-top: 46px; }
-.level-card { min-height: 202px; padding: 22px; display: flex; flex-direction: column; align-items: flex-start; text-align: left; color: #dce3e4; border: 1px solid rgba(177,196,208,.16); background: linear-gradient(145deg,rgba(22,32,42,.94),rgba(11,18,26,.94)); cursor: pointer; transition: border-color .2s,transform .2s,background .2s; }
-.level-card:hover:not(:disabled) { border-color: #d6b16e; transform: translateY(-3px); background: linear-gradient(145deg,#24303b,#101923); }
-.level-card:disabled { cursor: wait; opacity: .68; }
+.level-card { min-height: 202px; padding: 22px; display: flex; flex-direction: column; align-items: flex-start; text-align: left; text-decoration: none; color: #dce3e4; border: 1px solid rgba(177,196,208,.16); background: linear-gradient(145deg,rgba(22,32,42,.94),rgba(11,18,26,.94)); cursor: pointer; transition: border-color .2s,transform .2s,background .2s; }
+.level-card:hover, .level-card:focus-visible { border-color: #d6b16e; transform: translateY(-3px); background: linear-gradient(145deg,#24303b,#101923); }
+.level-card:focus-visible { outline: 2px solid #d6b16e; outline-offset: 3px; }
 .level-card:first-child { border-color: rgba(214,177,110,.42); }
 .level-card-number { color: #b79a66; font: 500 11px Georgia,serif; }
 .level-card-name { margin-top: 25px; color: #f1ede4; font: 500 24px Georgia,serif; }
