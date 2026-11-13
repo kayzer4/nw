@@ -31,6 +31,8 @@ const DEPTH = 6;
 const CELL_SIZE = 2;
 const HALF_X = WIDTH * CELL_SIZE / 2;
 const HALF_Z = DEPTH * CELL_SIZE / 2;
+// All configured building GLBs have the top of their plinth at local Y = 0.05.
+const BUILDING_PLINTH_HEIGHT = 0.05;
 const DIRECTIONS = [
   { x: 1, z: 0 },
   { x: 0, z: 1 },
@@ -203,12 +205,13 @@ function placeBuildings(map: CellType[][], blocks: Block[], models: ReturnType<t
         const { config } = pick(models, random);
         const [worldX, worldZ] = toWorldPosition(x, z);
         const asset = `/models/${config.pack}/${config.name}.glb`;
+        const scale = Math.min(CELL_SIZE / Math.max(config.actualWidth ?? 1, config.actualDepth ?? 1), 0.88 / modelFootprintRadius(asset));
         placed.push({
           id: `building-${x}-${z}`,
           asset,
-          position: [worldX, 0, worldZ],
+          position: [worldX, -BUILDING_PLINTH_HEIGHT * scale, worldZ],
           rotationY: buildingRotation(nearestRoadDirection(x, z, map)),
-          scale: Math.min(CELL_SIZE / Math.max(config.actualWidth ?? 1, config.actualDepth ?? 1), 0.88 / modelFootprintRadius(asset)),
+          scale,
         });
       }
     }

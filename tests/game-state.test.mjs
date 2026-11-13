@@ -109,5 +109,6 @@ test("residents cross the road only on a marked crossing model", () => {
 test("placed building geometry stays inside its cell", () => {
   for (const id of ids) for (const building of load(id).buildings) {
     expect(modelFootprintRadius(building.asset) * building.scale).toBeLessThanOrEqual(0.881);
+    expect(building.position[1] + building.scale * 0.05).toBeCloseTo(0);
   }
 });

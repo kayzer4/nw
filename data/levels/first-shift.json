@@ -138,7 +138,7 @@
       "asset": "/models/Models/building-k.glb",
       "position": [
         -5,
-        0,
+        -0.0422348347137416,
         -5
       ],
       "rotationY": 0,
@@ -149,7 +149,7 @@
       "asset": "/models/Models/building-h.glb",
       "position": [
         -3,
-        0,
+        -0.08731100291491052,
         -5
       ],
       "rotationY": 0,
@@ -160,7 +160,7 @@
       "asset": "/models/Models/building-skyscraper-c.glb",
       "position": [
         -1,
-        0,
+        -0.06340553681145344,
         -5
       ],
       "rotationY": 0,
@@ -171,7 +171,7 @@
       "asset": "/models/Models/building-e.glb",
       "position": [
         1,
-        0,
+        -0.05365853315304625,
         -5
       ],
       "rotationY": 0,
@@ -182,7 +182,7 @@
       "asset": "/models/Models/building-skyscraper-e.glb",
       "position": [
         3,
-        0,
+        -0.06795366395022925,
         -5
       ],
       "rotationY": -1.5707963267948966,
@@ -193,7 +193,7 @@
       "asset": "/models/Models/building-n.glb",
       "position": [
         -5,
-        0,
+        -0.03793102777812319,
         -3
       ],
       "rotationY": 0,
@@ -204,7 +204,7 @@
       "asset": "/models/Models/building-j.glb",
       "position": [
         -3,
-        0,
+        -0.0422348347137416,
         -3
       ],
       "rotationY": 0,
@@ -215,7 +215,7 @@
       "asset": "/models/Models/building-skyscraper-b.glb",
       "position": [
         -1,
-        0,
+        -0.06470582495516289,
         -3
       ],
       "rotationY": 0,
@@ -226,7 +226,7 @@
       "asset": "/models/Models/building-k.glb",
       "position": [
         1,
-        0,
+        -0.0422348347137416,
         -3
       ],
       "rotationY": 0,
@@ -237,7 +237,7 @@
       "asset": "/models/Models/building-f.glb",
       "position": [
         3,
-        0,
+        -0.08543685602417517,
         -3
       ],
       "rotationY": -1.5707963267948966,
@@ -248,7 +248,7 @@
       "asset": "/models/Models/building-d.glb",
       "position": [
         -5,
-        0,
+        -0.09777776741687272,
         -1
       ],
       "rotationY": 3.141592653589793,
@@ -259,7 +259,7 @@
       "asset": "/models/Models/building-a.glb",
       "position": [
         -3,
-        0,
+        -0.0936170155778632,
         -1
       ],
       "rotationY": 3.141592653589793,
@@ -270,7 +270,7 @@
       "asset": "/models/Models/building-n.glb",
       "position": [
         -1,
-        0,
+        -0.03793102777812319,
         -1
       ],
       "rotationY": 3.141592653589793,
@@ -281,7 +281,7 @@
       "asset": "/models/Models/building-f.glb",
       "position": [
         1,
-        0,
+        -0.08543685602417517,
         -1
       ],
       "rotationY": 3.141592653589793,
@@ -292,7 +292,7 @@
       "asset": "/models/Models/building-k.glb",
       "position": [
         3,
-        0,
+        -0.0422348347137416,
         -1
       ],
       "rotationY": 3.141592653589793,
@@ -303,7 +303,7 @@
       "asset": "/models/Models/building-h.glb",
       "position": [
         -5,
-        0,
+        -0.08731100291491052,
         3
       ],
       "rotationY": 0,
@@ -314,7 +314,7 @@
       "asset": "/models/Models/building-c.glb",
       "position": [
         -3,
-        0,
+        -0.08073393365227466,
         3
       ],
       "rotationY": 0,
@@ -325,7 +325,7 @@
       "asset": "/models/Models/building-d.glb",
       "position": [
         -1,
-        0,
+        -0.09777776741687272,
         3
       ],
       "rotationY": 0,
@@ -336,7 +336,7 @@
       "asset": "/models/Models/building-skyscraper-a.glb",
       "position": [
         -5,
-        0,
+        -0.06470584764201961,
         5
       ],
       "rotationY": 0,
@@ -347,7 +347,7 @@
       "asset": "/models/Models/building-f.glb",
       "position": [
         -3,
-        0,
+        -0.08543685602417517,
         5
       ],
       "rotationY": 0,
@@ -358,7 +358,7 @@
       "asset": "/models/Models/building-l.glb",
       "position": [
         -1,
-        0,
+        -0.06276747191885879,
         5
       ],
       "rotationY": -1.5707963267948966,
@@ -369,7 +369,7 @@
       "asset": "/models/Models/building-skyscraper-e.glb",
       "position": [
         3,
-        0,
+        -0.06795366395022925,
         3
       ],
       "rotationY": 0,
@@ -380,7 +380,7 @@
       "asset": "/models/Models/building-skyscraper-c.glb",
       "position": [
         5,
-        0,
+        -0.06340553681145344,
         3
       ],
       "rotationY": 0,
@@ -391,7 +391,7 @@
       "asset": "/models/Models/building-e.glb",
       "position": [
         3,
-        0,
+        -0.05365853315304625,
         5
       ],
       "rotationY": 1.5707963267948966,
@@ -402,7 +402,7 @@
       "asset": "/models/Models/building-d.glb",
       "position": [
         5,
-        0,
+        -0.09777776741687272,
         5
       ],
       "rotationY": 0,
