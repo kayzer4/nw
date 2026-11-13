@@ -85,12 +85,6 @@ export default function ComicIntro({ level, levels, ready, error, onStart, onBac
     return () => window.clearTimeout(timer);
   }, [panel, story, storyRead]);
 
-  useEffect(() => {
-    if (!storyRead || !ready || error || started.current) return;
-    started.current = true;
-    onStart();
-  }, [storyRead, ready, error, onStart]);
-
   return <main className="min-h-screen overflow-y-auto bg-[#d2c4a8] text-[#202126] selection:bg-[#d6b16e] selection:text-[#11161b]">
     <div className="min-h-screen bg-[radial-gradient(rgba(43,39,34,.13)_1px,transparent_1px)] [background-size:5px_5px]">
       <div className="mx-auto flex min-h-screen w-full max-w-[1440px] flex-col px-4 py-5 sm:px-8 lg:px-12">
@@ -113,11 +107,12 @@ export default function ComicIntro({ level, levels, ready, error, onStart, onBac
           </div>
 
           <footer className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t-4 border-[#202126] pt-5">
-            <div><div className="text-[9px] font-black tracking-[.2em]">ПАНЕЛЬ {visiblePanel + 1} / {story.panels.length}</div><div className="mt-1 text-[10px] font-medium tracking-[.08em] text-[#665d50]">ИСТОРИЯ ПРОДОЛЖИТСЯ АВТОМАТИЧЕСКИ</div></div>
+            <div><div className="text-[9px] font-black tracking-[.2em]">ПАНЕЛЬ {visiblePanel + 1} / {story.panels.length}</div><div className="mt-1 text-[10px] font-medium tracking-[.08em] text-[#665d50]">{storyRead ? "ИСТОРИЯ ПРОЧИТАНА" : "ИСТОРИЯ ПРОДОЛЖИТСЯ АВТОМАТИЧЕСКИ"}</div></div>
             <div className="flex items-center gap-3 text-[10px] font-bold tracking-[.12em]" role="status" aria-live="polite">
-              {!error && <span className="comic-loading-lamp text-xl text-[#9b7441]" aria-hidden="true">✳</span>}
-              <span>{error ?? (!ready ? storyRead ? "ИСТОРИЯ ПРОЧИТАНА · ЗАГРУЖАЕМ РАЙОН" : "ЗАГРУЖАЕМ РАЙОН" : storyRead ? "ОТКРЫВАЕМ РАЙОН" : "РАЙОН ГОТОВ · ЧИТАЕМ ИСТОРИЮ")}</span>
+              {!error && !ready && <span className="comic-loading-lamp text-xl text-[#9b7441]" aria-hidden="true">✳</span>}
+              <span>{error ?? (!ready ? "ЗАГРУЖАЕМ РАЙОН" : "РАЙОН ГОТОВ")}</span>
             </div>
+            {storyRead && ready && !error && <button type="button" onClick={() => { if (started.current) return; started.current = true; onStart(); }} className="border-2 border-[#202126] bg-[#202126] px-5 py-3 text-[10px] font-bold tracking-[.12em] text-[#f0e8d5] transition-colors hover:bg-[#424343] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#202126]">Начать смену →</button>}
           </footer>
         </section>
       </div>
