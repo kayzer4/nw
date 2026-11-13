@@ -1,12 +1,12 @@
 import { create } from "zustand";
 import type { LevelPreset } from "./level";
-import { advanceSession, buildCoverageIndex, createSession, type CoverageIndex, type SessionSnapshot } from "./simulation";
+import { advanceSession, citizenLighting, createSession, type SessionSnapshot } from "./simulation";
+import { gameClock } from "./clock";
 
 interface GameStore {
   level: LevelPreset | null;
   session: SessionSnapshot | null;
   lampStates: Record<string, boolean>;
-  coverage: CoverageIndex;
   loadLevel: (level: LevelPreset) => void;
   start: () => void;
   toggleLamp: (lampId: string) => void;
@@ -15,19 +15,28 @@ interface GameStore {
 }
 
 export const useGameStore = create<GameStore>((set, get) => ({
-  level: null, session: null, lampStates: {}, coverage: {},
+  level: null, session: null, lampStates: {},
   loadLevel: (level) => {
+    gameClock.reset();
     const lampStates = Object.fromEntries(level.lamps.map((lamp) => [lamp.id, lamp.initiallyOn]));
-    set({ level, session: createSession(level), lampStates, coverage: buildCoverageIndex(level) });
+    set({ level, session: createSession(level), lampStates });
   },
-  start: () => set((state) => state.session?.phase === "ready" ? { session: { ...state.session, phase: "playing" } } : {}),
+  start: () => set((state) => {
+    if (state.session?.phase !== "ready") return {};
+    gameClock.start();
+    return { session: { ...state.session, phase: "playing" } };
+  }),
   toggleLamp: (lampId) => set((state) => {
     if (state.session?.phase !== "playing" || !(lampId in state.lampStates)) return {};
-    return { lampStates: { ...state.lampStates, [lampId]: !state.lampStates[lampId] } };
+    const lampStates = { ...state.lampStates, [lampId]: !state.lampStates[lampId] };
+    return { lampStates, session: { ...state.session, citizenLit: citizenLighting(state.level!, lampStates, gameClock.elapsed()) } };
   }),
-  tick: () => set((state) => state.level && state.session
-    ? { session: advanceSession(state.level, state.session, state.lampStates, state.coverage) }
-    : {}),
+  tick: () => set((state) => {
+    if (!state.level || state.session?.phase !== "playing") return {};
+    const session = advanceSession(state.level, state.session, state.lampStates, gameClock.elapsed());
+    if (session.phase !== "playing") gameClock.stop();
+    return { session };
+  }),
   restart: () => {
     const { level, loadLevel } = get();
     if (level) loadLevel(level);

@@ -1,96 +1,45 @@
 import type { CitizenRoute, LevelPreset, Position2 } from "./level";
-
-export type CoverageIndex = Record<string, string[][]>;
+import { lampLightsPoint } from "./light";
 export interface SessionSnapshot {
   phase: "ready" | "playing" | "won" | "lost";
-  elapsedSeconds: number;
-  energy: number;
-  satisfaction: number;
+  elapsedSeconds: number; energy: number; satisfaction: number;
+  citizenLit: Record<string, boolean>;
 }
-
-const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
-
-function segmentHitsBox(a: Position2, b: Position2, center: Position2, halfExtent = 1.05) {
-  const minX = center[0] - halfExtent;
-  const maxX = center[0] + halfExtent;
-  const minZ = center[1] - halfExtent;
-  const maxZ = center[1] + halfExtent;
-  let low = 0;
-  let high = 1;
-  const axes: [number, number, number, number][] = [
-    [a[0], b[0] - a[0], minX, maxX],
-    [a[1], b[1] - a[1], minZ, maxZ],
-  ];
-  for (const [origin, delta, min, max] of axes) {
-    if (Math.abs(delta) < 1e-6) {
-      if (origin < min || origin > max) return false;
-      continue;
-    }
-    const t1 = (min - origin) / delta;
-    const t2 = (max - origin) / delta;
-    low = Math.max(low, Math.min(t1, t2));
-    high = Math.min(high, Math.max(t1, t2));
-    if (low > high) return false;
-  }
-  return high > 0 && low < 1;
-}
-
-function isBlocked(lamp: Position2, citizen: Position2, level: LevelPreset) {
-  return level.buildings.some((building) =>
-    segmentHitsBox(lamp, citizen, [building.position[0], building.position[2]]),
-  );
-}
-
-function isInRange(lamp: LevelPreset["lamps"][number], point: Position2) {
-  const dx = lamp.position[0] - point[0];
-  const dz = lamp.position[2] - point[1];
-  return dx * dx + dz * dz <= lamp.radius * lamp.radius;
-}
-
-/** Build once on level load; ticks then inspect only lamps that can reach each route point. */
-export function buildCoverageIndex(level: LevelPreset): CoverageIndex {
-  return Object.fromEntries(level.citizens.map((citizen) => [
-    citizen.id,
-    citizen.route.map((point) => level.lamps
-      .filter((lamp) => isInRange(lamp, point) && !isBlocked([lamp.position[0], lamp.position[2]], point, level))
-      .map((lamp) => lamp.id)),
-  ]));
-}
-
-export function createSession(level: LevelPreset): SessionSnapshot {
-  return { phase: "ready", elapsedSeconds: 0, energy: level.rules.startingEnergy, satisfaction: level.rules.startingSatisfaction };
-}
-
-export function advanceSession(
-  level: LevelPreset,
-  current: SessionSnapshot,
-  lampStates: Readonly<Record<string, boolean>>,
-  coverage: CoverageIndex,
-): SessionSnapshot {
-  if (current.phase !== "playing") return current;
-
-  const elapsedSeconds = current.elapsedSeconds + 1;
-  const activeLampCount = Object.values(lampStates).filter(Boolean).length;
-  const energy = Math.max(0, current.energy - activeLampCount * level.rules.energyPerLampSecond);
-  let litCitizens = 0;
-  for (const citizen of level.citizens) {
-    const routeIndex = Math.floor(elapsedSeconds / citizen.secondsPerPoint) % citizen.route.length;
-    const candidates = coverage[citizen.id]?.[routeIndex] ?? [];
-    if (candidates.some((lampId) => lampStates[lampId])) litCitizens += 1;
-  }
-  const satisfactionChange = litCitizens / Math.max(1, level.citizens.length) >= 0.5 ? 0.45 : -2.2;
-  const satisfaction = clamp(current.satisfaction + satisfactionChange, 0, 100);
-  const phase = energy <= 0 || satisfaction <= level.rules.minimumSatisfaction
-    ? "lost"
-    : elapsedSeconds >= level.rules.shiftSeconds ? "won" : "playing";
-  return { phase, elapsedSeconds, energy, satisfaction };
-}
-
+const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, n));
 export function routePosition(citizen: CitizenRoute, elapsedSeconds: number): Position2 {
+  if (!citizen.route.length) return [0, 0];
   const progress = elapsedSeconds / citizen.secondsPerPoint;
-  const segment = Math.floor(progress) % citizen.route.length;
+  const index = Math.floor(progress) % citizen.route.length;
   const fraction = progress - Math.floor(progress);
-  const from = citizen.route[segment];
-  const to = citizen.route[(segment + 1) % citizen.route.length];
-  return [from[0] + (to[0] - from[0]) * fraction, from[1] + (to[1] - from[1]) * fraction];
+  const a = citizen.route[index], b = citizen.route[(index + 1) % citizen.route.length];
+  return [a[0] + (b[0] - a[0]) * fraction, a[1] + (b[1] - a[1]) * fraction];
+}
+export function citizenLighting(level: LevelPreset, states: Readonly<Record<string, boolean>>, elapsed: number) {
+  return Object.fromEntries(level.citizens.map((citizen) => {
+    const point = routePosition(citizen, elapsed);
+    return [citizen.id, level.lamps.some((lamp) => states[lamp.id] && lampLightsPoint(lamp, point, level.buildings))];
+  })) as Record<string, boolean>;
+}
+export function createSession(level: LevelPreset): SessionSnapshot {
+  const states = Object.fromEntries(level.lamps.map((lamp) => [lamp.id, lamp.initiallyOn]));
+  return { phase: "ready", elapsedSeconds: 0, energy: level.rules.startingEnergy, satisfaction: level.rules.startingSatisfaction, citizenLit: citizenLighting(level, states, 0) };
+}
+export function advanceSession(level: LevelPreset, current: SessionSnapshot, states: Readonly<Record<string, boolean>>, elapsed: number): SessionSnapshot {
+  if (current.phase !== "playing") return current;
+  const nextTime = Math.min(level.rules.shiftSeconds, Math.max(current.elapsedSeconds, elapsed));
+  const dt = nextTime - current.elapsedSeconds;
+  const onCount = level.lamps.filter((lamp) => states[lamp.id]).length;
+  const energy = Math.max(0, current.energy - onCount * level.rules.energyPerLampSecond * dt);
+  let satisfaction = current.satisfaction;
+  // Integrate along the route, including after a throttled background tab resumes.
+  for (let time = current.elapsedSeconds; time < nextTime;) {
+    const step = Math.min(0.25, nextTime - time);
+    const lighting = citizenLighting(level, states, time + step / 2);
+    const litCount = Object.values(lighting).filter(Boolean).length;
+    satisfaction = clamp(satisfaction + (litCount >= Math.ceil(level.citizens.length / 2) ? 0.35 : -0.6) * step, 0, 100);
+    time += step;
+  }
+  const citizenLit = citizenLighting(level, states, nextTime);
+  const phase = energy <= 0 || satisfaction <= level.rules.minimumSatisfaction ? "lost" : nextTime >= level.rules.shiftSeconds ? "won" : "playing";
+  return { phase, elapsedSeconds: nextTime, energy, satisfaction, citizenLit };
 }

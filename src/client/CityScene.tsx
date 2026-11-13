@@ -7,6 +7,9 @@ import { AnimationMixer, Box3, LoopRepeat, Object3D, type Group } from "three";
 import { clone as skeletonClone } from "three/examples/jsm/utils/SkeletonUtils.js";
 import type { CitizenRoute, LevelPreset, PlacedAsset, PlacedLamp } from "@/game/level";
 import { useGameStore } from "@/game/game-store";
+import { gameClock } from "@/game/clock";
+import { lampCone } from "@/game/light";
+import { routePosition } from "@/game/simulation";
 
 function Model({ asset, scale = 1 }: { asset: string; scale?: number }) {
   const { scene } = useGLTF(asset);
@@ -26,6 +29,7 @@ function Lamp({ lamp }: { lamp: PlacedLamp }) {
   const on = useGameStore((state) => state.lampStates[lamp.id] ?? lamp.initiallyOn);
   const toggle = useGameStore((state) => state.toggleLamp);
   const spotlightOriginHeight = 0.62 * lamp.scale;
+  const cone = lampCone(lamp);
   const spotlightTarget = useMemo(() => {
     const target = new Object3D();
     target.position.set(0, -5 * lamp.scale, -0.15 * lamp.scale);
@@ -41,15 +45,15 @@ function Lamp({ lamp }: { lamp: PlacedLamp }) {
     >
       <Model asset={lamp.asset} scale={lamp.scale} />
       <primitive object={spotlightTarget} />
-      {on && <spotLight position={[0, spotlightOriginHeight, -0.15 * lamp.scale]} target={spotlightTarget} color={lamp.color} intensity={lamp.intensity} distance={lamp.radius} angle={Math.PI / 5} penumbra={0.4} decay={2} />}
+      {on && <spotLight position={[0, spotlightOriginHeight, -0.15 * lamp.scale]} target={spotlightTarget} color={lamp.color} intensity={lamp.intensity} distance={cone.distance} angle={cone.angle} penumbra={0.4} decay={2} />}
     </group>
   );
 }
 
 function Citizen({ citizen }: { citizen: CitizenRoute }) {
   const group = useRef<Group>(null);
-  const progress = useRef(0);
   const isPlaying = useGameStore((state) => state.session?.phase === "playing");
+  const lit = useGameStore((state) => state.session?.citizenLit[citizen.id] ?? false);
   const { scene, animations } = useGLTF(citizen.asset);
   const clone = useMemo(() => {
     scene.updateMatrixWorld(true);
@@ -76,20 +80,17 @@ function Citizen({ citizen }: { citizen: CitizenRoute }) {
       mixer.stopAllAction();
     };
   }, [isPlaying, mixer, walkClip]);
-  useEffect(() => { if (!isPlaying) progress.current = 0; }, [isPlaying]);
   useFrame((_, delta) => {
     if (isPlaying) mixer.update(delta);
-    if (!group.current || !isPlaying || citizen.route.length === 0) return;
-    progress.current = (progress.current + delta / citizen.secondsPerPoint) % citizen.route.length;
-    const segment = Math.floor(progress.current);
-    const fraction = progress.current - segment;
-    const from = citizen.route[segment];
-    const to = citizen.route[(segment + 1) % citizen.route.length];
-    group.current.position.set(from[0] + (to[0] - from[0]) * fraction, 0, from[1] + (to[1] - from[1]) * fraction);
-    group.current.rotation.y = Math.atan2(to[0] - from[0], to[1] - from[1]);
+    if (!group.current || citizen.route.length === 0) return;
+    const time = isPlaying ? gameClock.elapsed() : useGameStore.getState().session?.elapsedSeconds ?? 0;
+    const point = routePosition(citizen, time);
+    const next = routePosition(citizen, time + 0.04);
+    group.current.position.set(point[0], 0, point[1]);
+    group.current.rotation.y = Math.atan2(next[0] - point[0], next[1] - point[1]);
   });
   const initial = citizen.route[0] ?? [0, 0];
-  return <group ref={group} position={[initial[0], 0, initial[1]]}><primitive object={clone} /></group>;
+  return <group ref={group} position={[initial[0], 0, initial[1]]}><primitive object={clone} /><sprite position={[0, citizen.scale * 1.75 + 0.12, 0]} scale={[0.18, 0.18, 1]}><spriteMaterial color={lit ? "#8fe5a6" : "#ff746b"} depthTest={false} /></sprite></group>;
 }
 
 function District({ level }: { level: LevelPreset }) {
