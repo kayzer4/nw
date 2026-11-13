@@ -414,7 +414,37 @@
       "id": "lamp-1",
       "asset": "/models/lamps/light-curved.glb",
       "position": [
-        1,
+        1.9,
+        0,
+        3
+      ],
+      "rotationY": -4.71238898038469,
+      "scale": 1,
+      "radius": 3.2,
+      "color": "#fffbe6",
+      "intensity": 2,
+      "initiallyOn": true
+    },
+    {
+      "id": "lamp-2",
+      "asset": "/models/lamps/light-curved.glb",
+      "position": [
+        4.1,
+        0,
+        -3
+      ],
+      "rotationY": -1.5707963267948966,
+      "scale": 1,
+      "radius": 3.2,
+      "color": "#fffbe6",
+      "intensity": 2,
+      "initiallyOn": true
+    },
+    {
+      "id": "lamp-3",
+      "asset": "/models/lamps/light-curved.glb",
+      "position": [
+        -3,
         0,
         0.09999999999999998
       ],
@@ -426,42 +456,12 @@
       "initiallyOn": true
     },
     {
-      "id": "lamp-2",
+      "id": "lamp-4",
       "asset": "/models/lamps/light-curved.glb",
       "position": [
         5.9,
         0,
-        -3
-      ],
-      "rotationY": 1.5707963267948966,
-      "scale": 1,
-      "radius": 3.2,
-      "color": "#fffbe6",
-      "intensity": 2,
-      "initiallyOn": true
-    },
-    {
-      "id": "lamp-3",
-      "asset": "/models/lamps/light-curved.glb",
-      "position": [
-        -5,
-        0,
-        1.9
-      ],
-      "rotationY": 0,
-      "scale": 1,
-      "radius": 3.2,
-      "color": "#fffbe6",
-      "intensity": 2,
-      "initiallyOn": true
-    },
-    {
-      "id": "lamp-4",
-      "asset": "/models/lamps/light-curved.glb",
-      "position": [
-        1.9,
-        0,
-        5
+        -1.0000000000000002
       ],
       "rotationY": -4.71238898038469,
       "scale": 1,
@@ -474,11 +474,11 @@
       "id": "lamp-5",
       "asset": "/models/lamps/light-curved.glb",
       "position": [
-        5,
+        0.09999999999999998,
         0,
-        1.9
+        3
       ],
-      "rotationY": 0,
+      "rotationY": -1.5707963267948966,
       "scale": 1,
       "radius": 3.2,
       "color": "#fffbe6",
@@ -489,7 +489,7 @@
       "id": "lamp-6",
       "asset": "/models/lamps/light-curved.glb",
       "position": [
-        -3,
+        -5,
         0,
         1.9
       ],
@@ -522,6 +522,14 @@
       "asset": "/models/characters/cube_guy.glb",
       "scale": 0.2,
       "route": [
+        [
+          1.9000000000000004,
+          5.9
+        ],
+        [
+          1.9,
+          3
+        ],
         [
           1.9,
           1.9
@@ -561,9 +569,21 @@
         [
           -0.9999999999999999,
           1.9
+        ],
+        [
+          0.09999999999999998,
+          1.9
+        ],
+        [
+          0.09999999999999998,
+          3
+        ],
+        [
+          0.1000000000000002,
+          5.9
         ]
       ],
-      "secondsPerPoint": 8.559999999999999
+      "secondsPerPoint": 7.840000000000001
     },
     {
       "id": "walker-02",
@@ -609,15 +629,19 @@
         [
           1.9,
           3
-        ]
-      ],
-      "secondsPerPoint": 9.400000000000002
-    },
-    {
-      "id": "walker-04",
-      "asset": "/models/characters/cube_guy.glb",
-      "scale": 0.2,
-      "route": [
+        ],
+        [
+          1.9,
+          1.9
+        ],
+        [
+          3,
+          1.9
+        ],
+        [
+          3,
+          0.09999999999999998
+        ],
         [
           1,
           0.09999999999999998
@@ -629,6 +653,42 @@
         [
           -0.9999999999999999,
           1.9
+        ],
+        [
+          0.09999999999999998,
+          1.9
+        ]
+      ],
+      "secondsPerPoint": 7.127272727272729
+    },
+    {
+      "id": "walker-04",
+      "asset": "/models/characters/cube_guy.glb",
+      "scale": 0.2,
+      "route": [
+        [
+          -0.9999999999999999,
+          1.9
+        ],
+        [
+          0.09999999999999998,
+          1.9
+        ],
+        [
+          0.09999999999999998,
+          3
+        ],
+        [
+          0.1000000000000002,
+          5.9
+        ],
+        [
+          1.9000000000000004,
+          5.9
+        ],
+        [
+          1.9,
+          3
         ],
         [
           1.9,
@@ -673,9 +733,17 @@
         [
           3,
           0.09999999999999998
+        ],
+        [
+          1,
+          0.09999999999999998
+        ],
+        [
+          -1,
+          0.09999999999999998
         ]
       ],
-      "secondsPerPoint": 8.400000000000002
+      "secondsPerPoint": 7.873684210526317
     },
     {
       "id": "walker-05",
@@ -721,9 +789,29 @@
         [
           -0.9999999999999999,
           1.9
+        ],
+        [
+          0.09999999999999998,
+          1.9
+        ],
+        [
+          0.09999999999999998,
+          3
+        ],
+        [
+          0.1000000000000002,
+          5.9
+        ],
+        [
+          1.9000000000000004,
+          5.9
+        ],
+        [
+          1.9,
+          3
         ]
       ],
-      "secondsPerPoint": 7.733333333333333
+      "secondsPerPoint": 7.127272727272728
     }
   ],
   "rules": {

@@ -444,21 +444,6 @@
       "id": "lamp-3",
       "asset": "/models/lamps/light-curved.glb",
       "position": [
-        5.9,
-        0,
-        3
-      ],
-      "rotationY": -4.71238898038469,
-      "scale": 1,
-      "radius": 3,
-      "color": "#fffbe6",
-      "intensity": 2,
-      "initiallyOn": true
-    },
-    {
-      "id": "lamp-4",
-      "asset": "/models/lamps/light-curved.glb",
-      "position": [
         3.9,
         0,
         -3
@@ -469,6 +454,21 @@
       "color": "#fffbe6",
       "intensity": 2,
       "initiallyOn": false
+    },
+    {
+      "id": "lamp-4",
+      "asset": "/models/lamps/light-curved.glb",
+      "position": [
+        5.9,
+        0,
+        3
+      ],
+      "rotationY": -4.71238898038469,
+      "scale": 1,
+      "radius": 3,
+      "color": "#fffbe6",
+      "intensity": 2,
+      "initiallyOn": true
     },
     {
       "id": "lamp-5",
@@ -554,6 +554,18 @@
           0.09999999999999998
         ],
         [
+          3.9,
+          0.09999999999999987
+        ],
+        [
+          3.9,
+          -1.0000000000000002
+        ],
+        [
+          2.1,
+          -0.9999999999999999
+        ],
+        [
           2.1,
           0.09999999999999998
         ],
@@ -586,7 +598,7 @@
           3
         ]
       ],
-      "secondsPerPoint": 8.466666666666667
+      "secondsPerPoint": 7.36
     },
     {
       "id": "walker-02",

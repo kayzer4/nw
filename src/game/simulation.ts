@@ -17,7 +17,7 @@ export function routePosition(citizen: CitizenRoute, elapsedSeconds: number): Po
 export function citizenLighting(level: LevelPreset, states: Readonly<Record<string, boolean>>, elapsed: number) {
   return Object.fromEntries(level.citizens.map((citizen) => {
     const point = routePosition(citizen, elapsed);
-    return [citizen.id, level.lamps.some((lamp) => states[lamp.id] && lampLightsPoint(lamp, point, level.buildings))];
+    return [citizen.id, level.lamps.some((lamp) => states[lamp.id] && lampLightsPoint(lamp, point))];
   })) as Record<string, boolean>;
 }
 export function createSession(level: LevelPreset): SessionSnapshot {

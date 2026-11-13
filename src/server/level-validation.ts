@@ -26,7 +26,7 @@ export function assessLevel(level: LevelPreset): number {
     throw new Error("Lamp power, color and radius must be uniform within a level.");
   }
   const samples = coverageSamples(level.roads, level.citizens);
-  const missing = samples.filter(({ position }) => !level.lamps.some((lamp) => lampLightsPoint(lamp, position, level.buildings)));
+  const missing = samples.filter(({ position }) => !level.lamps.some((lamp) => lampLightsPoint(lamp, position)));
   if (missing.length) throw new Error(`${missing.length} road or route samples cannot be lit.`);
 
   const on = Object.fromEntries(level.lamps.map((lamp) => [lamp.id, true]));
@@ -43,7 +43,7 @@ export function assessLevel(level: LevelPreset): number {
     for (let mask = 1; mask < 2 ** level.lamps.length; mask++) {
       const count = level.lamps.reduce((sum, _, index) => sum + Number(Boolean(mask & (1 << index))), 0);
       if (count >= minimum) continue;
-      const lit = points.filter((point) => level.lamps.some((lamp, index) => Boolean(mask & (1 << index)) && lampLightsPoint(lamp, point, level.buildings))).length;
+      const lit = points.filter((point) => level.lamps.some((lamp, index) => Boolean(mask & (1 << index)) && lampLightsPoint(lamp, point))).length;
       if (lit >= Math.ceil(points.length / 2)) minimum = count;
     }
     requiredFraction += minimum / level.lamps.length;

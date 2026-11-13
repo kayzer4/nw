@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import fs from "node:fs";
-import { lampFootprintCenter, lampLightsPoint } from "../src/game/light";
+import { lampCone, lampFootprintCenter, lampLightsPoint } from "../src/game/light";
 import { advanceSession, citizenLighting, createSession, routePosition } from "../src/game/simulation";
 import { assessLevel } from "../src/server/level-validation";
 import { walkSegmentAllowed } from "../src/server/walk-geometry";
@@ -30,29 +30,35 @@ test("rendered route and lighting state use the same interpolated position", () 
   expect(halfway[0]).toBeCloseTo((citizen.route[0][0] + citizen.route[1][0]) / 2);
   expect(halfway[1]).toBeCloseTo((citizen.route[0][1] + citizen.route[1][1]) / 2);
   const states = Object.fromEntries(level.lamps.map((lamp) => [lamp.id, true]));
-  const expected = level.lamps.some((lamp) => lampLightsPoint(lamp, halfway, level.buildings));
+  const expected = level.lamps.some((lamp) => lampLightsPoint(lamp, halfway));
   expect(citizenLighting(level, states, citizen.secondsPerPoint / 2)[citizen.id]).toBe(expected);
 });
 
 test("light radius is measured from the rendered lamp head", () => {
   const lamp = load("first-shift").lamps[0];
   const center = lampFootprintCenter(lamp);
-  expect(lampLightsPoint(lamp, center, [])).toBe(true);
-  expect(lampLightsPoint(lamp, [center[0] + lamp.radius + 0.01, center[1]], [])).toBe(false);
+  expect(lampLightsPoint(lamp, center)).toBe(true);
+  expect(lampLightsPoint(lamp, [center[0] + lamp.radius + 0.01, center[1]])).toBe(false);
+  const cone = lampCone(lamp);
+  expect(Math.tan(cone.angle) * cone.height).toBeCloseTo(lamp.radius);
 });
 
 test("residents cross the road only on a marked crossing model", () => {
   const level = load("first-shift");
   const crossing = level.roads.find((road) => road.asset.endsWith("/road-crossing.glb"));
   const straight = level.roads.find((road) => road.asset.endsWith("/road-straight.glb"));
+  const intersection = level.roads.find((road) => road.asset.endsWith("/road-intersection.glb"));
   expect(crossing).toBeDefined();
   expect(straight).toBeDefined();
+  expect(intersection).toBeDefined();
   const crossingPoints = (road) => {
     const x = road.position[0], z = road.position[2], rotation = road.rotationY;
     return [[x - Math.sin(rotation) * 0.9, z - Math.cos(rotation) * 0.9], [x + Math.sin(rotation) * 0.9, z + Math.cos(rotation) * 0.9]];
   };
   expect(walkSegmentAllowed(...crossingPoints(crossing), level.roads, level.grid)).toBe(true);
   expect(walkSegmentAllowed(...crossingPoints(straight), level.roads, level.grid)).toBe(false);
+  const toWorld = (road, x, z) => [road.position[0] + x * Math.cos(road.rotationY) + z * Math.sin(road.rotationY), road.position[2] - x * Math.sin(road.rotationY) + z * Math.cos(road.rotationY)];
+  expect(walkSegmentAllowed(toWorld(intersection, -0.9, 0.9), toWorld(intersection, 0.9, 0.9), level.roads, level.grid)).toBe(false);
 });
 
 test("placed building geometry stays inside its cell", () => {

@@ -387,7 +387,7 @@ function segmentHitsBuilding(from: Position2, to: Position2, building: PlacedAss
   return high > 0 && low < 1;
 }
 
-function selectCoveringLamps(candidates: PlacedLamp[], samples: CoverageSample[], buildings: PlacedAsset[]) {
+function selectCoveringLamps(candidates: PlacedLamp[], samples: CoverageSample[]) {
   const selected: PlacedLamp[] = [];
   const uncovered = new Set(samples.map((_, index) => index));
   const remaining = [...candidates];
@@ -397,7 +397,7 @@ function selectCoveringLamps(candidates: PlacedLamp[], samples: CoverageSample[]
     let bestCoverage: number[] = [];
     for (let candidateIndex = 0; candidateIndex < remaining.length; candidateIndex += 1) {
       const candidate = remaining[candidateIndex];
-      const covered = [...uncovered].filter((sampleIndex) => lampLightsPoint(candidate, samples[sampleIndex].position, buildings));
+      const covered = [...uncovered].filter((sampleIndex) => lampLightsPoint(candidate, samples[sampleIndex].position));
       if (covered.length > bestCoverage.length) {
         bestIndex = candidateIndex;
         bestCoverage = covered;
@@ -431,7 +431,7 @@ function fallbackLamp(sample: CoverageSample, source: PlacedLamp, buildings: Pla
 function completeRouteCoverage(
   candidates: PlacedLamp[], samples: CoverageSample[], buildings: PlacedAsset[],
 ): PlacedLamp[] {
-  const { selected, uncovered } = selectCoveringLamps(candidates, samples, buildings);
+  const { selected, uncovered } = selectCoveringLamps(candidates, samples);
   const template = candidates[0];
   if (uncovered.size > 0 && !template) throw new Error("Cannot cover roads: no configured road lamp model is available.");
 
@@ -440,7 +440,7 @@ function completeRouteCoverage(
     const sample = samples[sampleIndex];
     const lamp = fallbackLamp(sample, template!, buildings, `road-lamp-${selected.length + 1}`);
     selected.push(lamp);
-    for (const index of uncovered) if (lampLightsPoint(lamp, samples[index].position, buildings)) uncovered.delete(index);
+    for (const index of uncovered) if (lampLightsPoint(lamp, samples[index].position)) uncovered.delete(index);
   }
 
   const unique = new Map<string, PlacedLamp>();
@@ -449,12 +449,12 @@ function completeRouteCoverage(
     if (!unique.has(key)) unique.set(key, lamp);
   }
   const placed = [...unique.values()].map((lamp, index) => ({ ...lamp, id: `lamp-${index + 1}` }));
-  const stillUncovered = samples.filter((sample) => !placed.some((lamp) => lampLightsPoint(lamp, sample.position, buildings)));
+  const stillUncovered = samples.filter((sample) => !placed.some((lamp) => lampLightsPoint(lamp, sample.position)));
   if (stillUncovered.length > 0) throw new Error(`Could not fully light road samples: ${stillUncovered.length}`);
   return placed;
 }
 
-function chooseInitiallyOn(lamps: PlacedLamp[], citizens: CitizenRoute[], buildings: PlacedAsset[]): PlacedLamp[] {
+function chooseInitiallyOn(lamps: PlacedLamp[], citizens: CitizenRoute[]): PlacedLamp[] {
   const anchors = [...new Map(citizens.flatMap((citizen) => citizen.route)
     .map((point) => [`${point[0].toFixed(2)},${point[1].toFixed(2)}`, point] as const)).values()];
   const uncovered = new Set(anchors.map((_, index) => index));
@@ -465,7 +465,7 @@ function chooseInitiallyOn(lamps: PlacedLamp[], citizens: CitizenRoute[], buildi
     let bestIndices: number[] = [];
     for (const lamp of lamps) {
       if (selected.has(lamp.id)) continue;
-      const indices = [...uncovered].filter((index) => lampLightsPoint(lamp, anchors[index], buildings));
+      const indices = [...uncovered].filter((index) => lampLightsPoint(lamp, anchors[index]));
       if (indices.length > bestIndices.length) { best = lamp; bestIndices = indices; }
     }
     if (!best || bestIndices.length === 0) break;
@@ -528,7 +528,7 @@ export function buildLevel(seedInput: string): LevelPreset {
     lamps = completeRouteCoverage(candidates, samples, buildings);
     if (lamps.length <= 10) break;
   }
-  lamps = chooseInitiallyOn(lamps, citizens, buildings);
+  lamps = chooseInitiallyOn(lamps, citizens);
 
   const level: LevelPreset = {
     id: "custom", seed, title: "Custom District", subtitle: `Generated from seed ${seed}.`,

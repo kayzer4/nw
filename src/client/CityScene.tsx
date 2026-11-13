@@ -8,7 +8,7 @@ import { clone as skeletonClone } from "three/examples/jsm/utils/SkeletonUtils.j
 import type { CitizenRoute, LevelPreset, PlacedAsset, PlacedLamp } from "@/game/level";
 import { useGameStore } from "@/game/game-store";
 import { gameClock } from "@/game/clock";
-import { LAMP_HEAD, lampCone } from "@/game/light";
+import { LAMP_HEAD, LAMP_HEAD_HEIGHT, lampCone } from "@/game/light";
 import { routePosition } from "@/game/simulation";
 
 function Model({ asset, scale = 1 }: { asset: string; scale?: number }) {
@@ -28,11 +28,11 @@ function StaticAsset({ item }: { item: PlacedAsset }) {
 function Lamp({ lamp, dragRef }: { lamp: PlacedLamp; dragRef: RefObject<boolean> }) {
   const on = useGameStore((state) => state.lampStates[lamp.id] ?? lamp.initiallyOn);
   const toggle = useGameStore((state) => state.toggleLamp);
-  const spotlightOriginHeight = 0.62 * lamp.scale;
+  const spotlightOriginHeight = LAMP_HEAD_HEIGHT * lamp.scale;
   const cone = lampCone(lamp);
   const spotlightTarget = useMemo(() => {
     const target = new Object3D();
-    target.position.set(0, -5 * lamp.scale, LAMP_HEAD[1] * lamp.scale);
+    target.position.set(0, 0, LAMP_HEAD[1] * lamp.scale);
     return target;
   }, [lamp.scale]);
   return (
@@ -44,7 +44,7 @@ function Lamp({ lamp, dragRef }: { lamp: PlacedLamp; dragRef: RefObject<boolean>
       ><Model asset={lamp.asset} scale={lamp.scale} /></group>
       <primitive object={spotlightTarget} />
       {on && <>
-        <spotLight position={[0, spotlightOriginHeight, LAMP_HEAD[1] * lamp.scale]} target={spotlightTarget} color={lamp.color} intensity={lamp.intensity} distance={cone.distance} angle={cone.angle} penumbra={0.4} decay={2} />
+        <spotLight position={[0, spotlightOriginHeight, LAMP_HEAD[1] * lamp.scale]} target={spotlightTarget} color={lamp.color} intensity={lamp.intensity} distance={0} angle={cone.angle} penumbra={0.02} decay={0} />
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.012, LAMP_HEAD[1] * lamp.scale]}>
           <circleGeometry args={[lamp.radius, 64]} />
           <meshBasicMaterial color={lamp.color} transparent opacity={0.065} depthWrite={false} />

@@ -21,10 +21,17 @@ export function walkSegmentAllowed(from: Position2, to: Position2, roads: readon
     const cosine = Math.cos(road.rotationY), sine = Math.sin(road.rotationY);
     const localX = dx * cosine - dz * sine;
     const localZ = dx * sine + dz * cosine;
-    if (Math.abs(localX) < 0.78 && Math.abs(localZ) < 0.78) {
-      // Only this model has a marked crossing through the road's middle.
-      if (!road.asset.endsWith("/road-crossing.glb") || Math.abs(localX) > 0.35) return false;
-    }
+    const left = localX <= -0.6, right = localX >= 0.6;
+    const front = localZ <= -0.6, back = localZ >= 0.6;
+    const model = road.asset.split("/").at(-1);
+    const walkable = model === "road-straight.glb" ? front || back
+      : model === "road-crossing.glb" ? front || back || Math.abs(localX) <= 0.35
+      : model === "road-end.glb" ? left || front || back
+      : model === "road-crossroad.glb" ? (left || right) && (front || back)
+      : model === "road-intersection.glb" ? front || (back && (left || right))
+      : model === "road-bend-square.glb" ? front || right || (left && back)
+      : false;
+    if (!walkable) return false;
   }
   return true;
 }
