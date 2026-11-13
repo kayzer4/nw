@@ -59,12 +59,12 @@ function ControlRoom({ levels, completedIds, loadingId, error, onSelect, onRetry
     <Watcher />
     <Telephone />
     <DeskFan />
-    <group position={[0, 1.995, -1.49]}>
+    <group position={[0, 1.995, -1.53]}>
       <Html transform center distanceFactor={4.3} wrapperClass="level-monitor-html">
         <div className="level-monitor-scale"><LevelMonitor levels={levels} completedIds={completedIds} loadingId={loadingId} error={error} onSelect={onSelect} onRetry={onRetry} /></div>
       </Html>
     </group>
-    <OrbitControls enablePan={false} enableZoom={false} minPolarAngle={1.35} maxPolarAngle={1.58} target={[0, 1.7, -0.35]} />
+    <OrbitControls enableRotate={false} enablePan={false} enableZoom={false} target={[0, 1.7, -0.35]} />
   </>;
 }
 
