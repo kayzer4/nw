@@ -37,6 +37,7 @@ export interface LevelPreset {
   seed: string;
   title: string;
   subtitle: string;
+  difficulty: number;
   grid: { width: number; depth: number; cellSize: number };
   roads: readonly PlacedAsset[];
   buildings: readonly PlacedAsset[];

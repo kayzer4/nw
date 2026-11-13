@@ -1,6 +1,11 @@
 import type { LevelPreset, PlacedLamp, Position2 } from "./level";
 export const LAMP_HEAD: Position2 = [0, -0.15];
 export const LAMP_HEAD_HEIGHT = 0.62;
+export function lampFootprintCenter(lamp: PlacedLamp): Position2 {
+  const x = LAMP_HEAD[0] * lamp.scale, z = LAMP_HEAD[1] * lamp.scale;
+  const cosine = Math.cos(lamp.rotationY), sine = Math.sin(lamp.rotationY);
+  return [lamp.position[0] + x * cosine + z * sine, lamp.position[2] - x * sine + z * cosine];
+}
 export function lampCone(lamp: PlacedLamp) {
   const height = LAMP_HEAD_HEIGHT * lamp.scale;
   return { height, angle: Math.atan(lamp.radius / height), distance: Math.hypot(lamp.radius, height) };
@@ -16,7 +21,8 @@ function hitsBuilding(a: Position2, b: Position2, x: number, z: number) {
   return hi > 0 && lo < 1;
 }
 export function lampLightsPoint(lamp: PlacedLamp, point: Position2, buildings: LevelPreset["buildings"]) {
-  const dx = lamp.position[0] - point[0], dz = lamp.position[2] - point[1];
+  const center = lampFootprintCenter(lamp);
+  const dx = center[0] - point[0], dz = center[1] - point[1];
   if (dx * dx + dz * dz > lamp.radius * lamp.radius) return false;
-  return !buildings.some((b) => hitsBuilding([lamp.position[0], lamp.position[2]], point, b.position[0], b.position[2]));
+  return !buildings.some((b) => hitsBuilding(center, point, b.position[0], b.position[2]));
 }

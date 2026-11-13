@@ -28,8 +28,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
   }),
   toggleLamp: (lampId) => set((state) => {
     if (state.session?.phase !== "playing" || !(lampId in state.lampStates)) return {};
+    const current = advanceSession(state.level!, state.session, state.lampStates, gameClock.elapsed());
+    if (current.phase !== "playing") { gameClock.stop(); return { session: current }; }
     const lampStates = { ...state.lampStates, [lampId]: !state.lampStates[lampId] };
-    return { lampStates, session: { ...state.session, citizenLit: citizenLighting(state.level!, lampStates, gameClock.elapsed()) } };
+    return { lampStates, session: { ...current, citizenLit: citizenLighting(state.level!, lampStates, current.elapsedSeconds) } };
   }),
   tick: () => set((state) => {
     if (!state.level || state.session?.phase !== "playing") return {};

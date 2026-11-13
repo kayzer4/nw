@@ -1,6 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { CitizenRoute, LevelPreset, PlacedAsset, PlacedLamp, Position2 } from "@/game/level";
+import { lampLightsPoint } from "@/game/light";
+import { coverageSamples, type CoverageSample } from "./coverage-samples";
+import { assessLevel } from "./level-validation";
 
 type RawConfig = {
   name: string; pack: string; modelType: string; roadType?: string;
@@ -15,7 +18,6 @@ type Connections = [boolean, boolean, boolean, boolean];
 type CellType = "road" | "building" | "empty";
 type Block = { x: number; z: number; w: number; h: number };
 type RoadTile = { key: string; config: RawConfig; rotationY: number; rotationSteps: number; connections: Connections };
-type RouteSample = { position: Position2; tangent: Position2 };
 type WalkNode = { id: string; cellX: number; cellZ: number; position: Position2; directions?: number[]; next: string[] };
 
 const projectRoot = process.cwd();
@@ -381,43 +383,7 @@ function segmentHitsBuilding(from: Position2, to: Position2, building: PlacedAss
   return high > 0 && low < 1;
 }
 
-function lampCoversPoint(lamp: PlacedLamp, point: Position2, buildings: PlacedAsset[]) {
-  const dx = lamp.position[0] - point[0];
-  const dz = lamp.position[2] - point[1];
-  return dx * dx + dz * dz <= lamp.radius * lamp.radius
-    && !buildings.some((building) => segmentHitsBuilding([lamp.position[0], lamp.position[2]], point, building));
-}
-
-function routeSamples(citizens: CitizenRoute[]): RouteSample[] {
-  const samples = new Map<string, RouteSample>();
-  for (const citizen of citizens) {
-    const route = citizen.route;
-    if (route.length === 0) continue;
-    if (route.length === 1) {
-      const point = route[0];
-      samples.set(`${point[0].toFixed(2)},${point[1].toFixed(2)}`, { position: point, tangent: [1, 0] });
-      continue;
-    }
-    for (let index = 0; index < route.length; index += 1) {
-      const from = route[index];
-      const to = route[(index + 1) % route.length];
-      const dx = to[0] - from[0];
-      const dz = to[1] - from[1];
-      const length = Math.hypot(dx, dz);
-      const steps = Math.max(1, Math.ceil(length / 0.5));
-      const tangent: Position2 = length > 0 ? [dx / length, dz / length] : [1, 0];
-      for (let step = 0; step <= steps; step += 1) {
-        const amount = step / steps;
-        const point: Position2 = [from[0] + dx * amount, from[1] + dz * amount];
-        const key = `${point[0].toFixed(2)},${point[1].toFixed(2)}`;
-        if (!samples.has(key)) samples.set(key, { position: point, tangent });
-      }
-    }
-  }
-  return [...samples.values()];
-}
-
-function selectCoveringLamps(candidates: PlacedLamp[], samples: RouteSample[], buildings: PlacedAsset[]) {
+function selectCoveringLamps(candidates: PlacedLamp[], samples: CoverageSample[], buildings: PlacedAsset[]) {
   const selected: PlacedLamp[] = [];
   const uncovered = new Set(samples.map((_, index) => index));
   const remaining = [...candidates];
@@ -427,7 +393,7 @@ function selectCoveringLamps(candidates: PlacedLamp[], samples: RouteSample[], b
     let bestCoverage: number[] = [];
     for (let candidateIndex = 0; candidateIndex < remaining.length; candidateIndex += 1) {
       const candidate = remaining[candidateIndex];
-      const covered = [...uncovered].filter((sampleIndex) => lampCoversPoint(candidate, samples[sampleIndex].position, buildings));
+      const covered = [...uncovered].filter((sampleIndex) => lampLightsPoint(candidate, samples[sampleIndex].position, buildings));
       if (covered.length > bestCoverage.length) {
         bestIndex = candidateIndex;
         bestCoverage = covered;
@@ -441,7 +407,7 @@ function selectCoveringLamps(candidates: PlacedLamp[], samples: RouteSample[], b
   return { selected, uncovered };
 }
 
-function fallbackLamp(sample: RouteSample, source: PlacedLamp, buildings: PlacedAsset[], id: string): PlacedLamp {
+function fallbackLamp(sample: CoverageSample, source: PlacedLamp, buildings: PlacedAsset[], id: string): PlacedLamp {
   const [dx, dz] = sample.tangent;
   const normal: Position2 = [-dz, dx];
   const offsets = [0.85, -0.85, 0];
@@ -459,15 +425,18 @@ function fallbackLamp(sample: RouteSample, source: PlacedLamp, buildings: Placed
 }
 
 function completeRouteCoverage(
-  candidates: PlacedLamp[], samples: RouteSample[], buildings: PlacedAsset[],
+  candidates: PlacedLamp[], samples: CoverageSample[], buildings: PlacedAsset[],
 ): PlacedLamp[] {
   const { selected, uncovered } = selectCoveringLamps(candidates, samples, buildings);
   const template = candidates[0];
-  if (uncovered.size > 0 && !template) throw new Error("Cannot cover citizen routes: no configured road lamp model is available.");
+  if (uncovered.size > 0 && !template) throw new Error("Cannot cover roads: no configured road lamp model is available.");
 
-  for (const sampleIndex of uncovered) {
+  while (uncovered.size > 0) {
+    const sampleIndex = uncovered.values().next().value as number;
     const sample = samples[sampleIndex];
-    selected.push(fallbackLamp(sample, template!, buildings, `route-lamp-${selected.length + 1}`));
+    const lamp = fallbackLamp(sample, template!, buildings, `road-lamp-${selected.length + 1}`);
+    selected.push(lamp);
+    for (const index of uncovered) if (lampLightsPoint(lamp, samples[index].position, buildings)) uncovered.delete(index);
   }
 
   const unique = new Map<string, PlacedLamp>();
@@ -476,8 +445,8 @@ function completeRouteCoverage(
     if (!unique.has(key)) unique.set(key, lamp);
   }
   const placed = [...unique.values()].map((lamp, index) => ({ ...lamp, id: `lamp-${index + 1}` }));
-  const stillUncovered = samples.filter((sample) => !placed.some((lamp) => lampCoversPoint(lamp, sample.position, buildings)));
-  if (stillUncovered.length > 0) throw new Error(`Could not fully light route samples: ${stillUncovered.map(({ position }) => position.join(",")).join(";")}`);
+  const stillUncovered = samples.filter((sample) => !placed.some((lamp) => lampLightsPoint(lamp, sample.position, buildings)));
+  if (stillUncovered.length > 0) throw new Error(`Could not fully light road samples: ${stillUncovered.length}`);
   return placed;
 }
 
@@ -492,7 +461,7 @@ function chooseInitiallyOn(lamps: PlacedLamp[], citizens: CitizenRoute[], buildi
     let bestIndices: number[] = [];
     for (const lamp of lamps) {
       if (selected.has(lamp.id)) continue;
-      const indices = [...uncovered].filter((index) => lampCoversPoint(lamp, anchors[index], buildings));
+      const indices = [...uncovered].filter((index) => lampLightsPoint(lamp, anchors[index], buildings));
       if (indices.length > bestIndices.length) { best = lamp; bestIndices = indices; }
     }
     if (!best || bestIndices.length === 0) break;
@@ -543,17 +512,27 @@ export function buildLevel(seedInput: string): LevelPreset {
 
   const buildings = placeBuildings(map, blocks, models, random);
   const citizens = makeCitizenRoutes(roadCells, random);
-  const samples = routeSamples(citizens);
-  const lampCandidates = createLampCandidates(roadCells);
-  const lamps = chooseInitiallyOn(completeRouteCoverage(lampCandidates, samples, buildings), citizens, buildings);
+  const samples = coverageSamples(roads, citizens);
+  const baseCandidates = createLampCandidates(roadCells);
+  const uniformColor = baseCandidates[0]?.color ?? "#fff8e7";
+  const uniformIntensity = baseCandidates[0]?.intensity ?? 2;
+  let lamps: PlacedLamp[] = [];
+  for (let radius = 5.5 + Number(seed) % 3 * 0.5; radius <= 8; radius += 0.5) {
+    const candidates = baseCandidates.map((lamp) => ({ ...lamp, radius, color: uniformColor, intensity: uniformIntensity }));
+    lamps = completeRouteCoverage(candidates, samples, buildings);
+    if (lamps.length <= 7) break;
+  }
+  lamps = chooseInitiallyOn(lamps, citizens, buildings);
 
-  return {
+  const level: LevelPreset = {
     id: "custom", seed, title: "Custom District", subtitle: `Generated from seed ${seed}.`,
+    difficulty: 1,
     grid: { width: WIDTH, depth: DEPTH, cellSize: CELL_SIZE },
     roads,
     buildings,
     lamps,
     citizens,
-    rules: { shiftSeconds: 100, startingEnergy: 190, energyPerLampSecond: 0.32, startingSatisfaction: 68, minimumSatisfaction: 35 },
+    rules: { shiftSeconds: 100, startingEnergy: lamps.length * 0.32 * 100 * 0.72, energyPerLampSecond: 0.32, startingSatisfaction: 68, minimumSatisfaction: 35 },
   };
+  return { ...level, difficulty: assessLevel(level) };
 }

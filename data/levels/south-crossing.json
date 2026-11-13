@@ -3,6 +3,7 @@
   "seed": "5005",
   "title": "South Crossing",
   "subtitle": "Guide the last walkers across the southern streets.",
+  "difficulty": 2,
   "grid": {
     "width": 6,
     "depth": 6,
@@ -443,6 +444,21 @@
       "id": "lamp-3",
       "asset": "/models/lamps/light-curved.glb",
       "position": [
+        2.1,
+        0,
+        -5
+      ],
+      "rotationY": -1.5707963267948966,
+      "scale": 1,
+      "radius": 6,
+      "color": "#fffbe6",
+      "intensity": 2,
+      "initiallyOn": false
+    },
+    {
+      "id": "lamp-4",
+      "asset": "/models/lamps/light-curved.glb",
+      "position": [
         -5,
         0,
         1.9
@@ -695,7 +711,7 @@
   ],
   "rules": {
     "shiftSeconds": 100,
-    "startingEnergy": 190,
+    "startingEnergy": 92.16,
     "energyPerLampSecond": 0.32,
     "startingSatisfaction": 68,
     "minimumSatisfaction": 35

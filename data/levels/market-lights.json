@@ -3,6 +3,7 @@
   "seed": "2063",
   "title": "Market Lights",
   "subtitle": "Watch the streets around the late market.",
+  "difficulty": 2,
   "grid": {
     "width": 6,
     "depth": 6,
@@ -413,13 +414,13 @@
       "id": "lamp-1",
       "asset": "/models/lamps/light-curved.glb",
       "position": [
-        -1,
+        1,
         0,
         0.09999999999999998
       ],
-      "rotationY": -3.141592653589793,
+      "rotationY": 3.141592653589793,
       "scale": 1,
-      "radius": 6,
+      "radius": 6.5,
       "color": "#fffbe6",
       "intensity": 2,
       "initiallyOn": true
@@ -428,13 +429,28 @@
       "id": "lamp-2",
       "asset": "/models/lamps/light-curved.glb",
       "position": [
-        1,
+        2.1,
         0,
-        0.09999999999999998
+        -5
       ],
-      "rotationY": 3.141592653589793,
+      "rotationY": -1.5707963267948966,
       "scale": 1,
-      "radius": 6,
+      "radius": 6.5,
+      "color": "#fffbe6",
+      "intensity": 2,
+      "initiallyOn": false
+    },
+    {
+      "id": "lamp-3",
+      "asset": "/models/lamps/light-curved.glb",
+      "position": [
+        -5,
+        0,
+        1.9
+      ],
+      "rotationY": 0,
+      "scale": 1,
+      "radius": 6.5,
       "color": "#fffbe6",
       "intensity": 2,
       "initiallyOn": true
@@ -700,7 +716,7 @@
   ],
   "rules": {
     "shiftSeconds": 100,
-    "startingEnergy": 190,
+    "startingEnergy": 69.12,
     "energyPerLampSecond": 0.32,
     "startingSatisfaction": 68,
     "minimumSatisfaction": 35
