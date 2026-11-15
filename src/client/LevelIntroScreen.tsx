@@ -1,11 +1,13 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { LevelPreset, LevelSummary } from "@/game/level";
 import { loadProgress, saveProgress } from "@/game/progress";
 import ComicIntro from "./ComicIntro";
-import ScenePreloader from "./ScenePreloader";
+
+const ScenePreloader = dynamic(() => import("./ScenePreloader"), { ssr: false });
 
 export default function LevelIntroScreen({ level, levels }: { level: LevelPreset; levels: LevelSummary[] }) {
   const router = useRouter();
