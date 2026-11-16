@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Lightkeeper — Night Shift",
-  description: "Keep the neighborhood safe until sunrise.",
+  title: "Lightkeeper — Ночная смена",
+  description: "Освещай город разумно до рассвета.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body>{children}</body></html>;
+  return <html lang="ru"><body>{children}</body></html>;
 }

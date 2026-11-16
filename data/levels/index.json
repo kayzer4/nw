@@ -2,31 +2,31 @@
   {
     "id": "first-shift",
     "seed": "1001",
-    "title": "First Shift",
-    "subtitle": "Keep the district lit until sunrise."
+    "title": "Первая смена",
+    "subtitle": "Освети район до рассвета."
   },
   {
     "id": "market-lights",
     "seed": "2063",
-    "title": "Market Lights",
-    "subtitle": "Watch the streets around the late market."
+    "title": "Огни рынка",
+    "subtitle": "Проследи за улицами у ночного рынка."
   },
   {
     "id": "north-gate",
     "seed": "3012",
-    "title": "North Gate",
-    "subtitle": "Hold the northern crossing through the night."
+    "title": "Северные ворота",
+    "subtitle": "Удержи освещённым северный переход."
   },
   {
     "id": "west-end",
     "seed": "4001",
-    "title": "West End",
-    "subtitle": "Keep the west side moving until morning."
+    "title": "Западный квартал",
+    "subtitle": "Проведи жителей западного района до утра."
   },
   {
     "id": "south-crossing",
     "seed": "5005",
-    "title": "South Crossing",
-    "subtitle": "Guide the last walkers across the southern streets."
+    "title": "Южный переход",
+    "subtitle": "Проведи последних жителей через южные улицы."
   }
 ]

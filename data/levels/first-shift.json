@@ -1,8 +1,8 @@
 {
   "id": "first-shift",
   "seed": "1001",
-  "title": "First Shift",
-  "subtitle": "Keep the district lit until sunrise.",
+  "title": "Первая смена",
+  "subtitle": "Освети район до рассвета.",
   "difficulty": 2,
   "grid": {
     "width": 6,

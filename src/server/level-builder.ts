@@ -529,7 +529,7 @@ export function buildLevel(seedInput: string, challengeIndex?: number): LevelPre
   lamps = lamps.map((lamp) => ({ ...lamp, initiallyOn: false }));
 
   const level: LevelPreset = {
-    id: "custom", seed, title: "Custom District", subtitle: `Generated from seed ${seed}.`,
+    id: "custom", seed, title: "Пользовательский район", subtitle: `Создан по коду ${seed}.`,
     difficulty: 1,
     grid: { width: WIDTH, depth: DEPTH, cellSize: CELL_SIZE },
     roads,

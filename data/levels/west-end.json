@@ -1,8 +1,8 @@
 {
   "id": "west-end",
   "seed": "4001",
-  "title": "West End",
-  "subtitle": "Keep the west side moving until morning.",
+  "title": "Западный квартал",
+  "subtitle": "Проведи жителей западного района до утра.",
   "difficulty": 5,
   "grid": {
     "width": 6,

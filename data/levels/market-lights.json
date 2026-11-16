@@ -1,8 +1,8 @@
 {
   "id": "market-lights",
   "seed": "2063",
-  "title": "Market Lights",
-  "subtitle": "Watch the streets around the late market.",
+  "title": "Огни рынка",
+  "subtitle": "Проследи за улицами у ночного рынка.",
   "difficulty": 3,
   "grid": {
     "width": 6,

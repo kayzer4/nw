@@ -10,7 +10,7 @@ import { GameTicker } from "./GameTicker";
 import { ProgressRecorder } from "./ProgressRecorder";
 import { useLampHoverStore } from "./lamp-hover-store";
 
-const CityScene = dynamic(() => import("./CityScene"), { ssr: false, loading: () => <div className="scene-loading">LOADING THE DISTRICT…</div> });
+const CityScene = dynamic(() => import("./CityScene"), { ssr: false, loading: () => <div className="scene-loading">ЗАГРУЖАЕМ РАЙОН…</div> });
 
 export default function GameScreen({ level }: { level: LevelPreset }) {
   const router = useRouter();
@@ -44,7 +44,7 @@ export default function GameScreen({ level }: { level: LevelPreset }) {
     if (store.level?.id === level.id && store.session?.phase === "ready") store.start();
   }, [level.id]);
 
-  if (loadedLevelId !== level.id) return <div className="load-state">LOADING THE DISTRICT…</div>;
+  if (loadedLevelId !== level.id) return <div className="load-state">ЗАГРУЖАЕМ РАЙОН…</div>;
 
   return <main className="game-shell">
     <div className="city-stage"

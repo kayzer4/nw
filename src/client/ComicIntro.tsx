@@ -24,7 +24,7 @@ function SceneArt({ chapter, panel }: { chapter: ComicChapter; panel: number }) 
     {style.weather === "rain" && <div className="absolute inset-0 opacity-60 [background-image:repeating-linear-gradient(110deg,transparent_0_14px,rgba(188,220,230,.25)_15px,transparent_16px_28px)]" />}
     {style.weather === "market" && <div className="absolute left-6 top-11 h-16 w-24 border-2 border-[#e09b59]/60 bg-[#df9b59]/10"><span className="absolute inset-x-2 top-4 border-t border-[#f4c978]/70" /><span className="absolute inset-x-2 top-9 border-t border-[#f4c978]/30" /></div>}
     {style.weather === "gate" && <div className="absolute left-[15%] top-10 h-24 w-16 border-x-4 border-t-4 border-[#9ecad4]/70"><span className="absolute -left-4 top-10 h-2 w-28 rotate-[-12deg] bg-[#d8a35f]/70" /></div>}
-    {style.weather === "critical" && <div className="absolute left-6 top-8 border-2 border-[#e69a68]/60 px-2 py-1 text-[8px] font-bold tracking-[.2em] text-[#f1bc91]">SOUTH / OPEN</div>}
+    {style.weather === "critical" && <div className="absolute left-6 top-8 border-2 border-[#e69a68]/60 px-2 py-1 text-[8px] font-bold tracking-[.2em] text-[#f1bc91]">ЮГ / ПРОХОД</div>}
     <div className="absolute inset-x-0 bottom-0 h-[45%] bg-[#081019]/90 [clip-path:polygon(0_43%,17%_21%,34%_46%,49%_13%,65%_38%,82%_18%,100%_40%,100%_100%,0_100%)]" />
     <div className="absolute inset-x-[8%] bottom-[21%] h-1 bg-[#b9c2bd]/30 shadow-[0_0_18px_rgba(159,201,204,.18)]" />
     <div className={`comic-watcher comic-watcher-${panel}`}><span className="comic-watcher-head" /><span className="comic-watcher-body" /><span className="comic-watcher-arm" /><span className="comic-watcher-beam" /></div>
@@ -32,8 +32,8 @@ function SceneArt({ chapter, panel }: { chapter: ComicChapter; panel: number }) 
       <div className="absolute -left-4 -top-6 h-8 w-8 rounded-full bg-[#f4c978]/10 blur-md" />
       <div className="relative h-16 w-[2px] bg-[#77828a]/80"><span className="absolute -left-[4px] -top-1 h-2 w-3 rounded-full bg-[#f5cf82] shadow-[0_0_12px_4px_rgba(245,207,130,.7)]" /></div>
     </div>)}
-    <div className="absolute bottom-3 left-4 flex items-center gap-2 text-[8px] font-bold tracking-[.18em] text-[#bac8c5]/70"><ThunderboltFilled style={{ color: style.accent }} /> {panel === 0 ? "HUM" : panel === 1 ? "CLICK" : "KEEP WATCH"}</div>
-    {panel === 1 && <div className="absolute right-4 top-4 rotate-[-8deg] border-2 border-[#f0c67d] px-2 py-1 text-[9px] font-black tracking-[.18em] text-[#f0c67d]">WATCH!</div>}
+    <div className="absolute bottom-3 left-4 flex items-center gap-2 text-[8px] font-bold tracking-[.18em] text-[#bac8c5]/70"><ThunderboltFilled style={{ color: style.accent }} /> {panel === 0 ? "ГУДЕНИЕ" : panel === 1 ? "ЩЕЛЧОК" : "СЛЕДИ ЗА СВЕТОМ"}</div>
+    {panel === 1 && <div className="absolute right-4 top-4 rotate-[-8deg] border-2 border-[#f0c67d] px-2 py-1 text-[9px] font-black tracking-[.18em] text-[#f0c67d]">ВНИМАНИЕ!</div>}
   </div>;
 }
 
@@ -76,16 +76,16 @@ export default function ComicIntro({ level, levels, ready, error, onStart, onBac
       <div className="mx-auto flex min-h-screen w-full max-w-[1440px] flex-col px-4 py-5 sm:px-8 lg:px-12">
         <header className="flex items-center justify-between border-b-4 border-[#202126] pb-4">
           <button type="button" onClick={onBack} className="group flex items-center gap-3 text-left text-[#202126] transition hover:-translate-y-0.5">
-            <span className="grid h-9 w-9 place-items-center border-2 border-[#202126] bg-[#e9dfca] font-serif text-lg shadow-[3px_3px_0_#202126]">N</span>
-            <span><strong className="block text-[10px] tracking-[.2em]">LIGHTKEEPER</strong><small className="mt-1 block text-[8px] font-bold tracking-[.16em] text-[#665d50]">RETURN TO DISTRICTS</small></span>
+            <span className="grid h-9 w-9 place-items-center border-2 border-[#202126] bg-[#e9dfca] font-serif text-lg shadow-[3px_3px_0_#202126]">Л</span>
+            <span><strong className="block text-[10px] tracking-[.2em]">LIGHTKEEPER</strong><small className="mt-1 block text-[8px] font-bold tracking-[.16em] text-[#665d50]">ВЕРНУТЬСЯ К РАЙОНАМ</small></span>
           </button>
-          <div className="hidden items-center gap-3 sm:flex"><span className="text-[9px] font-bold tracking-[.18em] text-[#665d50]">FIELD COMIC</span><Progress percent={Math.round(((currentIndex + 1) / Math.max(1, levels.length)) * 100)} showInfo={false} strokeColor="#202126" railColor="rgba(32,33,38,.18)" size="small" className="w-28" /></div>
+          <div className="hidden items-center gap-3 sm:flex"><span className="text-[9px] font-bold tracking-[.18em] text-[#665d50]">КОМИКС СМЕНЫ</span><Progress percent={Math.round(((currentIndex + 1) / Math.max(1, levels.length)) * 100)} showInfo={false} strokeColor="#202126" railColor="rgba(32,33,38,.18)" size="small" className="w-28" /></div>
         </header>
 
         <section className="flex flex-1 flex-col py-8 lg:py-12">
           <div className="mb-7 flex flex-wrap items-end justify-between gap-5">
             <div><div className="mb-3 flex items-center gap-2"><Tag color={style.accent}>{story.chapter}</Tag><span className="text-[9px] font-bold tracking-[.2em] text-[#665d50]">{level.id.replaceAll("-", " ")}</span></div><h1 className="max-w-4xl font-serif text-5xl leading-[.88] tracking-[-.05em] sm:text-7xl lg:text-8xl">{story.title}</h1><p className="mt-4 max-w-2xl text-sm font-medium leading-6 text-[#665d50] sm:text-base">{story.subtitle}</p></div>
-            <div className="max-w-[230px] border-2 border-[#202126] bg-[#eee9dc] p-4 shadow-[5px_5px_0_#202126]"><div className="text-[8px] font-black tracking-[.2em] text-[#997949]">NIGHT LINE / RULE</div><div className="mt-2 font-serif text-lg leading-tight">{story.principle}</div></div>
+            <div className="max-w-[230px] border-2 border-[#202126] bg-[#eee9dc] p-4 shadow-[5px_5px_0_#202126]"><div className="text-[8px] font-black tracking-[.2em] text-[#997949]">ПРАВИЛО НОЧИ</div><div className="mt-2 font-serif text-lg leading-tight">{story.principle}</div></div>
           </div>
 
           <div className="grid flex-1 items-start gap-5 md:grid-cols-3 md:gap-6">

@@ -1,8 +1,8 @@
 {
   "id": "north-gate",
   "seed": "3012",
-  "title": "North Gate",
-  "subtitle": "Hold the northern crossing through the night.",
+  "title": "Северные ворота",
+  "subtitle": "Удержи освещённым северный переход.",
   "difficulty": 4,
   "grid": {
     "width": 6,
