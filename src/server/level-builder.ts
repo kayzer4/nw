@@ -5,6 +5,7 @@ import { lampLightsPoint } from "@/game/light";
 import { coverageSamples, type CoverageSample } from "./coverage-samples";
 import { assessLevel, lampExclusiveShares } from "./level-validation";
 import { balanceGeneratedLevel } from "./level-balance";
+import { planIdealLighting } from "./ideal-lighting";
 import { modelFootprintRadius } from "./model-footprint";
 import { walkSegmentAllowed } from "./walk-geometry";
 
@@ -456,32 +457,12 @@ function completeRouteCoverage(
   return placed.map((lamp, index) => ({ ...lamp, id: `lamp-${index + 1}` }));
 }
 
-function chooseInitiallyOn(lamps: PlacedLamp[], citizens: CitizenRoute[], maxContinuousLights = Math.max(1, Math.floor(lamps.length * 0.72))): PlacedLamp[] {
-  const anchors = [...new Map(citizens.flatMap((citizen) => citizen.route)
-    .map((point) => [`${point[0].toFixed(2)},${point[1].toFixed(2)}`, point] as const)).values()];
-  const uncovered = new Set(anchors.map((_, index) => index));
-  const selected = new Set<string>();
-  while (selected.size < maxContinuousLights && uncovered.size > 0) {
-    let best: PlacedLamp | undefined;
-    let bestIndices: number[] = [];
-    for (const lamp of lamps) {
-      if (selected.has(lamp.id)) continue;
-      const indices = [...uncovered].filter((index) => lampLightsPoint(lamp, anchors[index]));
-      if (indices.length > bestIndices.length) { best = lamp; bestIndices = indices; }
-    }
-    if (!best || bestIndices.length === 0) break;
-    selected.add(best.id);
-    for (const index of bestIndices) uncovered.delete(index);
-  }
-  return lamps.map((lamp) => ({ ...lamp, initiallyOn: selected.has(lamp.id) }));
-}
-
 const CHALLENGES = [
-  { shiftSeconds: 40, lampSeconds: 63, requiredLitResidents: 6, minimumSatisfaction: 88, minimumActions: 3 },
-  { shiftSeconds: 50, lampSeconds: 80, requiredLitResidents: 5, minimumSatisfaction: 90, minimumActions: 5 },
-  { shiftSeconds: 55, lampSeconds: 121, requiredLitResidents: 5, minimumSatisfaction: 90, minimumActions: 6 },
-  { shiftSeconds: 60, lampSeconds: 96, requiredLitResidents: 5, minimumSatisfaction: 90, minimumActions: 6 },
-  { shiftSeconds: 65, lampSeconds: 91, requiredLitResidents: 5, minimumSatisfaction: 90, minimumActions: 7 },
+  { shiftSeconds: 40, minimumSatisfaction: 15, wasteTolerance: 0.65 },
+  { shiftSeconds: 50, minimumSatisfaction: 20, wasteTolerance: 0.55 },
+  { shiftSeconds: 55, minimumSatisfaction: 20, wasteTolerance: 0.5 },
+  { shiftSeconds: 60, minimumSatisfaction: 25, wasteTolerance: 0.45 },
+  { shiftSeconds: 65, minimumSatisfaction: 30, wasteTolerance: 0.4 },
 ] as const;
 
 export function buildLevel(seedInput: string, challengeIndex?: number): LevelPreset {
@@ -543,7 +524,7 @@ export function buildLevel(seedInput: string, challengeIndex?: number): LevelPre
   }
   if (!lamps.length) lamps = bestLamps ?? [];
   const challenge = CHALLENGES[Math.max(0, Math.min(CHALLENGES.length - 1, challengeIndex ?? 0))];
-  lamps = chooseInitiallyOn(lamps, citizens, challengeIndex === undefined || challengeIndex === 0 ? 1 : Math.max(1, Math.floor(lamps.length * 0.72)));
+  lamps = lamps.map((lamp) => ({ ...lamp, initiallyOn: false }));
 
   const level: LevelPreset = {
     id: "custom", seed, title: "Custom District", subtitle: `Generated from seed ${seed}.`,
@@ -555,15 +536,18 @@ export function buildLevel(seedInput: string, challengeIndex?: number): LevelPre
     citizens,
     rules: {
       shiftSeconds: challenge.shiftSeconds,
-      startingEnergy: challenge.lampSeconds * 0.7,
+      startingEnergy: 0,
       energyPerLampSecond: 0.7,
-      startingSatisfaction: 95,
+      startingSatisfaction: 70,
       minimumSatisfaction: challenge.minimumSatisfaction,
-      requiredLitResidents: Math.min(challenge.requiredLitResidents, citizens.length),
+      requiredLitResidents: citizens.length,
       comfortGainPerSecond: 0.5,
-      comfortLossPerSecond: 1.2,
+      comfortLossPerSecond: 1.5,
     },
   };
-  const balanced = balanceGeneratedLevel(level, challenge.minimumActions);
+  while (!planIdealLighting(level) && level.lamps[0].radius < 5.4) {
+    level.lamps = level.lamps.map((lamp) => ({ ...lamp, radius: Math.round((lamp.radius + 0.1) * 10) / 10 }));
+  }
+  const balanced = balanceGeneratedLevel(level, challenge.wasteTolerance);
   return { ...balanced, difficulty: assessLevel(balanced) };
 }

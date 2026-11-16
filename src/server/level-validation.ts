@@ -1,7 +1,7 @@
 import type { LevelPreset, PlacedLamp } from "@/game/level";
 import { lampLightsPoint } from "@/game/light";
 import { advanceSession, createSession } from "@/game/simulation";
-import { findMinimumActionPlan } from "./action-planner";
+import { allOnWasteSeconds, planIdealLighting, playIdealPlan } from "./ideal-lighting";
 import { coverageSamples } from "./coverage-samples";
 import { modelFootprintRadius } from "./model-footprint";
 import { walkSegmentAllowed } from "./walk-geometry";
@@ -50,10 +50,14 @@ export function assessLevel(level: LevelPreset): number {
   const on = Object.fromEntries(level.lamps.map((lamp) => [lamp.id, true]));
   const off = Object.fromEntries(level.lamps.map((lamp) => [lamp.id, false]));
   const shift = level.rules.shiftSeconds;
-  if (outcome(level, on, shift).phase !== "lost") throw new Error("Leaving every lamp on must lose.");
+  if (allOnWasteSeconds(level) > 0 && outcome(level, on, shift).phase !== "lost") throw new Error("Leaving unnecessary lamps on must lose.");
   if (outcome(level, off, shift).phase !== "lost") throw new Error("Leaving every lamp off must lose.");
 
-  const plan = findMinimumActionPlan(level);
-  if (!plan) throw new Error("No winning lamp-switching plan found.");
-  return Math.max(1, Math.min(5, Math.round(1 + plan.actions * 0.45 + (shift - 40) * 0.03)));
+  const plan = planIdealLighting(level);
+  if (!plan || playIdealPlan(level, plan).phase !== "won") throw new Error("Keeping every resident lit must win.");
+  // More required switches and less tolerance for redundant light mean a harder shift.
+  const excessAllowance = level.rules.startingEnergy / level.rules.energyPerLampSecond;
+  const possibleWaste = level.lamps.length * shift - plan.lampSeconds;
+  const tolerance = Math.min(1, excessAllowance / Math.max(1, possibleWaste));
+  return Math.max(1, Math.min(5, Math.round(1 + plan.switches * 0.3 + (1 - tolerance) * 2)));
 }

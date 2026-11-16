@@ -423,7 +423,7 @@
       "radius": 3.4,
       "color": "#fffbe6",
       "intensity": 2,
-      "initiallyOn": true
+      "initiallyOn": false
     },
     {
       "id": "lamp-2",
@@ -771,12 +771,12 @@
   ],
   "rules": {
     "shiftSeconds": 40,
-    "startingEnergy": 44.099999999999994,
+    "startingEnergy": 36.4,
     "energyPerLampSecond": 0.7,
-    "startingSatisfaction": 95,
-    "minimumSatisfaction": 88,
+    "startingSatisfaction": 70,
+    "minimumSatisfaction": 15,
     "requiredLitResidents": 6,
     "comfortGainPerSecond": 0.5,
-    "comfortLossPerSecond": 1.2
+    "comfortLossPerSecond": 1.5
   }
 }

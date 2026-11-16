@@ -3,7 +3,7 @@
   "seed": "4001",
   "title": "West End",
   "subtitle": "Keep the west side moving until morning.",
-  "difficulty": 4,
+  "difficulty": 5,
   "grid": {
     "width": 6,
     "depth": 6,
@@ -423,7 +423,7 @@
       "radius": 3.4,
       "color": "#fffbe6",
       "intensity": 2,
-      "initiallyOn": true
+      "initiallyOn": false
     },
     {
       "id": "lamp-2",
@@ -438,7 +438,7 @@
       "radius": 3.4,
       "color": "#fffbe6",
       "intensity": 2,
-      "initiallyOn": true
+      "initiallyOn": false
     },
     {
       "id": "lamp-3",
@@ -859,12 +859,12 @@
   ],
   "rules": {
     "shiftSeconds": 60,
-    "startingEnergy": 67.19999999999999,
+    "startingEnergy": 23.467499999999998,
     "energyPerLampSecond": 0.7,
-    "startingSatisfaction": 95,
-    "minimumSatisfaction": 90,
-    "requiredLitResidents": 5,
+    "startingSatisfaction": 70,
+    "minimumSatisfaction": 25,
+    "requiredLitResidents": 6,
     "comfortGainPerSecond": 0.5,
-    "comfortLossPerSecond": 1.2
+    "comfortLossPerSecond": 1.5
   }
 }

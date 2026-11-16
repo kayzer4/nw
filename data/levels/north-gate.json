@@ -420,10 +420,10 @@
       ],
       "rotationY": -1.5707963267948966,
       "scale": 1,
-      "radius": 3.4,
+      "radius": 3.5,
       "color": "#fffbe6",
       "intensity": 2,
-      "initiallyOn": true
+      "initiallyOn": false
     },
     {
       "id": "lamp-2",
@@ -435,10 +435,10 @@
       ],
       "rotationY": -1.5707963267948966,
       "scale": 1,
-      "radius": 3.4,
+      "radius": 3.5,
       "color": "#fffbe6",
       "intensity": 2,
-      "initiallyOn": true
+      "initiallyOn": false
     },
     {
       "id": "lamp-3",
@@ -450,7 +450,7 @@
       ],
       "rotationY": 0,
       "scale": 1,
-      "radius": 3.4,
+      "radius": 3.5,
       "color": "#fffbe6",
       "intensity": 2,
       "initiallyOn": false
@@ -465,7 +465,7 @@
       ],
       "rotationY": -1.5707963267948966,
       "scale": 1,
-      "radius": 3.4,
+      "radius": 3.5,
       "color": "#fffbe6",
       "intensity": 2,
       "initiallyOn": false
@@ -907,12 +907,12 @@
   ],
   "rules": {
     "shiftSeconds": 55,
-    "startingEnergy": 84.69999999999999,
+    "startingEnergy": 23.7125,
     "energyPerLampSecond": 0.7,
-    "startingSatisfaction": 95,
-    "minimumSatisfaction": 90,
-    "requiredLitResidents": 5,
+    "startingSatisfaction": 70,
+    "minimumSatisfaction": 20,
+    "requiredLitResidents": 6,
     "comfortGainPerSecond": 0.5,
-    "comfortLossPerSecond": 1.2
+    "comfortLossPerSecond": 1.5
   }
 }

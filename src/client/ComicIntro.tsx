@@ -2,7 +2,7 @@
 
 import { ThunderboltFilled } from "@ant-design/icons";
 import { Progress, Tag } from "antd";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef } from "react";
 import { getComicChapter, type ComicChapter, type ComicMood, type ComicPanel } from "@/game/comics";
 import type { LevelSummary } from "@/game/level";
 
@@ -14,10 +14,10 @@ const moodStyles: Record<ComicMood, { sky: string; glow: string; accent: string;
   critical: { sky: "from-[#261822] via-[#4b2630] to-[#0d1119]", glow: "bg-[#efaf70]", accent: "#e69a68", weather: "critical" },
 };
 
-function SceneArt({ chapter, panel, active }: { chapter: ComicChapter; panel: number; active: boolean }) {
+function SceneArt({ chapter, panel }: { chapter: ComicChapter; panel: number }) {
   const style = moodStyles[chapter.mood];
   const lampCount = panel + 2;
-  return <div className={`relative min-h-[190px] overflow-hidden border-b-[5px] border-[#202126] bg-gradient-to-br ${style.sky} ${active ? "" : "opacity-90"}`} aria-label={`${chapter.title}: иллюстрация панели ${panel + 1}`}>
+  return <div className={`relative min-h-[190px] overflow-hidden border-b-[5px] border-[#202126] bg-gradient-to-br ${style.sky}`} aria-label={`${chapter.title}: иллюстрация панели ${panel + 1}`}>
     <div className="absolute inset-0 opacity-30 [background-image:radial-gradient(rgba(255,255,255,.28)_1px,transparent_1px)] [background-size:7px_7px]" />
     <div className="comic-speed-lines" />
     <div className={`absolute right-[15%] top-[14%] h-14 w-14 rounded-full ${style.glow} opacity-80 shadow-[0_0_45px_14px_rgba(244,201,120,.18)]`} />
@@ -32,37 +32,31 @@ function SceneArt({ chapter, panel, active }: { chapter: ComicChapter; panel: nu
       <div className="absolute -left-4 -top-6 h-8 w-8 rounded-full bg-[#f4c978]/10 blur-md" />
       <div className="relative h-16 w-[2px] bg-[#77828a]/80"><span className="absolute -left-[4px] -top-1 h-2 w-3 rounded-full bg-[#f5cf82] shadow-[0_0_12px_4px_rgba(245,207,130,.7)]" /></div>
     </div>)}
-    <div className="comic-sfx absolute bottom-3 left-4 flex items-center gap-2 text-[8px] font-bold tracking-[.18em] text-[#bac8c5]/70"><ThunderboltFilled style={{ color: style.accent }} /> {panel === 0 ? "HUM" : panel === 1 ? "CLICK" : "KEEP WATCH"}</div>
-    {panel === 1 && <div className="comic-sfx absolute right-4 top-4 rotate-[-8deg] border-2 border-[#f0c67d] px-2 py-1 text-[9px] font-black tracking-[.18em] text-[#f0c67d]">WATCH!</div>}
+    <div className="absolute bottom-3 left-4 flex items-center gap-2 text-[8px] font-bold tracking-[.18em] text-[#bac8c5]/70"><ThunderboltFilled style={{ color: style.accent }} /> {panel === 0 ? "HUM" : panel === 1 ? "CLICK" : "KEEP WATCH"}</div>
+    {panel === 1 && <div className="absolute right-4 top-4 rotate-[-8deg] border-2 border-[#f0c67d] px-2 py-1 text-[9px] font-black tracking-[.18em] text-[#f0c67d]">WATCH!</div>}
   </div>;
 }
 
-function ComicPanelCard({ chapter, panel, active }: { chapter: ComicChapter; panel: ComicPanel; active: boolean }) {
+function ComicPanelCard({ chapter, panel }: { chapter: ComicChapter; panel: ComicPanel }) {
   const index = chapter.panels.indexOf(panel);
   const sceneLabel = ["ПРИБЫТИЕ", "НАБЛЮДЕНИЕ", "РЕШЕНИЕ"][index] ?? "СЦЕНА";
-  return <article aria-label={`Панель ${index + 1}: ${panel.title}`} style={{ animationDelay: `${index * 120}ms` }} className={`comic-panel-pop group relative block w-full text-left transition duration-200 ${active ? "z-10 -translate-y-1 rotate-[-.4deg]" : "rotate-[.35deg] opacity-85"}`}>
+  return <article aria-label={`Панель ${index + 1}: ${panel.title}`} className="relative block w-full text-left">
     <div className="absolute -inset-1 bg-[#202126] shadow-[7px_8px_0_rgba(0,0,0,.24)]" />
-    <div className={`relative overflow-hidden bg-[#eee9dc] p-1 text-[#202126] ${active ? "comic-card-rock" : ""}`}>
-      <SceneArt chapter={chapter} panel={index} active={active} />
+    <div className="relative overflow-hidden bg-[#eee9dc] p-1 text-[#202126]">
+      <SceneArt chapter={chapter} panel={index} />
       <div className="min-h-[190px] p-4 sm:min-h-[210px] sm:p-5">
         <div className="flex items-start justify-between gap-3"><span className="text-[8px] font-black tracking-[.16em] text-[#997949]">{panel.kicker}</span><span className="font-serif text-xl text-[#9d9481]">{String(index + 1).padStart(2, "0")}</span></div>
         <div className="mt-2 inline-block bg-[#202126] px-2 py-1 text-[8px] font-black tracking-[.18em] text-[#f0e8d5]">{sceneLabel}</div>
         <h2 className="mt-3 font-serif text-[27px] leading-[.98] tracking-[-.035em]">{panel.title}</h2>
         <p className="mt-3 text-[12px] leading-5 text-[#5d6061]">{panel.text}</p>
-        {panel.speech && <div className="comic-bubble relative mt-4 border-2 border-[#24262a] bg-[#faf6e9] p-3 text-[11px] font-medium leading-4 shadow-[3px_3px_0_#c9bfa9] before:absolute before:-bottom-2 before:left-5 before:h-3 before:w-3 before:rotate-45 before:border-b-2 before:border-r-2 before:border-[#24262a] before:bg-[#faf6e9]">«{panel.speech}»</div>}
+        {panel.speech && <div className="relative mt-4 border-2 border-[#24262a] bg-[#faf6e9] p-3 text-[11px] font-medium leading-4 shadow-[3px_3px_0_#c9bfa9] before:absolute before:-bottom-2 before:left-5 before:h-3 before:w-3 before:rotate-45 before:border-b-2 before:border-r-2 before:border-[#24262a] before:bg-[#faf6e9]">«{panel.speech}»</div>}
       </div>
     </div>
   </article>;
 }
 
-function readingDuration(panel: ComicPanel) {
-  const words = `${panel.title} ${panel.text} ${panel.speech ?? ""}`.trim().split(/\s+/).length;
-  return Math.max(4500, Math.min(7000, words * 180));
-}
-
 export default function ComicIntro({ level, levels, ready, error, onStart, onBack }: { level: LevelSummary; levels: readonly LevelSummary[]; ready: boolean; error: string | null; onStart: () => void; onBack: () => void }) {
   const chapter = getComicChapter(level.id);
-  const [panel, setPanel] = useState(0);
   const started = useRef(false);
   const currentIndex = Math.max(0, levels.findIndex((item) => item.id === level.id));
   const fallback = useMemo<ComicChapter>(() => ({
@@ -75,15 +69,7 @@ export default function ComicIntro({ level, levels, ready, error, onStart, onBac
     panels: [{ kicker: "НОЧНАЯ ЛИНИЯ", title: level.title, text: level.subtitle }],
   }), [currentIndex, level.id, level.subtitle, level.title]);
   const story = chapter ?? fallback;
-  const storyRead = panel >= story.panels.length;
-  const visiblePanel = Math.min(panel, story.panels.length - 1);
   const style = moodStyles[story.mood];
-
-  useEffect(() => {
-    if (storyRead) return;
-    const timer = window.setTimeout(() => setPanel((value) => value + 1), readingDuration(story.panels[panel]));
-    return () => window.clearTimeout(timer);
-  }, [panel, story, storyRead]);
 
   return <main className="min-h-screen overflow-y-auto bg-[#d2c4a8] text-[#202126] selection:bg-[#d6b16e] selection:text-[#11161b]">
     <div className="min-h-screen bg-[radial-gradient(rgba(43,39,34,.13)_1px,transparent_1px)] [background-size:5px_5px]">
@@ -98,21 +84,21 @@ export default function ComicIntro({ level, levels, ready, error, onStart, onBac
 
         <section className="flex flex-1 flex-col py-8 lg:py-12">
           <div className="mb-7 flex flex-wrap items-end justify-between gap-5">
-            <div><div className="mb-3 flex items-center gap-2"><Tag color={style.accent}>{story.chapter}</Tag><span className="text-[9px] font-bold tracking-[.2em] text-[#665d50]">{level.id.replaceAll("-", " ")}</span></div><h1 className="comic-title-slam max-w-4xl font-serif text-5xl leading-[.88] tracking-[-.05em] sm:text-7xl lg:text-8xl">{story.title}</h1><p className="mt-4 max-w-2xl text-sm font-medium leading-6 text-[#665d50] sm:text-base">{story.subtitle}</p></div>
+            <div><div className="mb-3 flex items-center gap-2"><Tag color={style.accent}>{story.chapter}</Tag><span className="text-[9px] font-bold tracking-[.2em] text-[#665d50]">{level.id.replaceAll("-", " ")}</span></div><h1 className="max-w-4xl font-serif text-5xl leading-[.88] tracking-[-.05em] sm:text-7xl lg:text-8xl">{story.title}</h1><p className="mt-4 max-w-2xl text-sm font-medium leading-6 text-[#665d50] sm:text-base">{story.subtitle}</p></div>
             <div className="max-w-[230px] border-2 border-[#202126] bg-[#eee9dc] p-4 shadow-[5px_5px_0_#202126]"><div className="text-[8px] font-black tracking-[.2em] text-[#997949]">NIGHT LINE / RULE</div><div className="mt-2 font-serif text-lg leading-tight">{story.principle}</div></div>
           </div>
 
           <div className="grid flex-1 items-start gap-5 md:grid-cols-3 md:gap-6">
-            {story.panels.map((item, index) => <div key={`${story.levelId}-${index}`} className="relative md:after:absolute md:after:-right-5 md:after:top-1/2 md:after:h-1 md:after:w-5 md:after:bg-[#202126] md:after:content-[''] last:after:hidden"><ComicPanelCard chapter={story} panel={item} active={visiblePanel === index} /></div>)}
+            {story.panels.map((item, index) => <div key={`${story.levelId}-${index}`} className="relative md:after:absolute md:after:-right-5 md:after:top-1/2 md:after:h-1 md:after:w-5 md:after:bg-[#202126] md:after:content-[''] last:after:hidden"><ComicPanelCard chapter={story} panel={item} /></div>)}
           </div>
 
           <footer className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t-4 border-[#202126] pt-5">
-            <div><div className="text-[9px] font-black tracking-[.2em]">ПАНЕЛЬ {visiblePanel + 1} / {story.panels.length}</div><div className="mt-1 text-[10px] font-medium tracking-[.08em] text-[#665d50]">{storyRead ? "ИСТОРИЯ ПРОЧИТАНА" : "ИСТОРИЯ ПРОДОЛЖИТСЯ АВТОМАТИЧЕСКИ"}</div></div>
+            <div><div className="text-[9px] font-black tracking-[.2em]">КОМИКС / {story.panels.length} ПАНЕЛИ</div><div className="mt-1 text-[10px] font-medium tracking-[.08em] text-[#665d50]">Начни смену, когда будешь готов</div></div>
             <div className="flex items-center gap-3 text-[10px] font-bold tracking-[.12em]" role="status" aria-live="polite">
               {!error && !ready && <span className="comic-loading-lamp text-xl text-[#9b7441]" aria-hidden="true">✳</span>}
               <span>{error ?? (!ready ? "ЗАГРУЖАЕМ РАЙОН" : "РАЙОН ГОТОВ")}</span>
             </div>
-            {storyRead && ready && !error && <button type="button" onClick={() => { if (started.current) return; started.current = true; onStart(); }} className="border-2 border-[#202126] bg-[#202126] px-5 py-3 text-[10px] font-bold tracking-[.12em] text-[#f0e8d5] transition-colors hover:bg-[#424343] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#202126]">Начать смену →</button>}
+            <button type="button" disabled={!ready || !!error} onClick={() => { if (started.current) return; started.current = true; onStart(); }} className="border-2 border-[#202126] bg-[#202126] px-5 py-3 text-[10px] font-bold tracking-[.12em] text-[#f0e8d5] transition-colors hover:bg-[#424343] disabled:cursor-wait disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#202126]">Начать смену →</button>
           </footer>
         </section>
       </div>

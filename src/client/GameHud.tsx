@@ -2,6 +2,8 @@
 
 import { useGameStore } from "@/game/game-store";
 import type { LevelPreset } from "@/game/level";
+import { lightingEconomy } from "@/game/simulation";
+import { useLampHoverStore } from "./lamp-hover-store";
 
 function meter(value: number, max: number) { return `${Math.max(0, Math.min(100, (value / max) * 100))}%`; }
 function formatTime(seconds: number) {
@@ -19,10 +21,14 @@ export default function GameHud({ level, onExit }: {
   const lamps = useGameStore((state) => state.lampStates);
   const restart = useGameStore((state) => state.restart);
   const toggleLamp = useGameStore((state) => state.toggleLamp);
+  const hoveredLampId = useLampHoverStore((state) => state.hoveredLampId);
+  const setHoveredLamp = useLampHoverStore((state) => state.setHoveredLamp);
+  const clearHoveredLamp = useLampHoverStore((state) => state.clearHoveredLamp);
   if (!session) return null;
   const remaining = Math.max(0, level.rules.shiftSeconds - session.elapsedSeconds);
   const phaseLabel = session.phase === "ready" ? "READY TO BEGIN" : session.phase === "playing" ? "SHIFT IN PROGRESS" : session.phase === "won" ? "SHIFT COMPLETE" : "SHIFT FAILED";
-  const headline = session.phase === "won" ? "Sunrise is yours." : session.phase === "lost" ? "The district went dark." : level.title;
+  const headline = session.phase === "won" ? "Sunrise is yours." : session.phase === "lost" ? (session.energy <= 0 ? "The grid was overloaded." : "The district went dark.") : level.title;
+  const excessLamps = lightingEconomy(level, lamps, session.elapsedSeconds).excessLamps;
 
   return (
     <div className="hud-shell">
@@ -35,10 +41,10 @@ export default function GameHud({ level, onExit }: {
       <section className="mission-card glass-panel">
         <div className="eyebrow">DISTRICT 01 <span>·</span> NIGHT SHIFT</div>
         <h1>{headline}</h1>
-        <p>{session.phase === "won" ? "The neighborhood made it safely to morning." : session.phase === "lost" ? "Restore the lights and try a different strategy." : `Keep ${level.rules.requiredLitResidents} of ${level.citizens.length} residents lit. Save power by switching lamps as they walk.`}</p>
+        <p>{session.phase === "won" ? "The neighborhood made it safely to morning." : session.phase === "lost" ? (session.energy <= 0 ? "Too many unnecessary lamps stayed on." : "Too many residents walked in darkness.") : `Keep all ${level.citizens.length} residents lit. Turn off lamps that nobody needs.`}</p>
         <div className="level-facts"><span>DIFFICULTY <b>{level.difficulty}/5</b></span><span>LIGHT REACH <b>{level.lamps[0]?.radius.toFixed(1)} m</b></span><span>COMFORT FLOOR <b>{level.rules.minimumSatisfaction}%</b></span></div>
         <div className="meters">
-          <div className="meter-block"><div className="meter-label"><span>GRID POWER</span><b>{Math.ceil(session.energy)} <small>kWh</small></b></div><div className="meter-track"><i className="energy-fill" style={{ width: meter(session.energy, level.rules.startingEnergy) }} /></div></div>
+          <div className="meter-block"><div className="meter-label"><span>EXCESS POWER BUDGET</span><b>{Math.ceil(session.energy)} <small>kWh</small></b></div><div className="meter-track"><i className="energy-fill" style={{ width: meter(session.energy, level.rules.startingEnergy) }} /></div></div>
           <div className="meter-block"><div className="meter-label"><span>RESIDENT COMFORT</span><b>{Math.round(session.satisfaction)}<small>%</small></b></div><div className="meter-track"><i className="comfort-fill" style={{ width: meter(session.satisfaction, 100) }} /></div></div>
           <div className="resident-count">{Object.values(session.citizenLit).filter(Boolean).length}/{level.citizens.length} RESIDENTS IN LIGHT <span>GOAL {level.rules.requiredLitResidents}/{level.citizens.length}</span></div>
         </div>
@@ -50,13 +56,13 @@ export default function GameHud({ level, onExit }: {
           {level.lamps.map((lamp, index) => {
             const on = lamps[lamp.id] ?? lamp.initiallyOn;
             const disabled = session.phase !== "playing";
-            return <button key={lamp.id} type="button" className={`lamp-switch ${on ? "is-on" : ""}`} disabled={disabled} onClick={() => toggleLamp(lamp.id)} aria-pressed={on} aria-label={`${on ? "Turn off" : "Turn on"} street lamp ${index + 1}`}><span className="lamp-glyph">✳</span><span>LAMP {String(index + 1).padStart(2, "0")}</span><i /></button>;
+            return <button key={lamp.id} type="button" className={`lamp-switch ${on ? "is-on" : ""} ${hoveredLampId === lamp.id ? "is-hovered" : ""}`} disabled={disabled} onPointerEnter={() => setHoveredLamp(lamp.id)} onPointerLeave={() => clearHoveredLamp(lamp.id)} onFocus={() => setHoveredLamp(lamp.id)} onBlur={() => clearHoveredLamp(lamp.id)} onClick={() => toggleLamp(lamp.id)} aria-pressed={on} aria-label={`${on ? "Turn off" : "Turn on"} street lamp ${index + 1}`}><span className="lamp-glyph">✳</span><span>LAMP {String(index + 1).padStart(2, "0")}</span><i /></button>;
           })}
         </div>
       </aside>
 
       <section className="control-panel glass-panel" aria-label="Shift controls">
-        <div className="panel-footer"><span className="footnote">POWER DRAIN <b>{(Object.values(lamps).filter(Boolean).length * level.rules.energyPerLampSecond).toFixed(1)} kWh / sec</b></span>
+        <div className="panel-footer"><span className="footnote">EXCESS DRAIN <b>{(excessLamps * level.rules.energyPerLampSecond).toFixed(1)} kWh / sec</b></span>
           {session.phase === "ready" ? <div className="running-note"><span className="status-dot live" /> STARTING SHIFT</div> : session.phase === "playing" ? <div className="running-note"><span className="status-dot live" /> PATROL ACTIVE</div> : <button type="button" className="primary-button" onClick={restart}>RESTART SHIFT <span>↻</span></button>}
         </div>
       </section>

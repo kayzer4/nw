@@ -10,6 +10,7 @@ import { useGameStore } from "@/game/game-store";
 import { gameClock } from "@/game/clock";
 import { LAMP_HEAD, LAMP_HEAD_HEIGHT, lampCone } from "@/game/light";
 import { routePosition } from "@/game/simulation";
+import { useLampHoverStore } from "./lamp-hover-store";
 
 const glowVertexShader = `
 varying vec2 vUv;
@@ -77,6 +78,9 @@ function SidewalkGround({ buildings, cellSize }: { buildings: readonly PlacedAss
 function Lamp({ lamp, dragRef }: { lamp: PlacedLamp; dragRef: RefObject<boolean> }) {
   const on = useGameStore((state) => state.lampStates[lamp.id] ?? lamp.initiallyOn);
   const toggle = useGameStore((state) => state.toggleLamp);
+  const hovered = useLampHoverStore((state) => state.hoveredLampId === lamp.id);
+  const setHoveredLamp = useLampHoverStore((state) => state.setHoveredLamp);
+  const clearHoveredLamp = useLampHoverStore((state) => state.clearHoveredLamp);
   const spotlightOriginHeight = LAMP_HEAD_HEIGHT * lamp.scale;
   const cone = lampCone(lamp);
   const glowUniforms = useMemo(() => ({ glowColor: { value: new Color(lamp.color) } }), [lamp.color]);
@@ -89,9 +93,19 @@ function Lamp({ lamp, dragRef }: { lamp: PlacedLamp; dragRef: RefObject<boolean>
     <group position={[lamp.position[0], lamp.position[1], lamp.position[2]]} rotation={[0, lamp.rotationY, 0]}>
       <group
         onClick={(event) => { event.stopPropagation(); if (!dragRef.current) toggle(lamp.id); }}
-        onPointerOver={() => { document.body.style.cursor = "pointer"; }}
-        onPointerOut={() => { document.body.style.cursor = ""; }}
-      ><Model asset={lamp.asset} scale={lamp.scale} /></group>
+        onPointerOver={(event) => { event.stopPropagation(); setHoveredLamp(lamp.id); document.body.style.cursor = "pointer"; }}
+        onPointerOut={() => { clearHoveredLamp(lamp.id); document.body.style.cursor = ""; }}
+      >
+        <Model asset={lamp.asset} scale={lamp.scale} />
+        <mesh position={[0, spotlightOriginHeight / 2, LAMP_HEAD[1] * lamp.scale / 2]}>
+          <boxGeometry args={[0.85 * lamp.scale, spotlightOriginHeight + 0.35 * lamp.scale, 0.9 * lamp.scale]} />
+          <meshBasicMaterial transparent opacity={0} depthWrite={false} />
+        </mesh>
+      </group>
+      {hovered && <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.024, 0]} raycast={() => null}>
+        <ringGeometry args={[0.42, 0.62, 32]} />
+        <meshBasicMaterial color="#f0c876" transparent opacity={0.9} depthWrite={false} toneMapped={false} />
+      </mesh>}
       <primitive object={spotlightTarget} />
       {on && <>
         <spotLight position={[0, spotlightOriginHeight, LAMP_HEAD[1] * lamp.scale]} target={spotlightTarget} color={lamp.color} intensity={lamp.intensity} distance={0} angle={cone.angle} penumbra={0.02} decay={0} castShadow shadow-mapSize-width={512} shadow-mapSize-height={512} shadow-bias={-0.00015} shadow-normalBias={0.015} />

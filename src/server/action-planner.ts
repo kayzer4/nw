@@ -1,5 +1,5 @@
 import type { LevelPreset } from "../game/level";
-import { citizenLighting } from "../game/simulation";
+import { lightingEconomy } from "../game/simulation";
 
 interface Step { time: number; mask: number; }
 interface SearchState {
@@ -38,12 +38,15 @@ export function findMinimumActionPlan(level: LevelPreset, maxActions = 16): {
 
   for (let start = 0; start < rules.shiftSeconds; start += interval) {
     const duration = Math.min(interval, rules.shiftSeconds - start);
-    const comfortDeltas = masks.map((states) => {
-      const deltas: number[] = [];
+    const effects = masks.map((states) => {
+      const deltas: { comfort: number; energy: number }[] = [];
       for (let time = start; time < start + duration - 1e-8; time += 0.25) {
         const dt = Math.min(0.25, start + duration - time);
-        const lit = Object.values(citizenLighting(level, states, time + dt / 2)).filter(Boolean).length;
-        deltas.push((lit >= rules.requiredLitResidents ? rules.comfortGainPerSecond : -rules.comfortLossPerSecond) * dt);
+        const { litCount, excessLamps } = lightingEconomy(level, states, time + dt / 2);
+        deltas.push({
+          comfort: (litCount >= rules.requiredLitResidents ? rules.comfortGainPerSecond : -rules.comfortLossPerSecond) * dt,
+          energy: excessLamps * rules.energyPerLampSecond * dt,
+        });
       }
       return deltas;
     });
@@ -52,14 +55,14 @@ export function findMinimumActionPlan(level: LevelPreset, maxActions = 16): {
       const change = countBits(state.mask ^ mask);
       const actions = state.actions + change;
       if (actions > maxActions) continue;
-      const energy = state.energy - countBits(mask) * rules.energyPerLampSecond * duration;
-      if (energy <= 1e-7) continue;
+      let energy = state.energy;
       let comfort = state.comfort;
-      for (const delta of comfortDeltas[mask]) {
-        comfort = Math.min(100, comfort + delta);
-        if (comfort <= rules.minimumSatisfaction + 1e-7) break;
+      for (const effect of effects[mask]) {
+        comfort = Math.min(100, comfort + effect.comfort);
+        energy -= effect.energy;
+        if (comfort <= rules.minimumSatisfaction + 1e-7 || energy <= 1e-7) break;
       }
-      if (comfort <= rules.minimumSatisfaction + 1e-7) continue;
+      if (comfort <= rules.minimumSatisfaction + 1e-7 || energy <= 1e-7) continue;
       const key = `${mask}:${actions}`;
       const peers = next.get(key) ?? [];
       if (peers.some((peer) => peer.energy >= energy - 1e-7 && peer.comfort >= comfort - 1e-7)) continue;

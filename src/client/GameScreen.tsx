@@ -8,6 +8,7 @@ import { useGameStore } from "@/game/game-store";
 import GameHud from "./GameHud";
 import { GameTicker } from "./GameTicker";
 import { ProgressRecorder } from "./ProgressRecorder";
+import { useLampHoverStore } from "./lamp-hover-store";
 
 const CityScene = dynamic(() => import("./CityScene"), { ssr: false, loading: () => <div className="scene-loading">LOADING THE DISTRICT…</div> });
 
@@ -18,8 +19,9 @@ export default function GameScreen({ level }: { level: LevelPreset }) {
   const loadedLevelId = useGameStore((state) => state.level?.id);
 
   useEffect(() => {
+    useLampHoverStore.getState().clearHoveredLamp();
     useGameStore.getState().loadLevel(level);
-    return () => useGameStore.getState().quit();
+    return () => { useLampHoverStore.getState().clearHoveredLamp(); document.body.style.cursor = ""; useGameStore.getState().quit(); };
   }, [level]);
 
   const exitLevel = useCallback(() => {
