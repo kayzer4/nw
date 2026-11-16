@@ -80,8 +80,8 @@ function InfiniteGrid() {
   const { size, fadeDistance, fadeStrength } = infiniteGridOptions();
   return <Grid
     args={[size, size]}
-    position={[0, 0.04, 0]}
-    renderOrder={2}
+    position={[0, 0.015, 0]}
+    renderOrder={1}
     infiniteGrid
     followCamera
     fadeDistance={fadeDistance}
@@ -94,7 +94,7 @@ function InfiniteGrid() {
     sectionColor="#466472"
     onUpdate={(grid) => {
       const material = grid.material as { depthTest: boolean; depthWrite: boolean };
-      material.depthTest = false;
+      material.depthTest = true;
       material.depthWrite = false;
     }}
   />;
