@@ -4,14 +4,6 @@ export function hoverRingState(hovered: boolean, elapsedSeconds: number) {
   return { scale: 1 + pulse * 0.12, opacity: 0.72 + pulse * 0.22 };
 }
 
-export function wrappedGridCoordinate(value: number, cellSize: number) {
-  return ((value % cellSize) + cellSize) % cellSize;
-}
-
-export function gridCenterAtCamera(cameraX: number, cameraZ: number): [number, number] {
-  return [cameraX, cameraZ];
-}
-
-export function infiniteGridSurface() {
-  return { size: 96, fadeStart: 32, fadeEnd: 42 };
+export function infiniteGridOptions() {
+  return { size: 20, fadeDistance: 35, fadeStrength: 1.5 };
 }

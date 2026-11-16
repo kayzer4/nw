@@ -13,6 +13,12 @@ function formatTime(seconds: number) {
   return `${minutes}:${remainder}`;
 }
 
+export function shiftResult(phase: "ready" | "playing" | "won" | "lost") {
+  if (phase === "won") return { title: "СМЕНА ЗАВЕРШЕНА", detail: "Ты дождался рассвета.", tone: "won" as const };
+  if (phase === "lost") return { title: "СМЕНА ПРОВАЛЕНА", detail: "Энергия закончилась.", tone: "lost" as const };
+  return null;
+}
+
 export default function GameHud({ level, onExit }: {
   level: LevelPreset;
   onExit: () => void;
@@ -28,6 +34,7 @@ export default function GameHud({ level, onExit }: {
   const remaining = Math.max(0, level.rules.shiftSeconds - session.elapsedSeconds);
   const phaseLabel = session.phase === "ready" ? "СМЕНА ГОТОВА" : session.phase === "playing" ? "СМЕНА ИДЁТ" : session.phase === "won" ? "СМЕНА ЗАВЕРШЕНА" : "СМЕНА ПРОВАЛЕНА";
   const headline = session.phase === "won" ? "Ты дождался рассвета." : session.phase === "lost" ? "Энергия закончилась." : level.title;
+  const result = shiftResult(session.phase);
   const activeLampCount = lightingEconomy(level, lamps, session.elapsedSeconds).activeLampCount;
 
   return (
@@ -48,6 +55,13 @@ export default function GameHud({ level, onExit }: {
         </div>
       </section>
 
+      {result && <section className={`shift-result ${result.tone}`} role="status" aria-live="assertive">
+        <div className="eyebrow">НОЧНАЯ СЛУЖБА</div>
+        <h2>{result.title}</h2>
+        <p>{result.detail}</p>
+        <button type="button" className="primary-button" onClick={restart}>НАЧАТЬ ЗАНОВО <span>↻</span></button>
+      </section>}
+
       <aside className="lamp-panel glass-panel" aria-label="Управление уличными фонарями">
         <div className="panel-heading"><div><div className="eyebrow">ПУЛЬТ УПРАВЛЕНИЯ</div><h2>Уличные фонари <span>{Object.values(lamps).filter(Boolean).length}/{level.lamps.length} включено</span></h2></div><div className="tap-hint">ВЫБЕРИ ФОНАРЬ В ГОРОДЕ ИЛИ ЗДЕСЬ</div></div>
         <div className="lamp-list">
@@ -59,11 +73,11 @@ export default function GameHud({ level, onExit }: {
         </div>
       </aside>
 
-      <section className="control-panel glass-panel" aria-label="Управление сменой">
+      {!result && <section className="control-panel glass-panel" aria-label="Управление сменой">
         <div className="panel-footer"><span className="footnote">РАСХОД <b>{(activeLampCount * level.rules.energyPerLampSecond).toFixed(1)} кВт·ч / сек</b></span>
-          {session.phase === "ready" ? <div className="running-note"><span className="status-dot live" /> СМЕНА НАЧИНАЕТСЯ</div> : session.phase === "playing" ? <div className="running-note"><span className="status-dot live" /> ПАТРУЛЬ НА СВЯЗИ</div> : <button type="button" className="primary-button" onClick={restart}>НАЧАТЬ ЗАНОВО <span>↻</span></button>}
+          {session.phase === "ready" ? <div className="running-note"><span className="status-dot live" /> СМЕНА НАЧИНАЕТСЯ</div> : <div className="running-note"><span className="status-dot live" /> ПАТРУЛЬ НА СВЯЗИ</div>}
         </div>
-      </section>
+      </section>}
 
       <div className="scene-hint"><span>ПЕРЕТАСКИВАЙ</span> ПОВЕРНУТЬ <i /> <span>КОЛЕСО</span> МАСШТАБ</div>
     </div>

@@ -1,7 +1,7 @@
 import { expect, test } from "bun:test";
 import * as sceneEffects from "../src/client/scene-effects";
 
-const { hoverRingState, wrappedGridCoordinate } = sceneEffects;
+const { hoverRingState } = sceneEffects;
 
 test("hover ring remains hidden until a lamp is targeted and then pulses within a controlled range", () => {
   expect(hoverRingState(false, 0)).toEqual({ scale: 0, opacity: 0 });
@@ -13,17 +13,10 @@ test("hover ring remains hidden until a lamp is targeted and then pulses within 
   expect(later.scale).toBeLessThanOrEqual(1.14);
 });
 
-test("grid coordinates repeat around the camera instead of ending at a fixed plane edge", () => {
-  expect(wrappedGridCoordinate(0, 2)).toBe(0);
-  expect(wrappedGridCoordinate(17, 2)).toBe(1);
-  expect(wrappedGridCoordinate(-1, 2)).toBe(1);
-});
-
-test("infinite grid stays centered on the camera while it pans beyond one tile", () => {
-  expect(sceneEffects.gridCenterAtCamera?.(201.75, -64.5)).toEqual([201.75, -64.5]);
-});
-
-test("grid fades before its small camera-centred plane can show an edge", () => {
-  const surface = sceneEffects.infiniteGridSurface?.();
-  expect(surface).toEqual({ size: 96, fadeStart: 32, fadeEnd: 42 });
+test("infinite grid uses the renderer's camera-following fade", () => {
+  expect(sceneEffects.infiniteGridOptions?.()).toEqual({
+    size: 20,
+    fadeDistance: 35,
+    fadeStrength: 1.5,
+  });
 });
