@@ -19,5 +19,5 @@ export function lampLightFactor(lamp: PlacedLamp, point: Position2) {
   const distance = Math.hypot(dx, dz);
   if (distance >= lamp.radius) return 0;
   const normalized = distance / Math.max(lamp.radius, 0.001);
-  return 0.35 + 0.65 * (1 - normalized * normalized);
+  return Math.pow(1 - normalized, 2.2);
 }

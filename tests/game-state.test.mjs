@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import fs from "node:fs";
-import { lampCone, lampFootprintCenter, lampLightsPoint } from "../src/game/light";
+import { lampCone, lampFootprintCenter, lampLightFactor, lampLightsPoint } from "../src/game/light";
 import { advanceSession, citizenLighting, createSession, routePosition } from "../src/game/simulation";
 import { assessLevel, lampExclusiveShares } from "../src/server/level-validation";
 import { walkSegmentAllowed } from "../src/server/walk-geometry";
@@ -105,6 +105,8 @@ test("light radius is measured from the rendered lamp head", () => {
   expect(lampLightsPoint(lamp, [center[0] + lamp.radius + 0.01, center[1]])).toBe(false);
   const cone = lampCone(lamp);
   expect(Math.tan(cone.angle) * cone.height).toBeCloseTo(lamp.radius);
+  expect(lampLightFactor(lamp, center)).toBeCloseTo(1);
+  expect(lampLightFactor(lamp, [center[0] + lamp.radius * 0.5, center[1]])).toBeLessThan(0.3);
 });
 
 test("residents cross the road only on a marked crossing model", () => {
