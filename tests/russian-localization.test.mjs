@@ -18,7 +18,7 @@ test("level catalog is presented in Russian", () => {
 });
 
 test("public interface declares Russian locale", () => {
-  expect(read("src/app/layout.tsx")).toContain('<html lang="ru">');
+  expect(read("src/app/layout.tsx")).toContain('<html lang="ru" suppressHydrationWarning>');
   expect(read("src/client/GameHud.tsx")).toContain("ЭНЕРГИЯ СЕТИ");
   expect(read("src/client/LevelPicker.tsx")).toContain("Выбери район");
 });
