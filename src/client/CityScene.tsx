@@ -170,10 +170,6 @@ function Lamp({ lamp, dragRef }: { lamp: PlacedLamp; dragRef: RefObject<boolean>
           <circleGeometry args={[lamp.radius, 64]} />
           <shaderMaterial vertexShader={glowVertexShader} fragmentShader={glowFragmentShader} uniforms={glowUniforms} transparent blending={AdditiveBlending} depthWrite={false} toneMapped={false} />
         </mesh>
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.015, LAMP_HEAD[1] * lamp.scale]}>
-          <ringGeometry args={[lamp.radius - 0.025, lamp.radius, 64]} />
-          <meshBasicMaterial color={lamp.color} transparent opacity={0.4} depthWrite={false} />
-        </mesh>
       </>}
     </group>
   );
