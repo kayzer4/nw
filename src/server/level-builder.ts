@@ -458,11 +458,11 @@ function completeRouteCoverage(
 }
 
 const CHALLENGES = [
-  { shiftSeconds: 40, minimumSatisfaction: 15, energyAllowance: 0.4 },
-  { shiftSeconds: 50, minimumSatisfaction: 20, energyAllowance: 0.3 },
-  { shiftSeconds: 55, minimumSatisfaction: 20, energyAllowance: 0.22 },
-  { shiftSeconds: 60, minimumSatisfaction: 25, energyAllowance: 0.16 },
-  { shiftSeconds: 65, minimumSatisfaction: 30, energyAllowance: 0.1 },
+  { shiftSeconds: 40, energyAllowance: 0.4 },
+  { shiftSeconds: 50, energyAllowance: 0.3 },
+  { shiftSeconds: 55, energyAllowance: 0.22 },
+  { shiftSeconds: 60, energyAllowance: 0.16 },
+  { shiftSeconds: 65, energyAllowance: 0.1 },
 ] as const;
 
 export function buildLevel(seedInput: string, challengeIndex?: number): LevelPreset {
@@ -540,11 +540,7 @@ export function buildLevel(seedInput: string, challengeIndex?: number): LevelPre
       shiftSeconds: challenge.shiftSeconds,
       startingEnergy: 0,
       energyPerLampSecond: 0.7,
-      startingSatisfaction: 70,
-      minimumSatisfaction: challenge.minimumSatisfaction,
       requiredLitResidents: citizens.length,
-      comfortGainPerSecond: 0.5,
-      comfortLossPerSecond: 1.5,
     },
   };
   while (!planIdealLighting(level) && level.lamps[0].radius < 5.4) {

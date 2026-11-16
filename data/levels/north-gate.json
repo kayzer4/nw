@@ -909,10 +909,6 @@
     "shiftSeconds": 55,
     "startingEnergy": 133.224,
     "energyPerLampSecond": 0.7,
-    "startingSatisfaction": 70,
-    "minimumSatisfaction": 20,
-    "requiredLitResidents": 6,
-    "comfortGainPerSecond": 0.5,
-    "comfortLossPerSecond": 1.5
+    "requiredLitResidents": 6
   }
 }

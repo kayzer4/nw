@@ -16,8 +16,8 @@ for (const { id } of catalog) {
   const allOff = Object.fromEntries(level.lamps.map((lamp) => [lamp.id, false]));
   const onOutcome = advanceSession(level, start, allOn, level.rules.shiftSeconds);
   const offOutcome = advanceSession(level, start, allOff, level.rules.shiftSeconds);
-  if (ideal.phase !== "won" || onOutcome.phase !== "lost" || offOutcome.phase !== "lost") {
-    throw new Error(`${id}: expected ideal win and all-on/all-off losses, got ${ideal.phase}/${onOutcome.phase}/${offOutcome.phase}`);
+  if (ideal.phase !== "won" || onOutcome.phase !== "lost" || offOutcome.phase !== "won") {
+    throw new Error(`${id}: expected ideal win, all-on loss, and all-off win, got ${ideal.phase}/${onOutcome.phase}/${offOutcome.phase}`);
   }
-  console.log(`${id.padEnd(16)} ideal: WON (${plan.switches} clicks, ${ideal.energy.toFixed(1)} kWh spare)  all on: LOST at ${onOutcome.elapsedSeconds}s  all off: LOST at ${offOutcome.elapsedSeconds}s`);
+  console.log(`${id.padEnd(16)} ideal: WON (${plan.switches} clicks, ${ideal.energy.toFixed(1)} kWh spare)  all on: LOST at ${onOutcome.elapsedSeconds}s  all off: WON`);
 }

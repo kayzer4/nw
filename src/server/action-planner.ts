@@ -6,7 +6,6 @@ interface SearchState {
   mask: number;
   actions: number;
   energy: number;
-  comfort: number;
   previous: SearchState | null;
   step: Step | null;
 }
@@ -23,7 +22,6 @@ export function findMinimumActionPlan(level: LevelPreset, maxActions = 16): {
   actionsPerMinute: number;
   steps: Step[];
   remainingEnergy: number;
-  remainingComfort: number;
 } | null {
   const { lamps, rules } = level;
   if (!lamps.length || lamps.length > 8) return null;
@@ -33,50 +31,41 @@ export function findMinimumActionPlan(level: LevelPreset, maxActions = 16): {
   const initialMask = lamps.reduce((mask, lamp, index) => mask | (lamp.initiallyOn ? 1 << index : 0), 0);
   let frontier = new Map<string, SearchState[]>([[`${initialMask}:0`, [{
     mask: initialMask, actions: 0, energy: rules.startingEnergy,
-    comfort: rules.startingSatisfaction, previous: null, step: null,
+    previous: null, step: null,
   }]]]);
 
   for (let start = 0; start < rules.shiftSeconds; start += interval) {
     const duration = Math.min(interval, rules.shiftSeconds - start);
     const effects = masks.map((states) => {
-      const deltas: { comfort: number; energy: number }[] = [];
+      let energy = 0;
       for (let time = start; time < start + duration - 1e-8; time += 0.25) {
         const dt = Math.min(0.25, start + duration - time);
-        const { litCount, activeLampCount } = lightingEconomy(level, states, time + dt / 2);
-        deltas.push({
-          comfort: (litCount >= rules.requiredLitResidents ? rules.comfortGainPerSecond : -rules.comfortLossPerSecond) * dt,
-          energy: activeLampCount * rules.energyPerLampSecond * dt,
-        });
+        const { activeLampCount } = lightingEconomy(level, states, time + dt / 2);
+        energy += activeLampCount * rules.energyPerLampSecond * dt;
       }
-      return deltas;
+      return energy;
     });
     const next = new Map<string, SearchState[]>();
     for (const states of frontier.values()) for (const state of states) for (let mask = 0; mask < masks.length; mask++) {
       const change = countBits(state.mask ^ mask);
       const actions = state.actions + change;
       if (actions > maxActions) continue;
-      let energy = state.energy;
-      let comfort = state.comfort;
-      for (const effect of effects[mask]) {
-        comfort = Math.min(100, comfort + effect.comfort);
-        energy -= effect.energy;
-        if (comfort <= rules.minimumSatisfaction + 1e-7 || energy <= 1e-7) break;
-      }
-      if (comfort <= rules.minimumSatisfaction + 1e-7 || energy <= 1e-7) continue;
+      const energy = state.energy - effects[mask];
+      if (energy <= 1e-7) continue;
       const key = `${mask}:${actions}`;
       const peers = next.get(key) ?? [];
-      if (peers.some((peer) => peer.energy >= energy - 1e-7 && peer.comfort >= comfort - 1e-7)) continue;
+      if (peers.some((peer) => peer.energy >= energy - 1e-7)) continue;
       for (let index = peers.length - 1; index >= 0; index--) {
-        if (energy >= peers[index].energy - 1e-7 && comfort >= peers[index].comfort - 1e-7) peers.splice(index, 1);
+        if (energy >= peers[index].energy - 1e-7) peers.splice(index, 1);
       }
-      peers.push({ mask, actions, energy, comfort, previous: change ? state : state.previous, step: change ? { time: start, mask } : state.step });
+      peers.push({ mask, actions, energy, previous: change ? state : state.previous, step: change ? { time: start, mask } : state.step });
       next.set(key, peers);
     }
     frontier = next;
     if (!frontier.size) return null;
   }
 
-  const best = [...frontier.values()].flat().sort((a, b) => a.actions - b.actions || b.comfort - a.comfort)[0];
+  const best = [...frontier.values()].flat().sort((a, b) => a.actions - b.actions || b.energy - a.energy)[0];
   if (!best) return null;
   const steps: Step[] = [];
   for (let state: SearchState | null = best; state?.step; state = state.previous) steps.push(state.step);
@@ -86,6 +75,5 @@ export function findMinimumActionPlan(level: LevelPreset, maxActions = 16): {
     actionsPerMinute: Math.round(best.actions * 6000 / rules.shiftSeconds) / 100,
     steps,
     remainingEnergy: Math.round(best.energy * 100) / 100,
-    remainingComfort: Math.round(best.comfort * 100) / 100,
   };
 }

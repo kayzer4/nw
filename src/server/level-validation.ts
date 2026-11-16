@@ -48,10 +48,8 @@ export function assessLevel(level: LevelPreset): number {
   if (lampExclusiveShares(level.lamps, samples).some((share) => share === 0)) throw new Error("Level contains a redundant lamp.");
 
   const on = Object.fromEntries(level.lamps.map((lamp) => [lamp.id, true]));
-  const off = Object.fromEntries(level.lamps.map((lamp) => [lamp.id, false]));
   const shift = level.rules.shiftSeconds;
   if (outcome(level, on, shift).phase !== "lost") throw new Error("Leaving every lamp on must lose.");
-  if (outcome(level, off, shift).phase !== "lost") throw new Error("Leaving every lamp off must lose.");
 
   const plan = planIdealLighting(level);
   if (!plan || playIdealPlan(level, plan).phase !== "won") throw new Error("Keeping every resident lit must win.");
