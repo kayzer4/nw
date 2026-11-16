@@ -6,5 +6,5 @@ export function hoverRingState(hovered: boolean, elapsedSeconds: number) {
 
 export function infiniteGridOptions() {
   // Keep the shader's finite backing plane well outside the playable camera range.
-  return { size: 32, fadeDistance: 240, fadeStrength: 0.65 };
+  return { size: 32, fadeDistance: 240, fadeStrength: 1.15 };
 }

@@ -17,6 +17,6 @@ test("infinite grid uses the renderer's camera-following fade", () => {
   expect(sceneEffects.infiniteGridOptions?.()).toEqual({
     size: 32,
     fadeDistance: 240,
-    fadeStrength: 0.65,
+    fadeStrength: 1.15,
   });
 });
