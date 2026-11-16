@@ -21,11 +21,12 @@ void main() {
 }`;
 const glowFragmentShader = `
 uniform vec3 glowColor;
+uniform float glowOpacity;
 varying vec2 vUv;
 void main() {
   float radius = length(vUv - vec2(0.5)) * 2.0;
   float edge = 1.0 - smoothstep(0.94, 1.0, radius);
-  float strength = 0.24 * pow(max(0.0, 1.0 - radius), 1.35) * edge;
+  float strength = glowOpacity * 0.24 * pow(max(0.0, 1.0 - radius), 1.15) * edge;
   gl_FragColor = vec4(glowColor, strength);
   #include <tonemapping_fragment>
   #include <colorspace_fragment>
@@ -108,7 +109,7 @@ function Lamp({ lamp, dragRef }: { lamp: PlacedLamp; dragRef: RefObject<boolean>
   const clearHoveredLamp = useLampHoverStore((state) => state.clearHoveredLamp);
   const spotlightOriginHeight = LAMP_HEAD_HEIGHT * lamp.scale;
   const cone = lampCone(lamp);
-  const glowUniforms = useMemo(() => ({ glowColor: { value: new Color(lamp.color) } }), [lamp.color]);
+  const glowUniforms = useMemo(() => ({ glowColor: { value: new Color(lamp.color) }, glowOpacity: { value: 0 } }), [lamp.color]);
   const spotlightTarget = useMemo(() => {
     const target = new Object3D();
     target.position.set(0, 0, LAMP_HEAD[1] * lamp.scale);
@@ -116,10 +117,16 @@ function Lamp({ lamp, dragRef }: { lamp: PlacedLamp; dragRef: RefObject<boolean>
   }, [lamp.scale]);
   const hoverRing = useRef<Group>(null);
   const hoverMaterial = useRef<Mesh>(null);
+  const glowMaterial = useRef<Mesh>(null);
   useFrame(({ clock }) => {
     const state = hoverRingState(hovered, clock.elapsedTime);
     if (hoverRing.current) hoverRing.current.scale.setScalar(state.scale);
     if (hoverMaterial.current) (hoverMaterial.current.material as { opacity: number }).opacity = state.opacity;
+    if (glowMaterial.current) {
+      const material = glowMaterial.current.material as unknown as { uniforms: { glowOpacity: { value: number } } };
+      const target = on ? 1 : 0;
+      material.uniforms.glowOpacity.value += (target - material.uniforms.glowOpacity.value) * Math.min(1, 5 * 1 / 60);
+    }
   });
   return (
     <group position={[lamp.position[0], lamp.position[1], lamp.position[2]]} rotation={[0, lamp.rotationY, 0]}>
@@ -145,13 +152,11 @@ function Lamp({ lamp, dragRef }: { lamp: PlacedLamp; dragRef: RefObject<boolean>
         </mesh>
       </group>}
       <primitive object={spotlightTarget} />
-      <spotLight position={[0, spotlightOriginHeight, LAMP_HEAD[1] * lamp.scale]} target={spotlightTarget} color={lamp.color} intensity={on ? lamp.intensity : 0} distance={lamp.radius * 1.08} angle={cone.angle} penumbra={0.45} decay={2} castShadow shadow-mapSize-width={512} shadow-mapSize-height={512} shadow-bias={-0.00015} shadow-normalBias={0.015} />
-      {on && <>
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.012, LAMP_HEAD[1] * lamp.scale]}>
-          <circleGeometry args={[lamp.radius, 64]} />
-          <shaderMaterial vertexShader={glowVertexShader} fragmentShader={glowFragmentShader} uniforms={glowUniforms} transparent blending={AdditiveBlending} depthWrite={false} toneMapped={false} />
-        </mesh>
-      </>}
+      <spotLight position={[0, spotlightOriginHeight, LAMP_HEAD[1] * lamp.scale]} target={spotlightTarget} color={lamp.color} intensity={on ? lamp.intensity : 0} distance={lamp.radius * 1.15} angle={cone.angle} penumbra={0.45} decay={1.8} castShadow shadow-mapSize-width={512} shadow-mapSize-height={512} shadow-bias={-0.00015} shadow-normalBias={0.015} />
+      <mesh ref={glowMaterial} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.012, LAMP_HEAD[1] * lamp.scale]}>
+        <circleGeometry args={[lamp.radius, 64]} />
+        <shaderMaterial vertexShader={glowVertexShader} fragmentShader={glowFragmentShader} uniforms={glowUniforms} transparent blending={AdditiveBlending} depthWrite={false} toneMapped={false} />
+      </mesh>
     </group>
   );
 }
