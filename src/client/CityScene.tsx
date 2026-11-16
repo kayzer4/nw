@@ -90,8 +90,8 @@ function InfiniteGrid() {
     sectionSize={6}
     cellThickness={0.85}
     sectionThickness={1.15}
-    cellColor="#657277"
-    sectionColor="#748085"
+    cellColor="#141819"
+    sectionColor="#1b2021"
     onUpdate={(grid) => {
       const material = grid.material as { depthTest: boolean; depthWrite: boolean };
       material.depthTest = true;
