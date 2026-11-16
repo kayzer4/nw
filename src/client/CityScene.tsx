@@ -78,7 +78,7 @@ function SidewalkGround({ buildings, cellSize }: { buildings: readonly PlacedAss
 
 function InfiniteGrid() {
   const { size, fadeDistance, fadeStrength } = infiniteGridOptions();
-  return <Grid args={[size, size]} position={[0, -0.08, 0]} infiniteGrid followCamera fadeDistance={fadeDistance} fadeStrength={fadeStrength} cellSize={1} sectionSize={4} cellThickness={1.15} sectionThickness={1.5} cellColor="#23313b" sectionColor="#466472" />;
+  return <Grid args={[size, size]} position={[0, -0.08, 0]} infiniteGrid followCamera fadeDistance={fadeDistance} fadeStrength={fadeStrength} cellSize={1.5} sectionSize={6} cellThickness={1.3} sectionThickness={1.8} cellColor="#23313b" sectionColor="#466472" />;
 }
 
 function Lamp({ lamp, dragRef }: { lamp: PlacedLamp; dragRef: RefObject<boolean> }) {
@@ -231,12 +231,13 @@ function District({ level, dragRef, onReady }: { level: LevelPreset; dragRef: Re
   );
 }
 
-// Keep motion at display refresh rate, while expensive shadow maps update at
-// 20 Hz. Lower pixel density only after sustained slow frames, with hysteresis.
+// Keep motion at display refresh rate while expensive shadow maps update at
+// 20 Hz. Stable DPR is important here because the grid shader relies on
+// screen-space derivatives (fwidth); changing it causes line shimmer.
 /* eslint-disable react-hooks/immutability -- Three.js renderer is an imperative external object. */
 function RenderBudget() {
-  const { gl, setDpr } = useThree();
-  const budget = useRef({ shadowTime: 0, elapsed: 0, frames: 0, dpr: 1, fastWindows: 0 });
+  const { gl } = useThree();
+  const budget = useRef({ shadowTime: 0 });
   useEffect(() => {
     gl.shadowMap.autoUpdate = false;
     gl.shadowMap.needsUpdate = true;
@@ -249,17 +250,6 @@ function RenderBudget() {
       gl.shadowMap.needsUpdate = true;
       state.shadowTime %= 1 / 20;
     }
-    if (document.hidden || delta > 0.25) return;
-    state.elapsed += delta;
-    state.frames++;
-    if (state.elapsed < 2) return;
-    const fps = state.frames / state.elapsed;
-    state.fastWindows = fps > 58 ? state.fastWindows + 1 : 0;
-    const next = fps < 52 ? Math.max(0.85, state.dpr - 0.1)
-      : state.fastWindows >= 5 ? Math.min(1, state.dpr + 0.05) : state.dpr;
-    if (next !== state.dpr) { state.dpr = next; setDpr(next); state.fastWindows = 0; }
-    state.elapsed = 0;
-    state.frames = 0;
   });
   return null;
 }

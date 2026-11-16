@@ -15,8 +15,8 @@ test("hover ring remains hidden until a lamp is targeted and then pulses within 
 
 test("infinite grid uses the renderer's camera-following fade", () => {
   expect(sceneEffects.infiniteGridOptions?.()).toEqual({
-    size: 24,
-    fadeDistance: 90,
-    fadeStrength: 1,
+    size: 32,
+    fadeDistance: 240,
+    fadeStrength: 0.65,
   });
 });
