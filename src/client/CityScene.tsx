@@ -77,7 +77,7 @@ function SidewalkGround({ buildings, cellSize }: { buildings: readonly PlacedAss
   </mesh>;
 }
 
-function InfiniteGrid() {
+function InfiniteGrid({ cellSize }: { cellSize: number }) {
   const { size, fadeDistance, fadeStrength } = infiniteGridOptions();
   return <Grid
     args={[size, size]}
@@ -87,8 +87,8 @@ function InfiniteGrid() {
     followCamera
     fadeDistance={fadeDistance}
     fadeStrength={fadeStrength}
-    cellSize={1.5}
-    sectionSize={6}
+    cellSize={cellSize}
+    sectionSize={cellSize * 4}
     cellThickness={0.85}
     sectionThickness={1.15}
     cellColor="#303a3d"
@@ -245,7 +245,7 @@ function District({ level, dragRef, onReady }: { level: LevelPreset; dragRef: Re
       <fog attach="fog" args={["#080d15", 18, 38]} />
       <ambientLight intensity={0.22} color="#9baec8" />
       <directionalLight position={[-5, 12, 6]} intensity={0.3} color="#a9c5f0" castShadow shadow-mapSize-width={1024} shadow-mapSize-height={1024} shadow-camera-left={-12} shadow-camera-right={12} shadow-camera-top={12} shadow-camera-bottom={-12} shadow-normalBias={0.02} />
-      <InfiniteGrid />
+      <InfiniteGrid cellSize={level.grid.cellSize} />
       {level.roads.map((road) => <StaticAsset key={road.id} item={road} castShadow={false} />)}
       <SidewalkGround buildings={level.buildings} cellSize={level.grid.cellSize} />
       {level.buildings.map((building) => <StaticAsset key={building.id} item={building} />)}
