@@ -78,7 +78,26 @@ function SidewalkGround({ buildings, cellSize }: { buildings: readonly PlacedAss
 
 function InfiniteGrid() {
   const { size, fadeDistance, fadeStrength } = infiniteGridOptions();
-  return <Grid args={[size, size]} position={[0, 0.025, 0]} renderOrder={2} infiniteGrid followCamera fadeDistance={fadeDistance} fadeStrength={fadeStrength} cellSize={1.5} sectionSize={6} cellThickness={1.3} sectionThickness={1.8} cellColor="#23313b" sectionColor="#466472" />;
+  return <Grid
+    args={[size, size]}
+    position={[0, 0.04, 0]}
+    renderOrder={2}
+    infiniteGrid
+    followCamera
+    fadeDistance={fadeDistance}
+    fadeStrength={fadeStrength}
+    cellSize={1.5}
+    sectionSize={6}
+    cellThickness={1.3}
+    sectionThickness={1.8}
+    cellColor="#23313b"
+    sectionColor="#466472"
+    onUpdate={(grid) => {
+      const material = grid.material as { depthTest: boolean; depthWrite: boolean };
+      material.depthTest = false;
+      material.depthWrite = false;
+    }}
+  />;
 }
 
 function Lamp({ lamp, dragRef }: { lamp: PlacedLamp; dragRef: RefObject<boolean> }) {
