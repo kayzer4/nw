@@ -907,7 +907,7 @@
   ],
   "rules": {
     "shiftSeconds": 55,
-    "startingEnergy": 23.7125,
+    "startingEnergy": 133.224,
     "energyPerLampSecond": 0.7,
     "startingSatisfaction": 70,
     "minimumSatisfaction": 20,

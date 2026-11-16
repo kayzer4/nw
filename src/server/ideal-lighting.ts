@@ -1,5 +1,5 @@
 import type { LevelPreset } from "../game/level";
-import { countBits, coveredResidents, lampCoverageMasks, necessaryLampCount } from "../game/lighting";
+import { countBits, coveredResidents, lampCoverageMasks } from "../game/lighting";
 import { routePosition, advanceSession, createSession, type SessionSnapshot } from "../game/simulation";
 
 export interface LightingStep { time: number; mask: number }
@@ -31,16 +31,6 @@ export function planIdealLighting(level: LevelPreset): IdealLightingPlan | null 
     previous = best;
   }
   return { steps, switches, lampSeconds };
-}
-
-export function allOnWasteSeconds(level: LevelPreset): number {
-  const allOn = (1 << level.lamps.length) - 1;
-  let waste = 0;
-  for (let time = 0; time < level.rules.shiftSeconds; time += 0.25) {
-    const coverage = coverageAt(level, time + 0.125);
-    waste += (level.lamps.length - necessaryLampCount(coverage, allOn)) * 0.25;
-  }
-  return waste;
 }
 
 export function playIdealPlan(level: LevelPreset, plan: IdealLightingPlan) {

@@ -42,10 +42,10 @@ export function findMinimumActionPlan(level: LevelPreset, maxActions = 16): {
       const deltas: { comfort: number; energy: number }[] = [];
       for (let time = start; time < start + duration - 1e-8; time += 0.25) {
         const dt = Math.min(0.25, start + duration - time);
-        const { litCount, excessLamps } = lightingEconomy(level, states, time + dt / 2);
+        const { litCount, activeLampCount } = lightingEconomy(level, states, time + dt / 2);
         deltas.push({
           comfort: (litCount >= rules.requiredLitResidents ? rules.comfortGainPerSecond : -rules.comfortLossPerSecond) * dt,
-          energy: excessLamps * rules.energyPerLampSecond * dt,
+          energy: activeLampCount * rules.energyPerLampSecond * dt,
         });
       }
       return deltas;

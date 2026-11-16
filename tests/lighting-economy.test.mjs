@@ -10,14 +10,14 @@ const level = {
     comfortGainPerSecond: 0.5, comfortLossPerSecond: 1.5 },
 };
 
-test("serving a resident does not consume the budget reserved for needless lamps", () => {
+test("every active lamp consumes electricity, including lamps serving residents", () => {
   const start = { ...createSession(level), phase: "playing" };
   const necessary = advanceSession(level, start, { near: true, extra: false }, 5);
   const wasteful = advanceSession(level, start, { near: true, extra: true }, 5);
   const dark = advanceSession(level, start, { near: false, extra: false }, 5);
-  expect(necessary.energy).toBe(10);
-  expect(wasteful.energy).toBe(5);
+  expect(necessary.energy).toBe(5);
+  expect(wasteful.energy).toBe(0);
   expect(necessary.satisfaction).toBe(wasteful.satisfaction);
-  expect(dark.energy).toBe(necessary.energy);
+  expect(dark.energy).toBe(10);
   expect(dark.satisfaction).toBeLessThan(necessary.satisfaction);
 });

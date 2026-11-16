@@ -458,11 +458,11 @@ function completeRouteCoverage(
 }
 
 const CHALLENGES = [
-  { shiftSeconds: 40, minimumSatisfaction: 15, wasteTolerance: 0.65 },
-  { shiftSeconds: 50, minimumSatisfaction: 20, wasteTolerance: 0.55 },
-  { shiftSeconds: 55, minimumSatisfaction: 20, wasteTolerance: 0.5 },
-  { shiftSeconds: 60, minimumSatisfaction: 25, wasteTolerance: 0.45 },
-  { shiftSeconds: 65, minimumSatisfaction: 30, wasteTolerance: 0.4 },
+  { shiftSeconds: 40, minimumSatisfaction: 15, energyAllowance: 0.4 },
+  { shiftSeconds: 50, minimumSatisfaction: 20, energyAllowance: 0.3 },
+  { shiftSeconds: 55, minimumSatisfaction: 20, energyAllowance: 0.22 },
+  { shiftSeconds: 60, minimumSatisfaction: 25, energyAllowance: 0.16 },
+  { shiftSeconds: 65, minimumSatisfaction: 30, energyAllowance: 0.1 },
 ] as const;
 
 export function buildLevel(seedInput: string, challengeIndex?: number): LevelPreset {
@@ -512,7 +512,9 @@ export function buildLevel(seedInput: string, challengeIndex?: number): LevelPre
   const uniformIntensity = baseCandidates[0]?.intensity ?? 2;
   let lamps: PlacedLamp[] = [];
   let bestLamps: PlacedLamp[] | null = null;
-  const baseRadius = 2.8 + Number(seed) % 3 * 0.2;
+  // Start compact: three or more focused pools of light create a meaningful
+  // on/off decision, unlike a two-lamp layout where every lamp is mandatory.
+  const baseRadius = 2.2 + Number(seed) % 3 * 0.2;
   const targetLampCount = Math.max(3, Math.ceil(roads.length * 5 / 11));
   for (let step = 0; baseRadius + step * 0.2 <= 5.401; step++) {
     const radius = Math.round((baseRadius + step * 0.2) * 10) / 10;
@@ -520,7 +522,7 @@ export function buildLevel(seedInput: string, challengeIndex?: number): LevelPre
     const candidateLamps = completeRouteCoverage(candidates, samples, buildings);
     const leastExclusive = Math.min(...lampExclusiveShares(candidateLamps, samples));
     if (!bestLamps || candidateLamps.length < bestLamps.length || (candidateLamps.length === bestLamps.length && leastExclusive > Math.min(...lampExclusiveShares(bestLamps, samples)))) bestLamps = candidateLamps;
-    if (candidateLamps.length <= targetLampCount && leastExclusive >= 0.04) { lamps = candidateLamps; break; }
+    if (candidateLamps.length >= 3 && candidateLamps.length <= targetLampCount && leastExclusive >= 0.04) { lamps = candidateLamps; break; }
   }
   if (!lamps.length) lamps = bestLamps ?? [];
   const challenge = CHALLENGES[Math.max(0, Math.min(CHALLENGES.length - 1, challengeIndex ?? 0))];
@@ -548,6 +550,6 @@ export function buildLevel(seedInput: string, challengeIndex?: number): LevelPre
   while (!planIdealLighting(level) && level.lamps[0].radius < 5.4) {
     level.lamps = level.lamps.map((lamp) => ({ ...lamp, radius: Math.round((lamp.radius + 0.1) * 10) / 10 }));
   }
-  const balanced = balanceGeneratedLevel(level, challenge.wasteTolerance);
+  const balanced = balanceGeneratedLevel(level, challenge.energyAllowance);
   return { ...balanced, difficulty: assessLevel(balanced) };
 }

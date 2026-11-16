@@ -16,13 +16,3 @@ export function coveredResidents(coverage: readonly number[], lampMask: number):
   return coverage.reduce((residents, covered, index) => residents | (lampMask & (1 << index) ? covered : 0), 0);
 }
 
-/** The smallest subset of active lamps that serves everyone who is currently lit. */
-export function necessaryLampCount(coverage: readonly number[], activeMask: number): number {
-  const residents = coveredResidents(coverage, activeMask);
-  if (!residents) return 0;
-  let minimum = countBits(activeMask);
-  for (let subset = activeMask; subset; subset = (subset - 1) & activeMask) {
-    if (countBits(subset) < minimum && coveredResidents(coverage, subset) === residents) minimum = countBits(subset);
-  }
-  return minimum;
-}

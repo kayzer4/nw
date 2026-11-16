@@ -11,6 +11,7 @@ import { findMinimumActionPlan } from "../src/server/action-planner";
 import { planIdealLighting, playIdealPlan } from "../src/server/ideal-lighting";
 
 const ids = ["first-shift", "market-lights", "north-gate", "west-end", "south-crossing"];
+const energyAllowances = [0.4, 0.3, 0.22, 0.16, 0.1];
 const load = (id) => JSON.parse(fs.readFileSync(`data/levels/${id}.json`, "utf8"));
 
 describe("ready level contracts", () => {
@@ -44,6 +45,16 @@ describe("ready level contracts", () => {
     }
     expect(advanceSession(level, session, states, level.rules.shiftSeconds).phase).toBe("won");
   });
+});
+
+test("each level budget is its ideal lighting cost plus the intended difficulty allowance", () => {
+  for (const [index, id] of ids.entries()) {
+    const level = load(id);
+    const ideal = planIdealLighting(level);
+    expect(ideal).not.toBeNull();
+    const idealEnergy = ideal.lampSeconds * level.rules.energyPerLampSecond;
+    expect(level.rules.startingEnergy / idealEnergy - 1).toBeCloseTo(energyAllowances[index], 6);
+  }
 });
 
 test("lamp target scales with road count for other seeds", () => {

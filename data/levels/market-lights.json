@@ -3,7 +3,7 @@
   "seed": "2063",
   "title": "Market Lights",
   "subtitle": "Watch the streets around the late market.",
-  "difficulty": 4,
+  "difficulty": 3,
   "grid": {
     "width": 6,
     "depth": 6,
@@ -899,7 +899,7 @@
   ],
   "rules": {
     "shiftSeconds": 50,
-    "startingEnergy": 25.2175,
+    "startingEnergy": 127.39999999999999,
     "energyPerLampSecond": 0.7,
     "startingSatisfaction": 70,
     "minimumSatisfaction": 20,
