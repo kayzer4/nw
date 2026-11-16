@@ -5,5 +5,5 @@ export function hoverRingState(hovered: boolean, elapsedSeconds: number) {
 }
 
 export function infiniteGridOptions() {
-  return { size: 20, fadeDistance: 35, fadeStrength: 1.5 };
+  return { size: 24, fadeDistance: 90, fadeStrength: 1 };
 }
