@@ -22,3 +22,11 @@ test("public interface declares Russian locale", () => {
   expect(read("src/client/GameHud.tsx")).toContain("ЭНЕРГИЯ СЕТИ");
   expect(read("src/client/LevelPicker.tsx")).toContain("Выбери район");
 });
+
+test("game HUD omits removed complexity, radius, and comfort copy", () => {
+  const hud = read("src/client/GameHud.tsx");
+  expect(hud).not.toContain("СЛОЖНОСТЬ");
+  expect(hud).not.toContain("РАДИУС СВЕТА");
+  expect(hud).not.toContain("КОМФОРТ ЖИТЕЛЕЙ");
+  expect(hud).toContain("ЭНЕРГИЯ СЕТИ");
+});

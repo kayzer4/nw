@@ -9,7 +9,7 @@ bun install
 bun run dev
 ```
 
-Open http://localhost:3000; it redirects to `/levels`. Choose one of five districts at `/levels`, read its comic at `/levels/<id>/intro`, then press **Начать смену** to play at `/levels/<id>/play`. Each screen has its own URL, and a play URL can be opened directly. Use **LEVELS** to return to the catalog. Toggle lamps during the shift: leaving all of them on exhausts energy, while leaving them all off makes residents uncomfortable. The radius shown in the HUD matches the simulated and drawn ground footprint. Progress is saved in local storage.
+Open http://localhost:3000; it redirects to `/levels`. Choose one of five districts at `/levels`, read its comic at `/levels/<id>/intro`, then press **Начать смену** to play at `/levels/<id>/play`. Each screen has its own URL, and a play URL can be opened directly. Use **LEVELS** to return to the catalog. Toggle lamps during the shift: leaving all of them on exhausts energy, while an unlit street is only shown as an informational status. A shift is lost only when its energy reaches zero. Progress is saved in local storage.
 
 ## Generate levels locally
 

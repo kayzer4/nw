@@ -27,7 +27,7 @@ export default function GameHud({ level, onExit }: {
   if (!session) return null;
   const remaining = Math.max(0, level.rules.shiftSeconds - session.elapsedSeconds);
   const phaseLabel = session.phase === "ready" ? "СМЕНА ГОТОВА" : session.phase === "playing" ? "СМЕНА ИДЁТ" : session.phase === "won" ? "СМЕНА ЗАВЕРШЕНА" : "СМЕНА ПРОВАЛЕНА";
-  const headline = session.phase === "won" ? "Ты дождался рассвета." : session.phase === "lost" ? (session.energy <= 0 ? "Энергия закончилась." : "Район погрузился во тьму.") : level.title;
+  const headline = session.phase === "won" ? "Ты дождался рассвета." : session.phase === "lost" ? "Энергия закончилась." : level.title;
   const activeLampCount = lightingEconomy(level, lamps, session.elapsedSeconds).activeLampCount;
 
   return (
@@ -41,12 +41,10 @@ export default function GameHud({ level, onExit }: {
       <section className="mission-card glass-panel">
         <div className="eyebrow">РАЙОН <span>·</span> НОЧНАЯ СМЕНА</div>
         <h1>{headline}</h1>
-        <p>{session.phase === "won" ? "Жители благополучно дождались утра." : session.phase === "lost" ? (session.energy <= 0 ? "Энергия закончилась до рассвета." : "Слишком много жителей остались без света.") : `Освещай всех ${level.citizens.length} жителей. Выключай фонари, когда свет больше не нужен.`}</p>
-        <div className="level-facts"><span>СЛОЖНОСТЬ <b>{level.difficulty}/5</b></span><span>РАДИУС СВЕТА <b>{level.lamps[0]?.radius.toFixed(1)} м</b></span><span>МИНИМУМ КОМФОРТА <b>{level.rules.minimumSatisfaction}%</b></span></div>
+        <p>{session.phase === "won" ? "Смена завершена с запасом энергии." : session.phase === "lost" ? "Энергия закончилась до рассвета." : "Следи за расходом энергии до конца смены."}</p>
         <div className="meters">
           <div className="meter-block"><div className="meter-label"><span>ЭНЕРГИЯ СЕТИ</span><b>{Math.ceil(session.energy)} <small>кВт·ч</small></b></div><div className="meter-track"><i className="energy-fill" style={{ width: meter(session.energy, level.rules.startingEnergy) }} /></div></div>
-          <div className="meter-block"><div className="meter-label"><span>КОМФОРТ ЖИТЕЛЕЙ</span><b>{Math.round(session.satisfaction)}<small>%</small></b></div><div className="meter-track"><i className="comfort-fill" style={{ width: meter(session.satisfaction, 100) }} /></div></div>
-          <div className="resident-count">{Object.values(session.citizenLit).filter(Boolean).length}/{level.citizens.length} ЖИТЕЛЕЙ В СВЕТЕ <span>ЦЕЛЬ {level.rules.requiredLitResidents}/{level.citizens.length}</span></div>
+          <div className="resident-count">{Object.values(session.citizenLit).filter(Boolean).length}/{level.citizens.length} ЖИТЕЛЕЙ В СВЕТЕ</div>
         </div>
       </section>
 

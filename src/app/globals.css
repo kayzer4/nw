@@ -31,9 +31,7 @@ button { font: inherit; }
 .eyebrow span { color: #5e6970; padding: 0 5px; }
 .mission-card h1 { margin: 12px 0 7px; color: #f0eee8; font: 500 27px/1.12 Georgia,serif; letter-spacing: -.025em; }
 .mission-card p { margin: 0; color: #9ca8ae; font-size: 11px; line-height: 1.65; }
-.level-facts, .resident-count { display: flex; justify-content: space-between; color: #86949b; font-size: 8px; letter-spacing: .08em; }
-.level-facts { margin-top: 11px; }
-.level-facts b { color: #d9c7a4; font-weight: 600; }
+.resident-count { display: flex; justify-content: space-between; color: #86949b; font-size: 8px; letter-spacing: .08em; }
 .resident-count span { color: #a8b9aa; }
 .meters { display: grid; gap: 15px; margin-top: 14px; }
 .meter-label { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 7px; color: #8d9aa2; font-size: 8px; letter-spacing: .15em; }
@@ -42,7 +40,6 @@ button { font: inherit; }
 .meter-track { height: 3px; width: 100%; background: rgba(187,205,217,.12); }
 .meter-track i { display: block; height: 100%; transition: width .35s ease; }
 .energy-fill { background: #d1a75c; box-shadow: 0 0 9px rgba(209,167,92,.35); }
-.comfort-fill { background: #8fb49b; box-shadow: 0 0 9px rgba(143,180,155,.3); }
 .lamp-panel { position: absolute; top: 150px; right: 42px; width: 194px; padding: 18px; }
 .control-panel { position: absolute; bottom: 35px; left: 50%; width: min(480px, calc(100% - 48px)); transform: translateX(-50%); padding: 14px 18px; }
 .panel-heading { display: block; }
