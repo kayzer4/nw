@@ -1,4 +1,4 @@
-# Nightwatcher Clean MVP Implementation Plan
+# Lightkeeper MVP Implementation Plan
 
 > **For agentic workers:** Implement task-by-task in this session using executing-plans. Steps use checkbox syntax for tracking.
 

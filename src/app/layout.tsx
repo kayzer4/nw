@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Nightwatcher — Night Shift",
+  title: "Lightkeeper — Night Shift",
   description: "Keep the neighborhood safe until sunrise.",
 };
 

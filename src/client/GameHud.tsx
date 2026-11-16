@@ -33,7 +33,7 @@ export default function GameHud({ level, onExit }: {
   return (
     <div className="hud-shell">
       <header className="topbar">
-        <div className="brand"><button type="button" className="back-button" onClick={onExit}>← LEVELS</button><div><strong>NIGHTWATCHER</strong><small>AFTER HOURS DIVISION</small></div></div>
+        <div className="brand"><button type="button" className="back-button" onClick={onExit}>← LEVELS</button><div><strong>LIGHTKEEPER</strong><small>AFTER HOURS DIVISION</small></div></div>
         <div className="top-status"><span className={`status-dot ${session.phase === "playing" ? "live" : ""}`} />{phaseLabel}</div>
         <div className="shift-clock"><span>SHIFT ENDS IN</span><strong>{formatTime(remaining)}</strong></div>
       </header>

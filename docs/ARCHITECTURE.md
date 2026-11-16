@@ -1,6 +1,6 @@
 # Architecture
 
-Nightwatcher Clean is a single Next.js project. `src/client` renders the game, `src/game` contains pure gameplay rules and shared light geometry, and `src/server` plus `tools` build and validate presets locally. The Next.js API reads checked-in JSON; it never runs the generator on requests.
+Lightkeeper is a single Next.js project. `src/client` renders the game, `src/game` contains pure gameplay rules and shared light geometry, and `src/server` plus `tools` build and validate presets locally. The Next.js API reads checked-in JSON; it never runs the generator on requests.
 
 ## Level pipeline
 
@@ -20,7 +20,7 @@ The light footprint is rendered separately from its clickable lamp model. A poin
 
 ## Progress
 
-Completion and last selected level ID are stored in `localStorage` under `nightwatcher-clean.progress`, schema version 2. Version 1 completion records are retained. Invalid or unavailable storage falls back to the first level.
+Completion and last selected level ID are stored in `localStorage` under `lightkeeper.progress` (with legacy save compatibility), schema version 2. Version 1 completion records are retained. Invalid or unavailable storage falls back to the first level.
 
 ## Commands
 

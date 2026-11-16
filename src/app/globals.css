@@ -25,7 +25,7 @@ button { font: inherit; }
 .shift-clock span, .shift-clock strong { display: block; }
 .shift-clock span { color: #75818d; font-size: 8px; letter-spacing: .2em; }
 .shift-clock strong { margin-top: 4px; color: #e1c386; font: 500 21px Georgia,serif; letter-spacing: .07em; }
-.glass-panel { background: linear-gradient(135deg,rgba(15,22,30,.9),rgba(10,16,23,.83)); border: 1px solid rgba(177,196,208,.14); box-shadow: 0 16px 48px rgba(0,0,0,.24); backdrop-filter: blur(16px); }
+.glass-panel { background: linear-gradient(135deg,rgba(15,22,30,.9),rgba(10,16,23,.83)); border: 1px solid rgba(177,196,208,.14); box-shadow: 0 16px 48px rgba(0,0,0,.24); }
 .mission-card { position: absolute; top: 112px; left: 42px; width: 340px; padding: 23px 24px 22px; }
 .eyebrow { color: #bd9d65; font-size: 8px; letter-spacing: .22em; font-weight: 700; }
 .eyebrow span { color: #5e6970; padding: 0 5px; }

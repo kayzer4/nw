@@ -8,7 +8,7 @@ export default function LevelPicker({ levels, completedIds }: {
   completedIds: readonly string[];
 }) {
   return <main className="level-picker">
-    <header className="picker-header"><div className="brand"><span className="brand-mark">N</span><div><strong>NIGHTWATCHER</strong><small>AFTER HOURS DIVISION</small></div></div><span>THE CITY NEEDS A WATCHER</span></header>
+    <header className="picker-header"><div className="brand"><span className="brand-mark">L</span><div><strong>LIGHTKEEPER</strong><small>AFTER HOURS DIVISION</small></div></div><span>THE CITY NEEDS A LIGHTKEEPER</span></header>
     <div className="picker-content">
       <div className="eyebrow">NIGHT SHIFT / DISTRICT SELECT</div>
       <h1>Choose your district.</h1>

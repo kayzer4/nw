@@ -77,7 +77,7 @@ export default function ComicIntro({ level, levels, ready, error, onStart, onBac
         <header className="flex items-center justify-between border-b-4 border-[#202126] pb-4">
           <button type="button" onClick={onBack} className="group flex items-center gap-3 text-left text-[#202126] transition hover:-translate-y-0.5">
             <span className="grid h-9 w-9 place-items-center border-2 border-[#202126] bg-[#e9dfca] font-serif text-lg shadow-[3px_3px_0_#202126]">N</span>
-            <span><strong className="block text-[10px] tracking-[.2em]">NIGHTWATCHER</strong><small className="mt-1 block text-[8px] font-bold tracking-[.16em] text-[#665d50]">RETURN TO DISTRICTS</small></span>
+            <span><strong className="block text-[10px] tracking-[.2em]">LIGHTKEEPER</strong><small className="mt-1 block text-[8px] font-bold tracking-[.16em] text-[#665d50]">RETURN TO DISTRICTS</small></span>
           </button>
           <div className="hidden items-center gap-3 sm:flex"><span className="text-[9px] font-bold tracking-[.18em] text-[#665d50]">FIELD COMIC</span><Progress percent={Math.round(((currentIndex + 1) / Math.max(1, levels.length)) * 100)} showInfo={false} strokeColor="#202126" railColor="rgba(32,33,38,.18)" size="small" className="w-28" /></div>
         </header>

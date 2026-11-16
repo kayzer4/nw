@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, type RefObject } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
 import { AdditiveBlending, AnimationMixer, Box3, BufferGeometry, CanvasTexture, Color, Float32BufferAttribute, LoopRepeat, Mesh, Object3D, type Group } from "three";
 import { clone as skeletonClone } from "three/examples/jsm/utils/SkeletonUtils.js";
@@ -107,8 +107,8 @@ function Lamp({ lamp, dragRef }: { lamp: PlacedLamp; dragRef: RefObject<boolean>
         <meshBasicMaterial color="#f0c876" transparent opacity={0.9} depthWrite={false} toneMapped={false} />
       </mesh>}
       <primitive object={spotlightTarget} />
+      <spotLight position={[0, spotlightOriginHeight, LAMP_HEAD[1] * lamp.scale]} target={spotlightTarget} color={lamp.color} intensity={on ? lamp.intensity : 0} distance={0} angle={cone.angle} penumbra={0.02} decay={0} castShadow shadow-mapSize-width={512} shadow-mapSize-height={512} shadow-bias={-0.00015} shadow-normalBias={0.015} />
       {on && <>
-        <spotLight position={[0, spotlightOriginHeight, LAMP_HEAD[1] * lamp.scale]} target={spotlightTarget} color={lamp.color} intensity={lamp.intensity} distance={0} angle={cone.angle} penumbra={0.02} decay={0} castShadow shadow-mapSize-width={512} shadow-mapSize-height={512} shadow-bias={-0.00015} shadow-normalBias={0.015} />
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.012, LAMP_HEAD[1] * lamp.scale]}>
           <circleGeometry args={[lamp.radius, 64]} />
           <shaderMaterial vertexShader={glowVertexShader} fragmentShader={glowFragmentShader} uniforms={glowUniforms} transparent blending={AdditiveBlending} depthWrite={false} toneMapped={false} />
@@ -220,9 +220,44 @@ function District({ level, dragRef, onReady }: { level: LevelPreset; dragRef: Re
   );
 }
 
+// Keep motion at display refresh rate, while expensive shadow maps update at
+// 20 Hz. Lower pixel density only after sustained slow frames, with hysteresis.
+/* eslint-disable react-hooks/immutability -- Three.js renderer is an imperative external object. */
+function RenderBudget() {
+  const { gl, setDpr } = useThree();
+  const budget = useRef({ shadowTime: 0, elapsed: 0, frames: 0, dpr: 1, fastWindows: 0 });
+  useEffect(() => {
+    gl.shadowMap.autoUpdate = false;
+    gl.shadowMap.needsUpdate = true;
+    return () => { gl.shadowMap.autoUpdate = true; };
+  }, [gl]);
+  useFrame((_, delta) => {
+    const state = budget.current;
+    state.shadowTime += delta;
+    if (state.shadowTime >= 1 / 20) {
+      gl.shadowMap.needsUpdate = true;
+      state.shadowTime %= 1 / 20;
+    }
+    if (document.hidden || delta > 0.25) return;
+    state.elapsed += delta;
+    state.frames++;
+    if (state.elapsed < 2) return;
+    const fps = state.frames / state.elapsed;
+    state.fastWindows = fps > 58 ? state.fastWindows + 1 : 0;
+    const next = fps < 52 ? Math.max(0.65, state.dpr - 0.1)
+      : state.fastWindows >= 5 ? Math.min(1, state.dpr + 0.05) : state.dpr;
+    if (next !== state.dpr) { state.dpr = next; setDpr(next); state.fastWindows = 0; }
+    state.elapsed = 0;
+    state.frames = 0;
+  });
+  return null;
+}
+/* eslint-enable react-hooks/immutability */
+
 export default function CityScene({ level, dragRef, onReady }: { level: LevelPreset; dragRef: RefObject<boolean>; onReady: () => void }) {
   return (
-    <Canvas shadows camera={{ position: [12, 13, 14], fov: 42 }} dpr={[1, 1.5]} gl={{ antialias: true, powerPreference: "low-power" }}>
+    <Canvas shadows camera={{ position: [12, 13, 14], fov: 42 }} dpr={1} gl={{ antialias: true, powerPreference: "high-performance" }}>
+      <RenderBudget />
       <District level={level} dragRef={dragRef} onReady={onReady} />
     </Canvas>
   );

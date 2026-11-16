@@ -5,7 +5,9 @@ export interface CampaignProgress {
   completedLevelIds: string[];
 }
 
-const STORAGE_KEY = "nightwatcher-clean.progress";
+const STORAGE_KEY = "lightkeeper.progress";
+// Read the previous name once so existing players retain their campaign.
+const LEGACY_STORAGE_KEY = "nightwatcher-clean.progress";
 export const EMPTY_PROGRESS: CampaignProgress = { version: 2, lastLevelId: "first-shift", unlockedLevelIds: ["first-shift"], completedLevelIds: [] };
 
 type StorageLike = Pick<Storage, "getItem" | "setItem">;
@@ -17,7 +19,7 @@ function browserStorage(): StorageLike | null {
 export function loadProgress(storage: StorageLike | null = browserStorage()): CampaignProgress {
   if (!storage) return { ...EMPTY_PROGRESS, unlockedLevelIds: [...EMPTY_PROGRESS.unlockedLevelIds], completedLevelIds: [] };
   try {
-    const parsed: unknown = JSON.parse(storage.getItem(STORAGE_KEY) ?? "null");
+    const parsed: unknown = JSON.parse(storage.getItem(STORAGE_KEY) ?? storage.getItem(LEGACY_STORAGE_KEY) ?? "null");
     if (!parsed || typeof parsed !== "object") return { ...EMPTY_PROGRESS, unlockedLevelIds: [...EMPTY_PROGRESS.unlockedLevelIds], completedLevelIds: [] };
     const value = parsed as Partial<CampaignProgress>;
     if (!Array.isArray(value.unlockedLevelIds) || !Array.isArray(value.completedLevelIds)) {
