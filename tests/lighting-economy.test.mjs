@@ -6,18 +6,18 @@ const level = {
   lamps: [lamp("near", 0), lamp("extra", 0.5)],
   citizens: [{ id: "walker", route: [[0, 0]], speed: 1 }],
   rules: { shiftSeconds: 30, startingEnergy: 10, energyPerLampSecond: 1,
-    startingSatisfaction: 70, minimumSatisfaction: 20, requiredLitResidents: 1,
+    startingSatisfaction: 70, minimumSatisfaction: 50, requiredLitResidents: 1,
     comfortGainPerSecond: 0.5, comfortLossPerSecond: 1.5 },
 };
 
-test("every active lamp consumes electricity, including lamps serving residents", () => {
+test("darkness does not end a shift while the energy supply remains", () => {
   const start = { ...createSession(level), phase: "playing" };
-  const necessary = advanceSession(level, start, { near: true, extra: false }, 5);
-  const wasteful = advanceSession(level, start, { near: true, extra: true }, 5);
-  const dark = advanceSession(level, start, { near: false, extra: false }, 5);
-  expect(necessary.energy).toBe(5);
-  expect(wasteful.energy).toBe(0);
-  expect(necessary.satisfaction).toBe(wasteful.satisfaction);
-  expect(dark.energy).toBe(10);
-  expect(dark.satisfaction).toBeLessThan(necessary.satisfaction);
+  const result = advanceSession(level, start, { near: false, extra: false }, 30);
+  expect(result.phase).toBe("won");
+  expect(result.energy).toBe(10);
+});
+
+test("energy depletion remains the only loss condition", () => {
+  const start = { ...createSession(level), phase: "playing" };
+  expect(advanceSession(level, start, { near: true, extra: true }, 5).phase).toBe("lost");
 });

@@ -28,11 +28,7 @@ export interface GameRules {
   shiftSeconds: number;
   startingEnergy: number;
   energyPerLampSecond: number;
-  startingSatisfaction: number;
-  minimumSatisfaction: number;
   requiredLitResidents: number;
-  comfortGainPerSecond: number;
-  comfortLossPerSecond: number;
 }
 
 export interface LevelPreset {
