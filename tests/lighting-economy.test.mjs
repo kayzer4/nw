@@ -10,14 +10,14 @@ const level = {
     comfortGainPerSecond: 0.5, comfortLossPerSecond: 1.5 },
 };
 
-test("darkness does not end a shift while the energy supply remains", () => {
+test("darkness drains mood even while the energy supply remains", () => {
   const start = { ...createSession(level), phase: "playing" };
   const result = advanceSession(level, start, { near: false, extra: false }, 30);
-  expect(result.phase).toBe("won");
+  expect(result.phase).toBe("lost");
   expect(result.energy).toBe(10);
 });
 
-test("energy depletion remains the only loss condition", () => {
+test("mood depletion is the loss condition", () => {
   const start = { ...createSession(level), phase: "playing" };
-  expect(advanceSession(level, start, { near: true, extra: true }, 5).phase).toBe("lost");
+  expect(advanceSession(level, start, { near: false, extra: false }, 30).phase).toBe("lost");
 });

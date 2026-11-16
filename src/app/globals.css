@@ -40,6 +40,7 @@ button { font: inherit; }
 .meter-track { height: 3px; width: 100%; background: rgba(187,205,217,.12); }
 .meter-track i { display: block; height: 100%; transition: width .35s ease; }
 .energy-fill { background: #d1a75c; box-shadow: 0 0 9px rgba(209,167,92,.35); }
+.mood-fill { background: #9cc990; box-shadow: 0 0 9px rgba(156,201,144,.3); }
 .lamp-panel { position: absolute; top: 150px; right: 42px; width: 194px; padding: 18px; }
 .control-panel { position: absolute; bottom: 35px; left: 50%; width: min(480px, calc(100% - 48px)); transform: translateX(-50%); padding: 14px 18px; }
 .panel-heading { display: block; }
@@ -62,6 +63,8 @@ button { font: inherit; }
 .footnote b { margin-left: 6px; color: #c9b78e; font-weight: 500; }
 .primary-button { min-width: 190px; padding: 11px 13px; color: #12161b; background: #d6b16e; border: 0; font-size: 8px; font-weight: 700; letter-spacing: .16em; cursor: pointer; transition: background .2s ease; }
 .primary-button:hover { background: #eccb8e; }
+.secondary-button { display: block; width: 100%; margin-top: 10px; padding: 9px 13px; color: #b9c4c5; background: transparent; border: 1px solid rgba(177,196,208,.24); font-size: 8px; letter-spacing: .14em; cursor: pointer; }
+.secondary-button:hover { border-color: rgba(214,177,110,.6); color: #e5c789; }
 .primary-button span { margin-left: 14px; font-size: 14px; }
 .shift-result { position: absolute; z-index: 3; top: 50%; left: 50%; width: min(390px, calc(100% - 48px)); padding: 30px 32px; transform: translate(-50%, -50%); text-align: center; border: 1px solid rgba(214,177,110,.58); background: linear-gradient(145deg,rgba(18,29,35,.96),rgba(8,13,19,.94)); box-shadow: 0 28px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(214,177,110,.12); animation: result-reveal .32s ease-out both; }
 .shift-result h2 { margin: 13px 0 8px; color: #f1e6cf; font: 500 29px Georgia,serif; letter-spacing: .04em; }.shift-result p { margin: 0 0 22px; color: #a8b5b6; font-size: 12px; }.shift-result.lost { border-color: rgba(196,95,83,.65); }.shift-result.lost h2 { color: #e1a197; }.shift-result.lost .primary-button { background: #bd7467; }.shift-result.lost .primary-button:hover { background: #d38d80; }

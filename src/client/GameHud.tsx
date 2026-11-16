@@ -15,7 +15,7 @@ function formatTime(seconds: number) {
 
 export function shiftResult(phase: "ready" | "playing" | "won" | "lost") {
   if (phase === "won") return { title: "СМЕНА ЗАВЕРШЕНА", detail: "Ты дождался рассвета.", tone: "won" as const };
-  if (phase === "lost") return { title: "СМЕНА ПРОВАЛЕНА", detail: "Энергия закончилась.", tone: "lost" as const };
+  if (phase === "lost") return { title: "СМЕНА ПРОВАЛЕНА", detail: "Настроение жителей упало до нуля.", tone: "lost" as const };
   return null;
 }
 
@@ -33,9 +33,9 @@ export default function GameHud({ level, onExit }: {
   if (!session) return null;
   const remaining = Math.max(0, level.rules.shiftSeconds - session.elapsedSeconds);
   const phaseLabel = session.phase === "ready" ? "СМЕНА ГОТОВА" : session.phase === "playing" ? "СМЕНА ИДЁТ" : session.phase === "won" ? "СМЕНА ЗАВЕРШЕНА" : "СМЕНА ПРОВАЛЕНА";
-  const headline = session.phase === "won" ? "Ты дождался рассвета." : session.phase === "lost" ? "Энергия закончилась." : level.title;
+  const headline = session.phase === "won" ? "Ты дождался рассвета." : session.phase === "lost" ? "Настроение на нуле." : level.title;
   const result = shiftResult(session.phase);
-  const activeLampCount = lightingEconomy(level, lamps, session.elapsedSeconds).activeLampCount;
+  const activeLampCount = session.energy > 0 ? lightingEconomy(level, lamps, session.elapsedSeconds).activeLampCount : 0;
 
   return (
     <div className="hud-shell">
@@ -48,9 +48,10 @@ export default function GameHud({ level, onExit }: {
       <section className="mission-card glass-panel">
         <div className="eyebrow">РАЙОН <span>·</span> НОЧНАЯ СМЕНА</div>
         <h1>{headline}</h1>
-        <p>{session.phase === "won" ? "Смена завершена с запасом энергии." : session.phase === "lost" ? "Энергия закончилась до рассвета." : "Следи за расходом энергии до конца смены."}</p>
+        <p>{session.phase === "won" ? "Смена завершена с запасом энергии." : session.phase === "lost" ? "Жители больше не чувствуют себя в безопасности." : "Сохраняй свет и настроение жителей до рассвета."}</p>
         <div className="meters">
           <div className="meter-block"><div className="meter-label"><span>ЭНЕРГИЯ СЕТИ</span><b>{Math.ceil(session.energy)} <small>кВт·ч</small></b></div><div className="meter-track"><i className="energy-fill" style={{ width: meter(session.energy, level.rules.startingEnergy) }} /></div></div>
+          <div className="meter-block"><div className="meter-label"><span>НАСТРОЕНИЕ ЖИТЕЛЕЙ</span><b>{Math.ceil(session.mood)}<small>%</small></b></div><div className="meter-track"><i className="mood-fill" style={{ width: `${session.mood}%` }} /></div></div>
           <div className="resident-count">{Object.values(session.citizenLit).filter(Boolean).length}/{level.citizens.length} ЖИТЕЛЕЙ В СВЕТЕ</div>
         </div>
       </section>
@@ -60,13 +61,14 @@ export default function GameHud({ level, onExit }: {
         <h2>{result.title}</h2>
         <p>{result.detail}</p>
         <button type="button" className="primary-button" onClick={restart}>НАЧАТЬ ЗАНОВО <span>↻</span></button>
+        <button type="button" className="secondary-button" onClick={onExit}>НАЗАД В МЕНЮ</button>
       </section>}
 
       <aside className="lamp-panel glass-panel" aria-label="Управление уличными фонарями">
         <div className="panel-heading"><div><div className="eyebrow">ПУЛЬТ УПРАВЛЕНИЯ</div><h2>Уличные фонари <span>{Object.values(lamps).filter(Boolean).length}/{level.lamps.length} включено</span></h2></div><div className="tap-hint">ВЫБЕРИ ФОНАРЬ В ГОРОДЕ ИЛИ ЗДЕСЬ</div></div>
         <div className="lamp-list">
           {level.lamps.map((lamp, index) => {
-            const on = lamps[lamp.id] ?? lamp.initiallyOn;
+            const on = session.energy > 0 && (lamps[lamp.id] ?? lamp.initiallyOn);
             const disabled = session.phase !== "playing";
             return <button key={lamp.id} type="button" className={`lamp-switch ${on ? "is-on" : ""} ${hoveredLampId === lamp.id ? "is-hovered" : ""}`} disabled={disabled} onPointerEnter={() => setHoveredLamp(lamp.id)} onPointerLeave={() => clearHoveredLamp(lamp.id)} onFocus={() => setHoveredLamp(lamp.id)} onBlur={() => clearHoveredLamp(lamp.id)} onClick={() => toggleLamp(lamp.id)} aria-pressed={on} aria-label={`${on ? "Выключить" : "Включить"} фонарь ${index + 1}`}><span className="lamp-glyph">✳</span><span>ФОНАРЬ {String(index + 1).padStart(2, "0")}</span><i /></button>;
           })}

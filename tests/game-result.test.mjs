@@ -12,7 +12,7 @@ test("a won shift receives a victory plaque", () => {
 test("an exhausted grid receives a defeat plaque", () => {
   expect(result.shiftResult?.("lost")).toEqual({
     title: "СМЕНА ПРОВАЛЕНА",
-    detail: "Энергия закончилась.",
+    detail: "Настроение жителей упало до нуля.",
     tone: "lost",
   });
 });

@@ -101,7 +101,7 @@ function InfiniteGrid() {
 }
 
 function Lamp({ lamp, dragRef }: { lamp: PlacedLamp; dragRef: RefObject<boolean> }) {
-  const on = useGameStore((state) => state.lampStates[lamp.id] ?? lamp.initiallyOn);
+  const on = useGameStore((state) => Boolean((state.session?.energy ?? 0) > 0 && (state.lampStates[lamp.id] ?? lamp.initiallyOn)));
   const toggle = useGameStore((state) => state.toggleLamp);
   const hovered = useLampHoverStore((state) => state.hoveredLampId === lamp.id);
   const setHoveredLamp = useLampHoverStore((state) => state.setHoveredLamp);
@@ -128,7 +128,7 @@ function Lamp({ lamp, dragRef }: { lamp: PlacedLamp; dragRef: RefObject<boolean>
         onPointerOver={(event) => { event.stopPropagation(); setHoveredLamp(lamp.id); document.body.style.cursor = "pointer"; }}
         onPointerOut={() => { clearHoveredLamp(lamp.id); document.body.style.cursor = ""; }}
       >
-        <Model asset={lamp.asset} scale={lamp.scale} />
+        <Model asset={lamp.asset} scale={lamp.scale * 1.18} />
         <mesh position={[0, spotlightOriginHeight / 2, LAMP_HEAD[1] * lamp.scale / 2]}>
           <boxGeometry args={[0.85 * lamp.scale, spotlightOriginHeight + 0.35 * lamp.scale, 0.9 * lamp.scale]} />
           <meshBasicMaterial transparent opacity={0} depthWrite={false} />
@@ -145,7 +145,7 @@ function Lamp({ lamp, dragRef }: { lamp: PlacedLamp; dragRef: RefObject<boolean>
         </mesh>
       </group>}
       <primitive object={spotlightTarget} />
-      <spotLight position={[0, spotlightOriginHeight, LAMP_HEAD[1] * lamp.scale]} target={spotlightTarget} color={lamp.color} intensity={on ? lamp.intensity : 0} distance={0} angle={cone.angle} penumbra={0.02} decay={0} castShadow shadow-mapSize-width={512} shadow-mapSize-height={512} shadow-bias={-0.00015} shadow-normalBias={0.015} />
+      <spotLight position={[0, spotlightOriginHeight, LAMP_HEAD[1] * lamp.scale]} target={spotlightTarget} color={lamp.color} intensity={on ? lamp.intensity : 0} distance={lamp.radius * 1.15} angle={cone.angle} penumbra={0.45} decay={2} castShadow shadow-mapSize-width={512} shadow-mapSize-height={512} shadow-bias={-0.00015} shadow-normalBias={0.015} />
       {on && <>
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.012, LAMP_HEAD[1] * lamp.scale]}>
           <circleGeometry args={[lamp.radius, 64]} />

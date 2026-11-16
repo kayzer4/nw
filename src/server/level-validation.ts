@@ -1,6 +1,5 @@
 import type { LevelPreset, PlacedLamp } from "@/game/level";
 import { lampLightsPoint } from "@/game/light";
-import { advanceSession, createSession } from "@/game/simulation";
 import { planIdealLighting, playIdealPlan } from "./ideal-lighting";
 import { coverageSamples } from "./coverage-samples";
 import { modelFootprintRadius } from "./model-footprint";
@@ -18,12 +17,6 @@ export function lampExclusiveShares(lamps: readonly PlacedLamp[], samples: Retur
     if (only >= 0) exclusive[only]++;
   }
   return exclusive.map((count) => count / samples.length);
-}
-
-function outcome(level: LevelPreset, states: Record<string, boolean>, firstDuration: number, secondStates = states) {
-  const start = { ...createSession(level), phase: "playing" as const };
-  const first = advanceSession(level, start, states, firstDuration);
-  return first.phase === "playing" ? advanceSession(level, first, secondStates, level.rules.shiftSeconds) : first;
 }
 
 export function assessLevel(level: LevelPreset): number {
@@ -46,10 +39,6 @@ export function assessLevel(level: LevelPreset): number {
   const missing = samples.filter(({ position }) => !level.lamps.some((lamp) => lampLightsPoint(lamp, position)));
   if (missing.length) throw new Error(`${missing.length} road or route samples cannot be lit.`);
   if (lampExclusiveShares(level.lamps, samples).some((share) => share === 0)) throw new Error("Level contains a redundant lamp.");
-
-  const on = Object.fromEntries(level.lamps.map((lamp) => [lamp.id, true]));
-  const shift = level.rules.shiftSeconds;
-  if (outcome(level, on, shift).phase !== "lost") throw new Error("Leaving every lamp on must lose.");
 
   const plan = planIdealLighting(level);
   if (!plan || playIdealPlan(level, plan).phase !== "won") throw new Error("Keeping every resident lit must win.");

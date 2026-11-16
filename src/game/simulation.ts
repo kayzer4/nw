@@ -1,9 +1,9 @@
 import type { CitizenRoute, LevelPreset, Position2 } from "./level";
-import { lampLightsPoint } from "./light";
+import { lampLightFactor, lampLightsPoint } from "./light";
 import { countBits, coveredResidents, lampCoverageMasks } from "./lighting";
 export interface SessionSnapshot {
   phase: "ready" | "playing" | "won" | "lost";
-  elapsedSeconds: number; energy: number;
+  elapsedSeconds: number; energy: number; mood: number;
   citizenLit: Record<string, boolean>;
 }
 const routeDistances = new WeakMap<CitizenRoute, { cumulative: number[]; total: number }>();
@@ -49,23 +49,32 @@ export function lightingEconomy(level: LevelPreset, states: Readonly<Record<stri
 }
 export function createSession(level: LevelPreset): SessionSnapshot {
   const states = Object.fromEntries(level.lamps.map((lamp) => [lamp.id, lamp.initiallyOn]));
-  return { phase: "ready", elapsedSeconds: 0, energy: level.rules.startingEnergy, citizenLit: citizenLighting(level, states, 0) };
+  return { phase: "ready", elapsedSeconds: 0, energy: level.rules.startingEnergy, mood: 100, citizenLit: citizenLighting(level, states, 0) };
 }
 export function advanceSession(level: LevelPreset, current: SessionSnapshot, states: Readonly<Record<string, boolean>>, elapsed: number): SessionSnapshot {
   if (current.phase !== "playing") return current;
   const nextTime = Math.min(level.rules.shiftSeconds, Math.max(current.elapsedSeconds, elapsed));
   let energy = current.energy;
+  let mood = current.mood;
   // Integrate along the route, including after a throttled background tab resumes.
   for (let time = current.elapsedSeconds; time < nextTime;) {
     const step = Math.min(0.25, nextTime - time);
-    const { activeLampCount } = lightingEconomy(level, states, time + step / 2);
+    const effectiveStates = energy > 0 ? states : Object.fromEntries(level.lamps.map((lamp) => [lamp.id, false]));
+    const { activeLampCount } = lightingEconomy(level, effectiveStates, time + step / 2);
     energy = Math.max(0, energy - activeLampCount * level.rules.energyPerLampSecond * step);
+    const litRatio = level.citizens.reduce((sum, citizen) => {
+      const point = routePosition(citizen, time + step / 2);
+      return sum + Math.min(1, level.lamps.reduce((best, lamp) => effectiveStates[lamp.id] ? Math.max(best, lampLightFactor(lamp, point)) : best, 0));
+    }, 0) / Math.max(1, level.citizens.length);
+    const moodRate = litRatio <= 0 ? -8 : 0.8 - 0.35 * (1 - litRatio);
+    mood = Math.max(0, Math.min(100, mood + moodRate * step));
     time += step;
-    if (energy <= 0) {
-      return { phase: "lost", elapsedSeconds: time, energy, citizenLit: citizenLighting(level, states, time) };
+    if (mood <= 0) {
+      return { phase: "lost", elapsedSeconds: time, energy, mood, citizenLit: citizenLighting(level, effectiveStates, time) };
     }
   }
-  const citizenLit = citizenLighting(level, states, nextTime);
+  const effectiveStates = energy > 0 ? states : Object.fromEntries(level.lamps.map((lamp) => [lamp.id, false]));
+  const citizenLit = citizenLighting(level, effectiveStates, nextTime);
   const phase = nextTime >= level.rules.shiftSeconds ? "won" : "playing";
-  return { phase, elapsedSeconds: nextTime, energy, citizenLit };
+  return { phase, elapsedSeconds: nextTime, energy, mood, citizenLit };
 }
