@@ -117,11 +117,13 @@ function Lamp({ lamp, dragRef }: { lamp: PlacedLamp; dragRef: RefObject<boolean>
   }, [lamp.scale]);
   const hoverRing = useRef<Group>(null);
   const hoverMaterial = useRef<Mesh>(null);
+  const hoverProgress = useRef(0);
   const glowMaterial = useRef<Mesh>(null);
   useFrame(({ clock }) => {
     const state = hoverRingState(hovered, clock.elapsedTime);
-    if (hoverRing.current) hoverRing.current.scale.setScalar(state.scale);
-    if (hoverMaterial.current) (hoverMaterial.current.material as { opacity: number }).opacity = state.opacity;
+    hoverProgress.current += ((hovered ? 1 : 0) - hoverProgress.current) * 0.18;
+    if (hoverRing.current) hoverRing.current.scale.setScalar(hoverProgress.current * state.scale);
+    if (hoverMaterial.current) (hoverMaterial.current.material as { opacity: number }).opacity = hoverProgress.current * state.opacity;
     if (glowMaterial.current) {
       const material = glowMaterial.current.material as unknown as { uniforms: { glowOpacity: { value: number } } };
       const target = on ? 1 : 0;
