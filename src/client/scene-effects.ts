@@ -7,3 +7,11 @@ export function hoverRingState(hovered: boolean, elapsedSeconds: number) {
 export function wrappedGridCoordinate(value: number, cellSize: number) {
   return ((value % cellSize) + cellSize) % cellSize;
 }
+
+export function gridCenterAtCamera(cameraX: number, cameraZ: number): [number, number] {
+  return [cameraX, cameraZ];
+}
+
+export function infiniteGridSurface() {
+  return { size: 96, fadeStart: 32, fadeEnd: 42 };
+}

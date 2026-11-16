@@ -11,7 +11,7 @@ import { gameClock } from "@/game/clock";
 import { LAMP_HEAD, LAMP_HEAD_HEIGHT, lampCone } from "@/game/light";
 import { routePosition } from "@/game/simulation";
 import { useLampHoverStore } from "./lamp-hover-store";
-import { hoverRingState } from "./scene-effects";
+import { gridCenterAtCamera, hoverRingState, infiniteGridSurface } from "./scene-effects";
 
 const glowVertexShader = `
 varying vec2 vUv;
@@ -40,6 +40,8 @@ void main() {
 }`;
 const gridFragmentShader = `
 varying vec3 vWorldPosition;
+uniform float fadeStart;
+uniform float fadeEnd;
 float gridLine(float coordinate, float size) {
   float unit = coordinate / size;
   float distanceToLine = abs(fract(unit - 0.5) - 0.5) / fwidth(unit);
@@ -49,7 +51,10 @@ void main() {
   float fine = max(gridLine(vWorldPosition.x, 0.5), gridLine(vWorldPosition.z, 0.5));
   float major = max(gridLine(vWorldPosition.x, 2.0), gridLine(vWorldPosition.z, 2.0));
   vec3 color = mix(vec3(0.095, 0.14, 0.18), vec3(0.15, 0.26, 0.32), major);
-  float alpha = fine * 0.14 + major * 0.34;
+  float distanceToCamera = distance(vWorldPosition.xz, cameraPosition.xz);
+  float fade = 1.0 - smoothstep(fadeStart, fadeEnd, distanceToCamera);
+  if (fade <= 0.0) discard;
+  float alpha = (fine * 0.14 + major * 0.34) * fade;
   gl_FragColor = vec4(color, alpha);
 }`;
 
@@ -101,20 +106,18 @@ function SidewalkGround({ buildings, cellSize }: { buildings: readonly PlacedAss
 function InfiniteGrid() {
   const group = useRef<Group>(null);
   const { camera } = useThree();
+  const { size, fadeStart, fadeEnd } = infiniteGridSurface();
+  const uniforms = useMemo(() => ({ fadeStart: { value: fadeStart }, fadeEnd: { value: fadeEnd } }), [fadeStart, fadeEnd]);
   useFrame(() => {
     if (!group.current) return;
-    const size = 160;
-    group.current.position.x = Math.floor(camera.position.x / size) * size;
-    group.current.position.z = Math.floor(camera.position.z / size) * size;
+    const [x, z] = gridCenterAtCamera(camera.position.x, camera.position.z);
+    group.current.position.x = x;
+    group.current.position.z = z;
   });
   return <group ref={group} position={[0, -0.08, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-    <mesh receiveShadow>
-      <planeGeometry args={[160, 160]} />
-      <meshStandardMaterial color="#141c25" roughness={1} />
-    </mesh>
-    <mesh position={[0, 0.003, 0]}>
-      <planeGeometry args={[160, 160]} />
-      <shaderMaterial vertexShader={gridVertexShader} fragmentShader={gridFragmentShader} transparent depthWrite={false} />
+    <mesh>
+      <planeGeometry args={[size, size]} />
+      <shaderMaterial vertexShader={gridVertexShader} fragmentShader={gridFragmentShader} uniforms={uniforms} transparent depthWrite={false} />
     </mesh>
   </group>;
 }
