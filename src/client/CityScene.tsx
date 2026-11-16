@@ -107,7 +107,7 @@ function InfiniteGrid() {
     group.current.position.x = Math.floor(camera.position.x / size) * size;
     group.current.position.z = Math.floor(camera.position.z / size) * size;
   });
-  return <group ref={group} position={[0, -0.08, 0]}>
+  return <group ref={group} position={[0, -0.08, 0]} rotation={[-Math.PI / 2, 0, 0]}>
     <mesh receiveShadow>
       <planeGeometry args={[160, 160]} />
       <meshStandardMaterial color="#141c25" roughness={1} />
