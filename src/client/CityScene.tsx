@@ -11,6 +11,7 @@ import { gameClock } from "@/game/clock";
 import { LAMP_HEAD, LAMP_HEAD_HEIGHT, lampCone } from "@/game/light";
 import { routePosition } from "@/game/simulation";
 import { useLampHoverStore } from "./lamp-hover-store";
+import { hoverRingState } from "./scene-effects";
 
 const glowVertexShader = `
 varying vec2 vUv;
@@ -28,6 +29,28 @@ void main() {
   gl_FragColor = vec4(glowColor, strength);
   #include <tonemapping_fragment>
   #include <colorspace_fragment>
+}`;
+
+const gridVertexShader = `
+varying vec3 vWorldPosition;
+void main() {
+  vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+  vWorldPosition = worldPosition.xyz;
+  gl_Position = projectionMatrix * viewMatrix * worldPosition;
+}`;
+const gridFragmentShader = `
+varying vec3 vWorldPosition;
+float gridLine(float coordinate, float size) {
+  float unit = coordinate / size;
+  float distanceToLine = abs(fract(unit - 0.5) - 0.5) / fwidth(unit);
+  return 1.0 - min(distanceToLine, 1.0);
+}
+void main() {
+  float fine = max(gridLine(vWorldPosition.x, 0.5), gridLine(vWorldPosition.z, 0.5));
+  float major = max(gridLine(vWorldPosition.x, 2.0), gridLine(vWorldPosition.z, 2.0));
+  vec3 color = mix(vec3(0.095, 0.14, 0.18), vec3(0.15, 0.26, 0.32), major);
+  float alpha = fine * 0.14 + major * 0.34;
+  gl_FragColor = vec4(color, alpha);
 }`;
 
 function Model({ asset, scale = 1, castShadow = true }: { asset: string; scale?: number; castShadow?: boolean }) {
@@ -75,6 +98,27 @@ function SidewalkGround({ buildings, cellSize }: { buildings: readonly PlacedAss
   </mesh>;
 }
 
+function InfiniteGrid() {
+  const group = useRef<Group>(null);
+  const { camera } = useThree();
+  useFrame(() => {
+    if (!group.current) return;
+    const size = 160;
+    group.current.position.x = Math.floor(camera.position.x / size) * size;
+    group.current.position.z = Math.floor(camera.position.z / size) * size;
+  });
+  return <group ref={group} position={[0, -0.08, 0]}>
+    <mesh receiveShadow>
+      <planeGeometry args={[160, 160]} />
+      <meshStandardMaterial color="#141c25" roughness={1} />
+    </mesh>
+    <mesh position={[0, 0.003, 0]}>
+      <planeGeometry args={[160, 160]} />
+      <shaderMaterial vertexShader={gridVertexShader} fragmentShader={gridFragmentShader} transparent depthWrite={false} />
+    </mesh>
+  </group>;
+}
+
 function Lamp({ lamp, dragRef }: { lamp: PlacedLamp; dragRef: RefObject<boolean> }) {
   const on = useGameStore((state) => state.lampStates[lamp.id] ?? lamp.initiallyOn);
   const toggle = useGameStore((state) => state.toggleLamp);
@@ -89,6 +133,13 @@ function Lamp({ lamp, dragRef }: { lamp: PlacedLamp; dragRef: RefObject<boolean>
     target.position.set(0, 0, LAMP_HEAD[1] * lamp.scale);
     return target;
   }, [lamp.scale]);
+  const hoverRing = useRef<Group>(null);
+  const hoverMaterial = useRef<Mesh>(null);
+  useFrame(({ clock }) => {
+    const state = hoverRingState(hovered, clock.elapsedTime);
+    if (hoverRing.current) hoverRing.current.scale.setScalar(state.scale);
+    if (hoverMaterial.current) (hoverMaterial.current.material as { opacity: number }).opacity = state.opacity;
+  });
   return (
     <group position={[lamp.position[0], lamp.position[1], lamp.position[2]]} rotation={[0, lamp.rotationY, 0]}>
       <group
@@ -102,10 +153,16 @@ function Lamp({ lamp, dragRef }: { lamp: PlacedLamp; dragRef: RefObject<boolean>
           <meshBasicMaterial transparent opacity={0} depthWrite={false} />
         </mesh>
       </group>
-      {hovered && <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.024, 0]} raycast={() => null}>
-        <ringGeometry args={[0.42, 0.62, 32]} />
-        <meshBasicMaterial color="#f0c876" transparent opacity={0.9} depthWrite={false} toneMapped={false} />
-      </mesh>}
+      {hovered && <group ref={hoverRing} position={[0, 0.028, 0]} raycast={() => null}>
+        <mesh ref={hoverMaterial as RefObject<Mesh>} rotation={[-Math.PI / 2, 0, 0]}>
+          <ringGeometry args={[0.34, 0.42, 48]} />
+          <meshBasicMaterial color="#f6d67a" transparent opacity={0.82} depthWrite={false} toneMapped={false} />
+        </mesh>
+        <mesh rotation={[-Math.PI / 2, 0, 0]}>
+          <ringGeometry args={[0.56, 0.575, 48]} />
+          <meshBasicMaterial color="#f0c876" transparent opacity={0.34} depthWrite={false} toneMapped={false} />
+        </mesh>
+      </group>}
       <primitive object={spotlightTarget} />
       <spotLight position={[0, spotlightOriginHeight, LAMP_HEAD[1] * lamp.scale]} target={spotlightTarget} color={lamp.color} intensity={on ? lamp.intensity : 0} distance={0} angle={cone.angle} penumbra={0.02} decay={0} castShadow shadow-mapSize-width={512} shadow-mapSize-height={512} shadow-bias={-0.00015} shadow-normalBias={0.015} />
       {on && <>
@@ -204,11 +261,7 @@ function District({ level, dragRef, onReady }: { level: LevelPreset; dragRef: Re
       <fog attach="fog" args={["#080d15", 18, 38]} />
       <ambientLight intensity={0.22} color="#9baec8" />
       <directionalLight position={[-5, 12, 6]} intensity={0.3} color="#a9c5f0" castShadow shadow-mapSize-width={1024} shadow-mapSize-height={1024} shadow-camera-left={-12} shadow-camera-right={12} shadow-camera-top={12} shadow-camera-bottom={-12} shadow-normalBias={0.02} />
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.08, 0]} receiveShadow>
-        <planeGeometry args={[30, 30]} />
-        <meshStandardMaterial color="#141c25" roughness={1} />
-      </mesh>
-      <gridHelper args={[18, 36, "#26323d", "#18232d"]} position={[0, -0.06, 0]} />
+      <InfiniteGrid />
       {level.roads.map((road) => <StaticAsset key={road.id} item={road} castShadow={false} />)}
       <SidewalkGround buildings={level.buildings} cellSize={level.grid.cellSize} />
       {level.buildings.map((building) => <StaticAsset key={building.id} item={building} />)}
