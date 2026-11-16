@@ -25,7 +25,7 @@ varying vec2 vUv;
 void main() {
   float radius = length(vUv - vec2(0.5)) * 2.0;
   float edge = 1.0 - smoothstep(0.94, 1.0, radius);
-  float strength = 0.24 * pow(max(0.0, 1.0 - radius), 2.2) * edge;
+  float strength = 0.24 * pow(max(0.0, 1.0 - radius), 1.35) * edge;
   gl_FragColor = vec4(glowColor, strength);
   #include <tonemapping_fragment>
   #include <colorspace_fragment>
@@ -145,7 +145,7 @@ function Lamp({ lamp, dragRef }: { lamp: PlacedLamp; dragRef: RefObject<boolean>
         </mesh>
       </group>}
       <primitive object={spotlightTarget} />
-      <spotLight position={[0, spotlightOriginHeight, LAMP_HEAD[1] * lamp.scale]} target={spotlightTarget} color={lamp.color} intensity={on ? lamp.intensity : 0} distance={lamp.radius} angle={cone.angle} penumbra={0.6} decay={3} castShadow shadow-mapSize-width={512} shadow-mapSize-height={512} shadow-bias={-0.00015} shadow-normalBias={0.015} />
+      <spotLight position={[0, spotlightOriginHeight, LAMP_HEAD[1] * lamp.scale]} target={spotlightTarget} color={lamp.color} intensity={on ? lamp.intensity : 0} distance={lamp.radius * 1.08} angle={cone.angle} penumbra={0.45} decay={2} castShadow shadow-mapSize-width={512} shadow-mapSize-height={512} shadow-bias={-0.00015} shadow-normalBias={0.015} />
       {on && <>
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.012, LAMP_HEAD[1] * lamp.scale]}>
           <circleGeometry args={[lamp.radius, 64]} />
