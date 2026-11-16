@@ -120,7 +120,7 @@ function Lamp({ lamp, dragRef }: { lamp: PlacedLamp; dragRef: RefObject<boolean>
   const hoverProgress = useRef(0);
   const glowMaterial = useRef<Mesh>(null);
   useFrame(({ clock }) => {
-    const state = hoverRingState(hovered, clock.elapsedTime);
+    const state = hoverRingState(true, clock.elapsedTime);
     hoverProgress.current += ((hovered ? 1 : 0) - hoverProgress.current) * 0.18;
     if (hoverRing.current) hoverRing.current.scale.setScalar(hoverProgress.current * state.scale);
     if (hoverMaterial.current) (hoverMaterial.current.material as { opacity: number }).opacity = hoverProgress.current * state.opacity;
