@@ -146,9 +146,22 @@ function connectionsAt(x: number, z: number, map: CellType[][]): Connections {
   return DIRECTIONS.map(({ x: dx, z: dz }) => map[x + dx]?.[z + dz] === "road") as Connections;
 }
 
+function isStraight(needed: Connections) {
+  return (needed[0] && needed[2] && !needed[1] && !needed[3]) || (needed[1] && needed[3] && !needed[0] && !needed[2]);
+}
+
+function shouldPlaceCrossing(needed: Connections, random: () => number) {
+  if (!isStraight(needed)) return false;
+  return random() < 0.35;
+}
+
 function selectRoadTile(needed: Connections, tiles: RoadTile[], random: () => number): RoadTile | null {
   const matches = tiles.filter((tile) => tile.connections.every((connected, index) => connected === needed[index]));
-  return matches.length === 0 ? null : pick(matches, random);
+  if (matches.length === 0) return null;
+  const crossings = matches.filter((tile) => tile.config.tags?.includes("crosswalk"));
+  if (crossings.length && shouldPlaceCrossing(needed, random)) return pick(crossings, random);
+  const regular = matches.filter((tile) => !tile.config.tags?.includes("crosswalk"));
+  return pick(regular.length ? regular : matches, random);
 }
 
 function canPlaceAllRoads(map: CellType[][], tiles: RoadTile[], random: () => number) {

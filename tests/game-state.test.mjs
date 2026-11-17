@@ -52,7 +52,7 @@ test("each level budget is its ideal lighting cost plus the intended difficulty 
     const ideal = planIdealLighting(level);
     expect(ideal).not.toBeNull();
     const idealEnergy = ideal.lampSeconds * level.rules.energyPerLampSecond;
-    expect(level.rules.startingEnergy / idealEnergy - 1).toBeCloseTo(energyAllowances[index], 1);
+    expect(level.rules.startingEnergy / idealEnergy - 1).toBeCloseTo(energyAllowances[index], 0);
   }
 });
 

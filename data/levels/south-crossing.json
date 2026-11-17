@@ -23,7 +23,7 @@
     },
     {
       "id": "road-1-3",
-      "asset": "/models/roads/road-crossing.glb",
+      "asset": "/models/roads/road-straight.glb",
       "position": [
         -3,
         -0.05,
@@ -40,12 +40,12 @@
         -0.05,
         1
       ],
-      "rotationY": -3.141592653589793,
+      "rotationY": 0,
       "scale": 2
     },
     {
       "id": "road-3-3",
-      "asset": "/models/roads/road-crossing.glb",
+      "asset": "/models/roads/road-straight.glb",
       "position": [
         1,
         -0.05,
@@ -67,7 +67,7 @@
     },
     {
       "id": "road-4-1",
-      "asset": "/models/roads/road-straight.glb",
+      "asset": "/models/roads/road-crossing.glb",
       "position": [
         3,
         -0.05,
@@ -78,7 +78,7 @@
     },
     {
       "id": "road-4-2",
-      "asset": "/models/roads/road-crossing.glb",
+      "asset": "/models/roads/road-straight.glb",
       "position": [
         3,
         -0.05,
@@ -135,278 +135,278 @@
   "buildings": [
     {
       "id": "building-0-0",
-      "asset": "/models/Models/building-skyscraper-c.glb",
+      "asset": "/models/Models/building-j.glb",
       "position": [
         -5,
-        -0.06340553681145344,
+        -0.0422348347137416,
         -5
       ],
       "rotationY": 0,
-      "scale": 1.268110736229069
+      "scale": 0.844696694274832
     },
     {
       "id": "building-1-0",
-      "asset": "/models/Models/building-b.glb",
+      "asset": "/models/Models/building-i.glb",
       "position": [
         -3,
-        -0.09072163565935201,
+        -0.06758832327653772,
         -5
       ],
       "rotationY": 0,
-      "scale": 1.8144327131870401
+      "scale": 1.3517664655307542
     },
     {
       "id": "building-2-0",
-      "asset": "/models/Models/building-i.glb",
-      "position": [
-        -1,
-        -0.06758832327653772,
-        -5
-      ],
-      "rotationY": 0,
-      "scale": 1.3517664655307542
-    },
-    {
-      "id": "building-3-0",
-      "asset": "/models/Models/building-c.glb",
-      "position": [
-        1,
-        -0.08073393365227466,
-        -5
-      ],
-      "rotationY": -1.5707963267948966,
-      "scale": 1.614678673045493
-    },
-    {
-      "id": "building-0-1",
-      "asset": "/models/Models/building-skyscraper-b.glb",
-      "position": [
-        -5,
-        -0.06470582495516289,
-        -3
-      ],
-      "rotationY": 0,
-      "scale": 1.2941164991032577
-    },
-    {
-      "id": "building-1-1",
-      "asset": "/models/Models/building-k.glb",
-      "position": [
-        -3,
-        -0.0422348347137416,
-        -3
-      ],
-      "rotationY": 0,
-      "scale": 0.844696694274832
-    },
-    {
-      "id": "building-2-1",
-      "asset": "/models/Models/building-k.glb",
-      "position": [
-        -1,
-        -0.0422348347137416,
-        -3
-      ],
-      "rotationY": 0,
-      "scale": 0.844696694274832
-    },
-    {
-      "id": "building-3-1",
-      "asset": "/models/Models/building-b.glb",
-      "position": [
-        1,
-        -0.09072163565935201,
-        -3
-      ],
-      "rotationY": -1.5707963267948966,
-      "scale": 1.8144327131870401
-    },
-    {
-      "id": "building-0-2",
-      "asset": "/models/Models/building-skyscraper-b.glb",
-      "position": [
-        -5,
-        -0.06470582495516289,
-        -1
-      ],
-      "rotationY": 3.141592653589793,
-      "scale": 1.2941164991032577
-    },
-    {
-      "id": "building-1-2",
-      "asset": "/models/Models/building-g.glb",
-      "position": [
-        -3,
-        -0.09072164680869368,
-        -1
-      ],
-      "rotationY": 3.141592653589793,
-      "scale": 1.8144329361738736
-    },
-    {
-      "id": "building-2-2",
-      "asset": "/models/Models/building-skyscraper-b.glb",
-      "position": [
-        -1,
-        -0.06470582495516289,
-        -1
-      ],
-      "rotationY": 3.141592653589793,
-      "scale": 1.2941164991032577
-    },
-    {
-      "id": "building-3-2",
-      "asset": "/models/Models/building-c.glb",
-      "position": [
-        1,
-        -0.08073393365227466,
-        -1
-      ],
-      "rotationY": 3.141592653589793,
-      "scale": 1.614678673045493
-    },
-    {
-      "id": "building-5-0",
-      "asset": "/models/Models/building-j.glb",
-      "position": [
-        5,
-        -0.0422348347137416,
-        -5
-      ],
-      "rotationY": 1.5707963267948966,
-      "scale": 0.844696694274832
-    },
-    {
-      "id": "building-5-1",
-      "asset": "/models/Models/building-i.glb",
-      "position": [
-        5,
-        -0.06758832327653772,
-        -3
-      ],
-      "rotationY": 1.5707963267948966,
-      "scale": 1.3517664655307542
-    },
-    {
-      "id": "building-5-2",
       "asset": "/models/Models/building-m.glb",
       "position": [
-        5,
+        -1,
         -0.07085344268079159,
-        -1
+        -5
       ],
-      "rotationY": 3.141592653589793,
+      "rotationY": 0,
       "scale": 1.4170688536158318
     },
     {
-      "id": "building-0-4",
+      "id": "building-3-0",
       "asset": "/models/Models/building-skyscraper-d.glb",
       "position": [
-        -5,
+        1,
         -0.06340553681145344,
-        3
+        -5
       ],
-      "rotationY": 0,
+      "rotationY": -1.5707963267948966,
       "scale": 1.268110736229069
     },
     {
-      "id": "building-1-4",
+      "id": "building-0-1",
       "asset": "/models/Models/building-k.glb",
       "position": [
-        -3,
+        -5,
         -0.0422348347137416,
-        3
+        -3
       ],
       "rotationY": 0,
       "scale": 0.844696694274832
     },
     {
-      "id": "building-2-4",
+      "id": "building-1-1",
       "asset": "/models/Models/building-skyscraper-c.glb",
       "position": [
-        -1,
+        -3,
         -0.06340553681145344,
-        3
+        -3
       ],
       "rotationY": 0,
       "scale": 1.268110736229069
     },
     {
-      "id": "building-3-4",
+      "id": "building-2-1",
       "asset": "/models/Models/building-skyscraper-b.glb",
       "position": [
-        1,
+        -1,
         -0.06470582495516289,
-        3
+        -3
       ],
       "rotationY": 0,
       "scale": 1.2941164991032577
     },
     {
-      "id": "building-4-4",
+      "id": "building-3-1",
       "asset": "/models/Models/building-g.glb",
       "position": [
-        3,
+        1,
         -0.09072164680869368,
-        3
+        -3
       ],
-      "rotationY": 0,
+      "rotationY": -1.5707963267948966,
       "scale": 1.8144329361738736
     },
     {
-      "id": "building-0-5",
+      "id": "building-0-2",
       "asset": "/models/Models/building-skyscraper-e.glb",
       "position": [
         -5,
         -0.06795366395022925,
-        5
+        -1
       ],
-      "rotationY": 0,
+      "rotationY": 3.141592653589793,
       "scale": 1.359073279004585
     },
     {
-      "id": "building-1-5",
+      "id": "building-1-2",
       "asset": "/models/Models/building-skyscraper-d.glb",
       "position": [
         -3,
         -0.06340553681145344,
-        5
+        -1
       ],
-      "rotationY": 0,
+      "rotationY": 3.141592653589793,
       "scale": 1.268110736229069
     },
     {
-      "id": "building-2-5",
+      "id": "building-2-2",
       "asset": "/models/Models/building-e.glb",
       "position": [
         -1,
         -0.05365853315304625,
-        5
+        -1
       ],
-      "rotationY": 0,
+      "rotationY": 3.141592653589793,
       "scale": 1.073170663060925
     },
     {
-      "id": "building-3-5",
+      "id": "building-3-2",
       "asset": "/models/Models/building-f.glb",
       "position": [
         1,
         -0.08543685602417517,
-        5
+        -1
       ],
-      "rotationY": 0,
+      "rotationY": 3.141592653589793,
       "scale": 1.7087371204835033
     },
     {
-      "id": "building-4-5",
+      "id": "building-5-0",
       "asset": "/models/Models/building-a.glb",
       "position": [
+        5,
+        -0.0936170155778632,
+        -5
+      ],
+      "rotationY": 1.5707963267948966,
+      "scale": 1.8723403115572639
+    },
+    {
+      "id": "building-5-1",
+      "asset": "/models/Models/building-b.glb",
+      "position": [
+        5,
+        -0.09072163565935201,
+        -3
+      ],
+      "rotationY": 1.5707963267948966,
+      "scale": 1.8144327131870401
+    },
+    {
+      "id": "building-5-2",
+      "asset": "/models/Models/building-skyscraper-d.glb",
+      "position": [
+        5,
+        -0.06340553681145344,
+        -1
+      ],
+      "rotationY": 3.141592653589793,
+      "scale": 1.268110736229069
+    },
+    {
+      "id": "building-0-4",
+      "asset": "/models/Models/building-c.glb",
+      "position": [
+        -5,
+        -0.08073393365227466,
+        3
+      ],
+      "rotationY": 0,
+      "scale": 1.614678673045493
+    },
+    {
+      "id": "building-1-4",
+      "asset": "/models/Models/building-h.glb",
+      "position": [
+        -3,
+        -0.08731100291491052,
+        3
+      ],
+      "rotationY": 0,
+      "scale": 1.7462200582982104
+    },
+    {
+      "id": "building-2-4",
+      "asset": "/models/Models/building-a.glb",
+      "position": [
+        -1,
+        -0.0936170155778632,
+        3
+      ],
+      "rotationY": 0,
+      "scale": 1.8723403115572639
+    },
+    {
+      "id": "building-3-4",
+      "asset": "/models/Models/building-skyscraper-a.glb",
+      "position": [
+        1,
+        -0.06470584764201961,
+        3
+      ],
+      "rotationY": 0,
+      "scale": 1.2941169528403922
+    },
+    {
+      "id": "building-4-4",
+      "asset": "/models/Models/building-l.glb",
+      "position": [
         3,
+        -0.06276747191885879,
+        3
+      ],
+      "rotationY": 0,
+      "scale": 1.2553494383771757
+    },
+    {
+      "id": "building-0-5",
+      "asset": "/models/Models/building-c.glb",
+      "position": [
+        -5,
+        -0.08073393365227466,
+        5
+      ],
+      "rotationY": 0,
+      "scale": 1.614678673045493
+    },
+    {
+      "id": "building-1-5",
+      "asset": "/models/Models/building-skyscraper-a.glb",
+      "position": [
+        -3,
+        -0.06470584764201961,
+        5
+      ],
+      "rotationY": 0,
+      "scale": 1.2941169528403922
+    },
+    {
+      "id": "building-2-5",
+      "asset": "/models/Models/building-c.glb",
+      "position": [
+        -1,
+        -0.08073393365227466,
+        5
+      ],
+      "rotationY": 0,
+      "scale": 1.614678673045493
+    },
+    {
+      "id": "building-3-5",
+      "asset": "/models/Models/building-a.glb",
+      "position": [
+        1,
         -0.0936170155778632,
         5
       ],
-      "rotationY": -1.5707963267948966,
+      "rotationY": 0,
       "scale": 1.8723403115572639
+    },
+    {
+      "id": "building-4-5",
+      "asset": "/models/Models/building-skyscraper-a.glb",
+      "position": [
+        3,
+        -0.06470584764201961,
+        5
+      ],
+      "rotationY": -1.5707963267948966,
+      "scale": 1.2941169528403922
     }
   ],
   "lamps": [
@@ -478,6 +478,66 @@
       "scale": 0.2,
       "route": [
         [
+          2.1,
+          -5.9
+        ],
+        [
+          2.1,
+          -3
+        ],
+        [
+          2.1,
+          -0.9999999999999999
+        ],
+        [
+          2.1,
+          0.09999999999999998
+        ],
+        [
+          1,
+          0.09999999999999998
+        ],
+        [
+          -1,
+          0.09999999999999998
+        ],
+        [
+          -3,
+          0.09999999999999998
+        ],
+        [
+          -5.9,
+          0.09999999999999998
+        ],
+        [
+          -5.9,
+          1.9
+        ],
+        [
+          -3,
+          1.9
+        ],
+        [
+          -1,
+          1.9
+        ],
+        [
+          1,
+          1.9
+        ],
+        [
+          3,
+          1.9
+        ],
+        [
+          4.1,
+          1.9
+        ],
+        [
+          4.1,
+          3
+        ],
+        [
           4.1,
           5.9
         ],
@@ -502,6 +562,74 @@
           -1.0000000000000002
         ],
         [
+          3.9,
+          -3
+        ],
+        [
+          3.9,
+          -5.9
+        ]
+      ],
+      "speed": 0.25
+    },
+    {
+      "id": "walker-02",
+      "asset": "/models/characters/cube_guy.glb",
+      "scale": 0.2,
+      "route": [
+        [
+          2.1,
+          -0.9999999999999999
+        ],
+        [
+          2.1,
+          0.09999999999999998
+        ]
+      ],
+      "speed": 0.25
+    },
+    {
+      "id": "walker-03",
+      "asset": "/models/characters/cube_guy.glb",
+      "scale": 0.2,
+      "route": [
+        [
+          4.1,
+          3
+        ],
+        [
+          4.1,
+          5.9
+        ],
+        [
+          5.9,
+          5.9
+        ],
+        [
+          5.9,
+          3
+        ],
+        [
+          5.9,
+          0.09999999999999998
+        ],
+        [
+          3.9,
+          0.09999999999999987
+        ],
+        [
+          3.9,
+          -1.0000000000000002
+        ],
+        [
+          3.9,
+          -3
+        ],
+        [
+          2.1,
+          -3
+        ],
+        [
           2.1,
           -0.9999999999999999
         ],
@@ -518,7 +646,23 @@
           0.09999999999999998
         ],
         [
-          -0.9999999999999999,
+          -3,
+          0.09999999999999998
+        ],
+        [
+          -5.9,
+          0.09999999999999998
+        ],
+        [
+          -5.9,
+          1.9
+        ],
+        [
+          -3,
+          1.9
+        ],
+        [
+          -1,
           1.9
         ],
         [
@@ -532,40 +676,128 @@
         [
           4.1,
           1.9
+        ]
+      ],
+      "speed": 0.25
+    },
+    {
+      "id": "walker-04",
+      "asset": "/models/characters/cube_woman.glb",
+      "scale": 0.2,
+      "route": [
+        [
+          3,
+          1.9
+        ],
+        [
+          4.1,
+          1.9
         ],
         [
           4.1,
           3
+        ],
+        [
+          4.1,
+          5.9
+        ],
+        [
+          5.9,
+          5.9
+        ],
+        [
+          5.9,
+          3
+        ],
+        [
+          5.9,
+          0.09999999999999998
+        ],
+        [
+          3.9,
+          0.09999999999999987
+        ],
+        [
+          3.9,
+          -1.0000000000000002
+        ],
+        [
+          3.9,
+          -3
+        ],
+        [
+          3.9,
+          -5.9
+        ],
+        [
+          2.1,
+          -5.9
+        ],
+        [
+          2.1,
+          -3
+        ],
+        [
+          2.1,
+          -0.9999999999999999
+        ],
+        [
+          2.1,
+          0.09999999999999998
+        ],
+        [
+          1,
+          0.09999999999999998
+        ],
+        [
+          -1,
+          0.09999999999999998
+        ],
+        [
+          -3,
+          0.09999999999999998
+        ],
+        [
+          -5.9,
+          0.09999999999999998
+        ],
+        [
+          -5.9,
+          1.9
+        ],
+        [
+          -3,
+          1.9
+        ],
+        [
+          -1,
+          1.9
+        ],
+        [
+          1,
+          1.9
         ]
       ],
       "speed": 0.25
     },
     {
-      "id": "walker-02",
-      "asset": "/models/characters/cube_guy.glb",
+      "id": "walker-05",
+      "asset": "/models/characters/cube_woman.glb",
       "scale": 0.2,
       "route": [
         [
-          -3,
+          3.9,
+          0.09999999999999987
+        ],
+        [
+          5.9,
           0.09999999999999998
-        ],
-        [
-          -5.9,
-          0.09999999999999998
-        ],
-        [
-          -5.9,
-          1.9
-        ],
-        [
-          -3,
-          1.9
         ]
       ],
       "speed": 0.25
     },
     {
-      "id": "walker-03",
+      "id": "walker-06",
       "asset": "/models/characters/cube_woman.glb",
       "scale": 0.2,
       "route": [
@@ -582,16 +814,8 @@
           1.9
         ],
         [
-          -0.9999999999999999,
+          -1,
           1.9
-        ],
-        [
-          1,
-          1.9
-        ],
-        [
-          1,
-          0.09999999999999998
         ],
         [
           -1,
@@ -600,122 +824,6 @@
         [
           -3,
           0.09999999999999998
-        ]
-      ],
-      "speed": 0.25
-    },
-    {
-      "id": "walker-04",
-      "asset": "/models/characters/cube_guy.glb",
-      "scale": 0.2,
-      "route": [
-        [
-          -5.9,
-          0.09999999999999998
-        ],
-        [
-          -5.9,
-          1.9
-        ],
-        [
-          -3,
-          1.9
-        ],
-        [
-          -3,
-          0.09999999999999998
-        ]
-      ],
-      "speed": 0.25
-    },
-    {
-      "id": "walker-05",
-      "asset": "/models/characters/cube_guy.glb",
-      "scale": 0.2,
-      "route": [
-        [
-          1,
-          0.09999999999999998
-        ],
-        [
-          -1,
-          0.09999999999999998
-        ],
-        [
-          -0.9999999999999999,
-          1.9
-        ],
-        [
-          1,
-          1.9
-        ]
-      ],
-      "speed": 0.25
-    },
-    {
-      "id": "walker-06",
-      "asset": "/models/characters/cube_guy.glb",
-      "scale": 0.2,
-      "route": [
-        [
-          2.1,
-          -0.9999999999999999
-        ],
-        [
-          2.1,
-          0.09999999999999998
-        ],
-        [
-          1,
-          0.09999999999999998
-        ],
-        [
-          -1,
-          0.09999999999999998
-        ],
-        [
-          -0.9999999999999999,
-          1.9
-        ],
-        [
-          1,
-          1.9
-        ],
-        [
-          3,
-          1.9
-        ],
-        [
-          4.1,
-          1.9
-        ],
-        [
-          4.1,
-          3
-        ],
-        [
-          4.1,
-          5.9
-        ],
-        [
-          5.9,
-          5.9
-        ],
-        [
-          5.9,
-          3
-        ],
-        [
-          5.9,
-          0.09999999999999998
-        ],
-        [
-          3.9,
-          0.09999999999999987
-        ],
-        [
-          3.9,
-          -1.0000000000000002
         ]
       ],
       "speed": 0.25
@@ -723,7 +831,7 @@
   ],
   "rules": {
     "shiftSeconds": 65,
-    "startingEnergy": 115.49999999999999,
+    "startingEnergy": 133.98,
     "energyPerLampSecond": 0.7,
     "requiredLitResidents": 6
   }
